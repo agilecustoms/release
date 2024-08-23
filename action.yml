@@ -52,4 +52,6 @@ runs:
   #      run: git config --global url."https://${{ inputs.GIT_TOKEN }}:x-oauth-basic@github.com/agilecustoms/".insteadOf "https://github.com/agilecustoms/"
 
 outputs:
-  version: ${{ steps.generate.outputs.new_tag }}
+  version:
+    description: "Newly released version"
+    value: ${{ steps.generate.outputs.new_tag }}
