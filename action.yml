@@ -38,7 +38,7 @@ runs:
         session-token: ${{ steps.creds.outputs.aws-session-token }}
         source-dir: 'dist' # after 'download-artifact' step, there are assets in 'dist/*'
         bucket: 'agilecustoms-${{ inputs.SERVICE }}-dist'
-        bucket-dir: ${{ steps.generate.outputs.new_tag }}${{ inputs.DEV_RELEASE == 'false' && ',latest' || '' }}
+        bucket-dir: ${{ inputs.DEV_RELEASE == 'true' && github.ref_name || format('{0},{1}', steps.generate.outputs.new_tag, 'latest') }}
         tags: Release=${{ inputs.DEV_RELEASE == 'false' && 'true' || 'false' }}
 
     - name: Push tags
