@@ -1,0 +1,55 @@
+name: 'Release'
+description: 'login to AWS as deployer, setup Terraform, config git to resolve TF modules'
+inputs:
+  SERVICE:
+    description: 'Service being released'
+    required: true
+  AWS_ACCOUNT:
+    description: 'AWS account (shared) to release to'
+    required: true
+  DEV_RELEASE:
+    description: 'Used to make dev release - no release tagging, just upload binaries'
+    required: true
+    default: 'false'
+runs:
+  using: "composite"
+  steps:
+    - name: Generate new version
+      if: ${{ inputs.DEV_RELEASE == 'false' }}
+      id: generate
+      uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
+      env:
+        DRY_RUN: true # just generate new version, do not push tag
+#        GITHUB_TOKEN: ${{ secrets.GH_ACTIONS_TOKEN }} # Admin PAT to bypass push protection on 'main' branch
+
+    - name: Login AWS
+      id: creds
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT }}:role/ci/builder
+        output-credentials: true
+
+    - name: Upload S3
+      uses: agilecustoms/gha-upload-s3@main
+      with:
+        access-key-id: ${{ steps.creds.outputs.aws-access-key-id }}
+        secret-access-key: ${{ steps.creds.outputs.aws-secret-access-key }}
+        session-token: ${{ steps.creds.outputs.aws-session-token }}
+        source-dir: 'dist' # after 'download-artifact' step, there are assets in 'dist/*'
+        bucket: 'agilecustoms-${{ inputs.SERVICE }}-dist'
+        bucket-dir: ${{ steps.generate.outputs.new_tag }}${{ inputs.DEV_RELEASE == 'false' && ',latest' || '' }}
+        tags: Release=${{ inputs.DEV_RELEASE == 'false' && 'true' || 'false' }}
+
+    - name: Push tags
+      if: ${{ inputs.DEV_RELEASE == 'false' }}
+      shell: bash
+      run: |
+        git tag -d latest 2>/dev/null || true
+        git tag latest
+        git tag ${{ steps.generate.outputs.new_tag }}
+  #      run: git config --global url."https://${{ inputs.GIT_TOKEN }}:x-oauth-basic@github.com/agilecustoms/".insteadOf "https://github.com/agilecustoms/"
+        git push origin latest ${{ steps.generate.outputs.new_tag }} --force
+
+  outputs:
+    version: ${{ steps.generate.outputs.new_tag }}
