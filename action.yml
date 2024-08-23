@@ -51,5 +51,5 @@ runs:
         git push origin latest ${{ steps.generate.outputs.new_tag }} --force
   #      run: git config --global url."https://${{ inputs.GIT_TOKEN }}:x-oauth-basic@github.com/agilecustoms/".insteadOf "https://github.com/agilecustoms/"
 
-  outputs:
-    version: ${{ steps.generate.outputs.new_tag }}
+outputs:
+  version: ${{ steps.generate.outputs.new_tag }}
