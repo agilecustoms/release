@@ -19,8 +19,8 @@ runs:
       shell: bash
       run: |
         ls -la
-        [ -d dist ] && echo "upload_s3=true"
-        [ -d dist ] && echo "upload_s3=true" >> $GITHUB_OUTPUT
+        [ -d dist ] && echo "upload_s3=true" || true
+        [ -d dist ] && echo "upload_s3=true" >> $GITHUB_OUTPUT || true
 
     - name: Generate new version
       if: inputs.DEV_RELEASE == 'false'
