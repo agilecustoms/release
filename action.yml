@@ -27,7 +27,7 @@ runs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
-        role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT }}:role/ci/builder
+        role-to-assume: arn:aws:iam::${{ inputs.AWS_ACCOUNT }}:role/ci/builder
         output-credentials: true
 
     - name: Upload S3
