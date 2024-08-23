@@ -48,8 +48,8 @@ runs:
         git tag -d latest 2>/dev/null || true
         git tag latest
         git tag ${{ steps.generate.outputs.new_tag }}
-  #      run: git config --global url."https://${{ inputs.GIT_TOKEN }}:x-oauth-basic@github.com/agilecustoms/".insteadOf "https://github.com/agilecustoms/"
         git push origin latest ${{ steps.generate.outputs.new_tag }} --force
+  #      run: git config --global url."https://${{ inputs.GIT_TOKEN }}:x-oauth-basic@github.com/agilecustoms/".insteadOf "https://github.com/agilecustoms/"
 
   outputs:
     version: ${{ steps.generate.outputs.new_tag }}
