@@ -17,9 +17,8 @@ runs:
     - name: Init
       id: init
       shell: bash
+      # convention: if 'dist' directory exists, then upload to S3
       run: |
-        ls -la
-        [ -d dist ] && echo "upload_s3=true" || true
         [ -d dist ] && echo "upload_s3=true" >> $GITHUB_OUTPUT || true
 
     - name: Generate new version
@@ -28,6 +27,17 @@ runs:
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
         DRY_RUN: true # just generate new version, do not push tag
+
+    - name: S3 key
+      if: steps.init.outputs.upload_s3
+      id: s3_key
+      shell: bash
+      run: |
+        KEY="${{ inputs.SERVICE }}/${{ steps.generate.outputs.new_tag }},${{ inputs.SERVICE }}/latest"
+        if [ "${{ inputs.DEV_RELEASE }}" == "true" ]; then
+          KEY="${{ inputs.SERVICE }}/${{ github.ref_name }}"
+        fi
+        echo "KEY=$KEY" >> $GITHUB_OUTPUT
 
     - name: Login AWS
       if: steps.init.outputs.upload_s3
@@ -46,8 +56,8 @@ runs:
         secret-access-key: ${{ steps.creds.outputs.aws-secret-access-key }}
         session-token: ${{ steps.creds.outputs.aws-session-token }}
         source-dir: 'dist' # after 'download-artifact' step, there are assets in 'dist/*'
-        bucket: 'agilecustoms-${{ inputs.SERVICE }}-dist'
-        bucket-dir: ${{ inputs.DEV_RELEASE == 'true' && github.ref_name || format('{0},{1}', steps.generate.outputs.new_tag, 'latest') }}
+        bucket: 'agilecustoms-dist'
+        bucket-dir: ${{ steps.s3_key.outputs.KEY }}
         tags: Release=${{ inputs.DEV_RELEASE == 'false' && 'true' || 'false' }}
 
     - name: Push tags
