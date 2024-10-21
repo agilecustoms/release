@@ -1,16 +1,18 @@
 name: 'Release'
 description: 'login to AWS as deployer, setup Terraform, config git to resolve TF modules'
 inputs:
-  SERVICE:
-    description: 'Service being released'
-    required: true
-  AWS_ACCOUNT:
+  aws_account:
     description: 'AWS account (shared) to release to'
     required: true
-  DEV_RELEASE:
+  dev_release:
     description: 'Used to make dev release - no release tagging, just upload binaries'
-    required: true
+    required: false
     default: 'false'
+  gh_token:
+    description: |
+      Powerful token that allows to call other GH actions in the organization
+      Needed to push in tt-gitops, not used for dev release
+    required: false
 runs:
   using: "composite"
   steps:
@@ -18,11 +20,13 @@ runs:
       id: init
       shell: bash
       # convention: if 'dist' directory exists, then upload to S3
+      # this action is called in context of the service repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
       run: |
         [ -d dist ] && echo "upload_s3=true" >> $GITHUB_OUTPUT || true
+        echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
 
     - name: Generate new version
-      if: inputs.DEV_RELEASE == 'false'
+      if: inputs.dev_release == 'false'
       id: generate
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
@@ -33,11 +37,11 @@ runs:
       id: s3_key
       shell: bash
       run: |
-        KEY="${{ inputs.SERVICE }}/${{ steps.generate.outputs.new_tag }},${{ inputs.SERVICE }}/latest"
-        if [ "${{ inputs.DEV_RELEASE }}" == "true" ]; then
-          KEY="${{ inputs.SERVICE }}/${{ github.ref_name }}"
+        key="${{ steps.init.outputs.service }}/${{ steps.generate.outputs.new_tag }},${{ steps.init.outputs.service }}/latest"
+        if [ "${{ inputs.dev_release }}" == "true" ]; then
+          key="${{ steps.init.outputs.service }}/${{ github.ref_name }}"
         fi
-        echo "KEY=$KEY" >> $GITHUB_OUTPUT
+        echo "key=$key" >> $GITHUB_OUTPUT
 
     - name: Login AWS
       if: steps.init.outputs.upload_s3
@@ -45,7 +49,7 @@ runs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
-        role-to-assume: arn:aws:iam::${{ inputs.AWS_ACCOUNT }}:role/ci/builder
+        role-to-assume: arn:aws:iam::${{ inputs.aws_account }}:role/ci/builder
         output-credentials: true
 
     - name: Upload S3
@@ -57,17 +61,26 @@ runs:
         session-token: ${{ steps.creds.outputs.aws-session-token }}
         source-dir: 'dist' # after 'download-artifact' step, there are assets in 'dist/*'
         bucket: 'agilecustoms-dist'
-        bucket-dir: ${{ steps.s3_key.outputs.KEY }}
-        tags: Release=${{ inputs.DEV_RELEASE == 'false' && 'true' || 'false' }}
+        bucket-dir: ${{ steps.s3_key.outputs.key }}
+        tags: Release=${{ inputs.dev_release == 'false' && 'true' || 'false' }}
 
+    # TODO: if Send to GitOps fail and I rerun this action - I get error that tag 1.27.2 already exists
     - name: Push tags
-      if: inputs.DEV_RELEASE == 'false'
+      if: inputs.dev_release == 'false'
       shell: bash
       run: |
         git tag -d latest 2>/dev/null || true
         git tag latest
         git tag ${{ steps.generate.outputs.new_tag }}
         git push origin latest ${{ steps.generate.outputs.new_tag }} --force
+
+    - name: Send to GitOps
+      if: inputs.dev_release == 'false'
+      uses: agilecustoms/tt-gitops@main
+      with:
+        service: ${{ steps.init.outputs.service }}
+        version: ${{ steps.generate.outputs.new_tag }}
+        token: ${{ inputs.gh_token }}
 
 outputs:
   version:
