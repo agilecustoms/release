@@ -74,8 +74,9 @@ runs:
         git tag ${{ steps.generate.outputs.new_tag }}
         git push origin latest ${{ steps.generate.outputs.new_tag }} --force
 
-    - name: Send to GitOps
-      if: inputs.dev_release == 'false'
+    # I can not use placeholders in 'uses' section, so workaround is to have a step per project: tt (TimeTravel), rc (RapidCBP), etc.
+    - name: Send to tt-gitops
+      if: inputs.dev_release == 'false' && startsWith(github.repository, 'agilecustoms/tt-')
       uses: agilecustoms/tt-gitops@main
       with:
         service: ${{ steps.init.outputs.service }}
