@@ -1,9 +1,10 @@
 name: 'Release'
-description: 'login to AWS as deployer, setup Terraform, config git to resolve TF modules'
+description: 'generate new version, upload to s3, push tags and send to gitops'
 inputs:
   aws_account:
-    description: 'AWS account (shared) to release to'
-    required: true
+    description: 'AWS account (shared) to upload released artifacts to'
+    required: false
+    default: ''
   dev_release:
     description: 'Used to make dev release - no release tagging, just upload binaries'
     required: false
@@ -13,6 +14,10 @@ inputs:
       Powerful token that allows to call other GH actions in the organization
       Needed to push in tt-gitops, not used for dev release
     required: false
+  upload_s3:
+    description: 'Upload to S3'
+    required: false
+    default: 'true' # true - upload to S3 if 'dist' dir exist. false - do not upload to S3
 runs:
   using: "composite"
   steps:
@@ -22,7 +27,25 @@ runs:
       # convention: if 'dist' directory exists, then upload to S3
       # this action is called in context of the service repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
       run: |
-        [ -d dist ] && echo "upload_s3=true" >> $GITHUB_OUTPUT || true
+        echo "debug"
+        echo "${{ inputs.aws_account }}"
+        echo "${{ inputs.dev_release }}"
+        echo "${{ inputs.gh_token }}"
+        echo "${{ inputs.upload_s3 }}"
+        
+        if [ "${{ inputs.upload_s3 }}" == "true" ] && [ -d dist ]; then
+          echo "upload_s3=true" >> $GITHUB_OUTPUT
+          if [ -z "${{ inputs.aws_account }}" ]; then
+            echo "AWS account is required to upload /dist in S3" >&2
+            exit 1
+          fi
+        fi
+        
+        if [ "${{ inputs.dev_release }}" == "false" ] && [ -z "${{ inputs.gh_token }}" ]; then
+          echo "GH token is required to push tags (dev_release = false)" >&2
+          exit 1
+        fi
+        
         echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
 
     - name: Generate new version
