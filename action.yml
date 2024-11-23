@@ -26,12 +26,7 @@ runs:
       shell: bash
       # convention: if 'dist' directory exists, then upload to S3
       # this action is called in context of the service repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
-      run: |
-        echo "::debug::aws_account: ${{ inputs.aws_account }}"
-        echo "::debug::dev_release: ${{ inputs.dev_release }}"
-        echo "::debug::gh_token: ${{ inputs.gh_token }}"
-        echo "::debug::upload_s3: ${{ inputs.upload_s3 }}"
-        
+      run: |        
         if [ "${{ inputs.upload_s3 }}" == "true" ] && [ -d dist ]; then
           echo "upload_s3=true" >> $GITHUB_OUTPUT
           if [ -z "${{ inputs.aws_account }}" ]; then
