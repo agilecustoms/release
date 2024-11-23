@@ -27,11 +27,11 @@ runs:
       # convention: if 'dist' directory exists, then upload to S3
       # this action is called in context of the service repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
       run: |
-        echo "debug"
-        echo "${{ inputs.aws_account }}"
-        echo "${{ inputs.dev_release }}"
-        echo "${{ inputs.gh_token }}"
-        echo "${{ inputs.upload_s3 }}"
+#        echo "debug"
+#        echo "${{ inputs.aws_account }}"
+#        echo "${{ inputs.dev_release }}"
+#        echo "${{ inputs.gh_token }}"
+#        echo "${{ inputs.upload_s3 }}"
         
         if [ "${{ inputs.upload_s3 }}" == "true" ] && [ -d dist ]; then
           echo "upload_s3=true" >> $GITHUB_OUTPUT
