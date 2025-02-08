@@ -2,7 +2,7 @@ name: 'Release'
 description: 'generate new version, upload to s3, push tags and send to gitops'
 inputs:
   aws_account:
-    description: 'AWS account (shared) to upload released artifacts to'
+    description: 'AWS account (dist) to upload released artifacts to'
     required: false
     default: ''
   dev_release:
