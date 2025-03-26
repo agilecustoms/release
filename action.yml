@@ -1,104 +1,136 @@
 name: 'Release'
 description: 'generate new version, upload to s3, push tags and send to gitops'
 inputs:
-  aws_account:
+  aws-account:
     description: 'AWS account (dist) to upload released artifacts to'
     required: false
     default: ''
-  dev_release:
-    description: 'Used to make dev release - no release tagging, just upload binaries'
+  dev-release:
+    description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
     required: false
     default: 'false'
-  gh_token:
+  gh-token:
     description: |
       Powerful token that allows to call other GH actions in the organization
       Needed to push in tt-gitops, not used for dev release
     required: false
-  upload_s3:
-    description: 'Upload to S3'
+  publish:
+    description: 'One of the following: npm_npmjs, npm_CodeArtifact, docker_ECR'
     required: false
-    default: 'true' # true - upload to S3 if 'dist' dir exist. false - do not upload to S3
+    default: ''
 runs:
   using: "composite"
   steps:
+
+## Phase 0 - Init: validate inputs, infer defaults, login in AWS
+
     - name: Init
       id: init
       shell: bash
-      # convention: if 'dist' directory exists, then upload to S3
-      # this action is called in context of the service repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
+      # TODO: check that publish has one of the allowed values
+      # convention: if 's3' directory exists, then upload to S3
+      # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
       run: |        
-        if [ "${{ inputs.upload_s3 }}" == "true" ] && [ -d dist ]; then
-          echo "upload_s3=true" >> $GITHUB_OUTPUT
-          if [ -z "${{ inputs.aws_account }}" ]; then
+        if [ -d s3 ]; then
+          echo "upload-s3=true" >> $GITHUB_OUTPUT
+          if [ -z "${{ inputs.aws-account }}" ]; then
             echo "AWS account is required to upload /dist in S3" >&2
             exit 1
           fi
         fi
         
-        if [ "${{ inputs.dev_release }}" == "false" ] && [ -z "${{ inputs.gh_token }}" ]; then
-          echo "GH token is required to push tags (dev_release = false)" >&2
+        if [ "${{ inputs.dev-release }}" == "false" ] && [ -z "${{ inputs.gh-token }}" ]; then
+          echo "GH token is required to push tags (dev-release = false)" >&2
           exit 1
         fi
         
         echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
 
+    - name: Login AWS
+      if: steps.init.outputs.upload-s3 || inputs.publish == 'docker_ECR'
+      id: login-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/ci/builder
+        output-credentials: true
+
+    - name: Login to Amazon ECR
+      if: inputs.publish == 'docker_ECR'
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
+
+## Phase 1 - Generate new version
+
     - name: Generate new version
-      if: inputs.dev_release == 'false'
-      id: generate
+      if: inputs.dev-release == 'false'
+      id: version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
         DRY_RUN: true # just generate new version, do not push tag
 
-    - name: S3 key
-      if: steps.init.outputs.upload_s3
+    - name: Generate S3 key
+      if: steps.init.outputs.upload-s3
       id: s3_key
       shell: bash
       run: |
-        key="${{ steps.init.outputs.service }}/${{ steps.generate.outputs.new_tag }},${{ steps.init.outputs.service }}/latest"
-        if [ "${{ inputs.dev_release }}" == "true" ]; then
+        key="${{ steps.init.outputs.service }}/${{ steps.version.outputs.new_tag }},${{ steps.init.outputs.service }}/latest"
+        if [ "${{ inputs.dev-release }}" == "true" ]; then
           key="${{ steps.init.outputs.service }}/${{ github.ref_name }}"
         fi
         echo "key=$key" >> $GITHUB_OUTPUT
 
-    - name: Login AWS
-      if: steps.init.outputs.upload_s3
-      id: creds
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: us-east-1
-        role-to-assume: arn:aws:iam::${{ inputs.aws_account }}:role/ci/builder
-        output-credentials: true
+## Phase 2 - Update version in code
 
-    - name: Upload S3
-      if: steps.init.outputs.upload_s3
-      uses: agilecustoms/gha-upload-s3@main
-      with:
-        access-key-id: ${{ steps.creds.outputs.aws-access-key-id }}
-        secret-access-key: ${{ steps.creds.outputs.aws-secret-access-key }}
-        session-token: ${{ steps.creds.outputs.aws-session-token }}
-        source-dir: 'dist' # after 'download-artifact' step, there are assets in 'dist/*'
-        bucket: 'agilecustoms-dist'
-        bucket-dir: ${{ steps.s3_key.outputs.key }}
-        tags: Release=${{ inputs.dev_release == 'false' && 'true' || 'false' }}
+    - name: Update version in code
+      if: inputs.publish == 'npm_npmjs'
+      run: echo "update version in code"
 
-    # TODO: if Send to GitOps fail and I rerun this action - I get error that tag 1.27.2 already exists
-    - name: Push tags
-      if: inputs.dev_release == 'false'
+## Phase 3 - Git push
+
+    - name: Git push
+      if: inputs.dev-release == 'false'
       shell: bash
       run: |
         git tag -d latest 2>/dev/null || true
         git tag latest
-        git tag ${{ steps.generate.outputs.new_tag }}
-        git push origin latest ${{ steps.generate.outputs.new_tag }} --force
+        git tag ${{ steps.version.outputs.new_tag }}
+        git push origin latest ${{ steps.version.outputs.new_tag }} --force
+
+## Phase 4 - Publish artifacts
+
+    - name: Upload S3
+      if: steps.init.outputs.upload-s3
+      uses: agilecustoms/gha-upload-s3@main
+      with:
+        access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
+        secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
+        session-token: ${{ steps.login-aws.outputs.aws-session-token }}
+        source-dir: 'dist' # after 'download-artifact' step, there are assets in 'dist/*'
+        bucket: 'agilecustoms-dist'
+        bucket-dir: ${{ steps.s3_key.outputs.key }}
+        tags: Release=${{ inputs.dev-release == 'false' && 'true' || 'false' }}
+
+    - name: Push Docker image in ECR
+      if: inputs.publish == 'docker_ECR'
+      run: |
+        service="${{ steps.init.outputs.service }}"
+        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids imageTag=latest
+        ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/$service
+        docker tag $service $ECR_IMAGE:${{ steps.version.outputs.new_tag }}
+        docker tag $service $ECR_IMAGE:latest
+        docker push --all-tags $ECR_IMAGE
+
+## Phase 5 - Send to gitops
 
     # I can not use placeholders in 'uses' section, so workaround is to have a step per project: tt (TimeTravel), rc (RapidCBP), etc.
     - name: Send to tt-gitops
-      if: inputs.dev_release == 'false' && startsWith(github.repository, 'agilecustoms/tt-')
+      if: inputs.dev-release == 'false' && startsWith(github.repository, 'agilecustoms/tt-')
       uses: agilecustoms/tt-gitops@main
       with:
         service: ${{ steps.init.outputs.service }}
         version: ${{ steps.generate.outputs.new_tag }}
-        token: ${{ inputs.gh_token }}
+        token: ${{ inputs.gh-token }}
 
 outputs:
   version:

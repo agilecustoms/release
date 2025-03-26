@@ -2,18 +2,25 @@
 Reusable GitHub Action `gha-release`
 1. Generate new version
     - based on latest tag + git commit message: #major, #minor, #patch
-2. Upload artifacts to S3 (if any)
-    - Artifacts need to be in `dist` directory
-3. Push two tags: new (generated) version and 'latest'
-4. Send new version to central repository (gitops)
-    - if `input.dev_release == true` then do nothing
-    - if repo name has no `-` then do nothing
-    - get current repo prefix like `tt-message` => `tt` and then try to find `{prefix}-gitops`.
-      If not found (like `gha-prepare-terraform`, `java-parent`, `db-evolution-runner`) then do nothing. If found - send update in this repo.
-      That means some microservices as `db-evolution-runner` will be not automatically sent to gitops and need to be updated manually
+2. Update version in code (`package.json`, `pom.xml`) and commit (required for java-parent and envctl)
+   1. npm
+   2. (future) maven - only java-parent require publishing, and it has multi-module structure and thus custom release workflow
+3. Git push
+   1. push two tags: new (generated) version and 'latest'
+   2. push changes from step 2
+4. Publish artifacts
+   1. S3 (tt-message, tt-web, tt-auth, db-evolution-runner, dev-env). Files need to be in `s3` directory. Supports dev-release
+   2. Docker - ECR (cleanup-lambda)
+   3. npm - npmjs.com (envctl)
+5. Send new version to central repository `tt-gitops` (hardcoded)
+   - do it only if `input.dev_release == false` and current repo name starts with `tt-` (hardcoded) 
+   - if `input.dev_release == true` then do nothing
+   - (future) get current repo prefix (like `tt-message` => `tt`) and then try to find `{prefix}-gitops`.
+     If not found (like `gha-prepare-terraform`, `java-parent`, `db-evolution-runner`) then do nothing. If found - send update in this repo.
+     That means some microservices as `db-evolution-runner` will be not automatically sent to gitops and need to be updated manually
 
-Note: if upload fails OR some other error between step 3 and 4 - we'll get a new version that nobody knows about
-- it is better than having git tag promising something that you can not get
+Note: first I do git "Git push" and then "Publish artifacts", so that if publish fails, I can re-run release workflow.
+Ofcourse the price is dangling git tag. If publish fails painfully, we can easily roll back git tag!
 
 ## Test via 'test' workflow
 1. Make a branch 'feature' (this repo unlikely incur many changes)
