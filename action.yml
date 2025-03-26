@@ -84,6 +84,7 @@ runs:
 
     - name: Update version in code
       if: inputs.publish == 'npm_npmjs'
+      shell: bash
       run: echo "update version in code"
 
 ## Phase 3 - Git push
@@ -113,6 +114,7 @@ runs:
 
     - name: Push Docker image in ECR
       if: inputs.publish == 'docker_ECR'
+      shell: bash
       run: |
         service="${{ steps.init.outputs.service }}"
         AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids imageTag=latest
