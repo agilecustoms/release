@@ -4,7 +4,6 @@ inputs:
   aws-account:
     description: 'AWS account (dist) to upload released artifacts to'
     required: false
-    default: ''
   dev-release:
     description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
     required: false
@@ -12,12 +11,14 @@ inputs:
   gh-token:
     description: |
       Powerful token that allows to call other GH actions in the organization
-      Needed to push in tt-gitops, not used for dev release
+      Needed only to push in tt-gitops, not used for dev release
     required: false
   publish:
-    description: 'One of the following: docker_ECR, maven_CodeArtifact, npm_npmjs'
+    description: 'One of the following: docker_ECR, maven_CodeArtifact'
     required: false
-    default: ''
+  npmjs-token:
+    description: 'token to publish npm package in npmjs (not in CodeArtifact)'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -31,7 +32,7 @@ runs:
       # convention: if 's3' directory exists, then upload to S3
       # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
       run: |
-        allowed_publish=("docker_ECR" "maven_CodeArtifact" "npm_npmjs")
+        allowed_publish=("docker_ECR" "maven_CodeArtifact")
         if [ -n "${{ inputs.publish }}" ]; then
           if [[ ! " ${allowed_publish[@]} " =~ " ${{ inputs.publish }} " ]]; then
             echo "Invalid 'publish' value: ${{ inputs.publish }}" >&2
@@ -103,6 +104,18 @@ runs:
       shell: bash
       run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.new_tag }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
 
+    - name: Setup Node
+      if: inputs.npmjs-token
+      uses: actions/setup-node@v4
+      with:
+        node-version: 23
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Update version in npm
+      if: inputs.npmjs-token
+      shell: bash
+      run: npm version ${{ steps.version.outputs.new_tag }} --no-git-tag-version
+
 ## Phase 3 - Git push
 
     - name: Git push
@@ -151,6 +164,15 @@ runs:
       if: inputs.publish == 'maven_CodeArtifact'
       shell: bash
       run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
+
+    # get namespace from package.json: "name": "@agilecustoms/envctl"
+    # use namespace @agilecustoms to find npm registry url and token in .npmrc file prepared by prev step
+    - name: Publish in npmjs
+      if: inputs.npmjs-token
+      shell: bash
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
 
 ## Phase 5 - Send to gitops
 
