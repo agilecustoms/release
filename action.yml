@@ -39,7 +39,7 @@ runs:
           fi
         fi
         
-        if [ "${{ inputs.dev-release }}" == "false" ] && [ -z "${{ inputs.gh-token }}" ]; then
+        if [ "${{ inputs.dev-release }}" == "false" ] && [ ${{ startsWith(github.repository, 'agilecustoms/tt-') }} ] && [ -z "${{ inputs.gh-token }}" ]; then
           echo "GH token is required to push tags (dev-release = false)" >&2
           exit 1
         fi
@@ -126,6 +126,7 @@ runs:
 ## Phase 5 - Send to gitops
 
     # I can not use placeholders in 'uses' section, so workaround is to have a step per project: tt (TimeTravel), rc (RapidCBP), etc.
+    # TODO: improve this condition to remove hardcode and then add check that gh-token is present
     - name: Send to tt-gitops
       if: inputs.dev-release == 'false' && startsWith(github.repository, 'agilecustoms/tt-')
       uses: agilecustoms/tt-gitops@main
