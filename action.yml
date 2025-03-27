@@ -15,7 +15,7 @@ inputs:
       Needed to push in tt-gitops, not used for dev release
     required: false
   publish:
-    description: 'One of the following: npm_npmjs, npm_CodeArtifact, docker_ECR'
+    description: 'One of the following: docker_ECR, maven_CodeArtifact, npm_npmjs'
     required: false
     default: ''
 runs:
@@ -59,8 +59,6 @@ runs:
       if: inputs.publish == 'docker_ECR'
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
-
-
 
 ## Phase 1 - Generate new version
 
@@ -136,6 +134,11 @@ runs:
         docker tag $service $ECR_IMAGE:latest
         docker push --all-tags $ECR_IMAGE
 
+    # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
+    # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
+    # it does repackage though! (this is for good, bcz pom versions changed)
+    # TODO: verify phase still run in build and release jobs
+    # TODO: checkstyle and enforcer still run in both jobs
     - name: Upload to CodeArtifact
       if: inputs.publish == 'maven_CodeArtifact'
       shell: bash
