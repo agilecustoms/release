@@ -137,6 +137,7 @@ runs:
 
     - name: Upload to CodeArtifact
       if: inputs.publish == 'maven_CodeArtifact'
+      shell: bash
       run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
 
 ## Phase 5 - Send to gitops
