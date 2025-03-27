@@ -132,10 +132,10 @@ runs:
       uses: agilecustoms/tt-gitops@main
       with:
         service: ${{ steps.init.outputs.service }}
-        version: ${{ steps.generate.outputs.new_tag }}
+        version: ${{ steps.version.outputs.new_tag }}
         token: ${{ inputs.gh-token }}
 
 outputs:
   version:
     description: "Newly released version"
-    value: ${{ steps.generate.outputs.new_tag }}
+    value: ${{ steps.version.outputs.new_tag }}
