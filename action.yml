@@ -92,6 +92,7 @@ runs:
         role-name: builder
 
     - name: Update version in maven
+      if: inputs.publish == 'maven_CodeArtifact'
       shell: bash
       run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.new_tag }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
 
