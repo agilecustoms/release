@@ -118,7 +118,6 @@ runs:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
         session-token: ${{ steps.login-aws.outputs.aws-session-token }}
-        source-dir: 'dist' # after 'download-artifact' step, there are assets in 'dist/*'
         bucket: 'agilecustoms-dist'
         bucket-dir: ${{ steps.s3_key.outputs.key }}
         tags: Release=${{ inputs.dev-release == 'false' && 'true' || 'false' }}
