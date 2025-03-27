@@ -18,4 +18,4 @@ jobs:
       - name: Release
         uses: agilecustoms/gha-release@feature
         with:
-          AWS_ACCOUNT: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
