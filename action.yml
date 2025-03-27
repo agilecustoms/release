@@ -27,14 +27,23 @@ runs:
     - name: Init
       id: init
       shell: bash
-      # TODO: check that publish has one of the allowed values
+      # Validate 'publish': if provided, it should have one of allowed values
       # convention: if 's3' directory exists, then upload to S3
       # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
-      run: |        
+      run: |
+        allowed_publish=("docker_ECR" "maven_CodeArtifact" "npm_npmjs")
+        if [ -n "${{ inputs.publish }}" ]; then
+          if [[ ! " ${allowed_publish[@]} " =~ " ${{ inputs.publish }} " ]]; then
+            echo "Invalid 'publish' value: ${{ inputs.publish }}" >&2
+            echo "Allowed values are: ${allowed_publish[*]}" >&2
+            exit 1
+          fi
+        fi
+    
         if [ -d s3 ]; then
           echo "upload-s3=true" >> $GITHUB_OUTPUT
           if [ -z "${{ inputs.aws-account }}" ]; then
-            echo "AWS account is required to upload /dist in S3" >&2
+            echo "AWS account is required to upload files in S3" >&2
             exit 1
           fi
         fi
