@@ -39,7 +39,7 @@ runs:
           fi
         fi
         
-        if [ "${{ inputs.dev-release }}" == "false" ] && [ ${{ startsWith(github.repository, 'agilecustoms/tt-') }} ] && [ -z "${{ inputs.gh-token }}" ]; then
+        if [ "${{ inputs.dev-release }}" == "false" ] && [ "${{ startsWith(github.repository, 'agilecustoms/tt-') }}" == "true" ] && [ -z "${{ inputs.gh-token }}" ]; then
           echo "GH token is required to push tags (dev-release = false)" >&2
           exit 1
         fi
