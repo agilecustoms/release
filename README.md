@@ -2,16 +2,17 @@
 Reusable GitHub Action `gha-release`
 1. Generate new version
     - based on latest tag + git commit message: #major, #minor, #patch
-2. Update version in code (`package.json`, `pom.xml`) and commit (required for java-parent and envctl)
-   1. npm
-   2. (future) maven - only java-parent require publishing, and it has multi-module structure and thus custom release workflow
+2. Update version in code (`package.json`, `pom.xml`) and commit
+   1. maven (java-parent)
+   2. npm (envctl)
 3. Git push
    1. push two tags: new (generated) version and 'latest'
    2. push changes from step 2
 4. Publish artifacts
    1. S3 (tt-message, tt-web, tt-auth, db-evolution-runner, dev-env). Files need to be in `s3` directory. Supports dev-release
    2. Docker - ECR (cleanup-lambda)
-   3. npm - npmjs.com (envctl)
+   3. maven - CodeArtifact (java-parent)
+   4. npm - npmjs.com (envctl)
 5. Send new version to central repository `tt-gitops` (hardcoded)
    - do it only if `input.dev_release == false` and current repo name starts with `tt-` (hardcoded) 
    - if `input.dev_release == true` then do nothing
