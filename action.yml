@@ -96,7 +96,7 @@ runs:
       if: inputs.publish == 'maven_CodeArtifact'
       uses: agilecustoms/gha-prepare-java@main
       with:
-        AWS_ACCOUNT: ${{ inputs.aws-account }}
+        aws-account: ${{ inputs.aws-account }}
         role-name: builder
 
     - name: Update version in maven
