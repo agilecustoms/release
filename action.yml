@@ -135,8 +135,10 @@ runs:
           echo "No changes to commit."
         fi
         
-        # 2>/dev/null || true to ignore error if there is no 'latest' tag to delete
-        git tag -d latest 2>/dev/null || true
+        if git rev-parse --verify --quiet latest; then
+          git tag -d latest
+        fi
+        
         git tag latest
         git tag ${{ steps.version.outputs.new_tag }}
         git push --atomic origin main refs/tags/latest refs/tags/${{ steps.version.outputs.new_tag }} --force
