@@ -123,12 +123,17 @@ runs:
       shell: bash
       run: |
         git config --global user.name "CI User" && git config --global user.email "user@ci.com"
-        git add -u && git commit -m "Release version ${{ steps.version.outputs.new_tag }} [skip ci]" 2>/dev/null || true
+        git add -u
+        if ! git diff --cached --quiet; then
+          git commit -m "Release version ${{ steps.version.outputs.new_tag }} [skip ci]"
+        else
+          echo "No changes to commit."
+        fi  
         git tag -d latest 2>/dev/null || true
         git tag latest
         git tag ${{ steps.version.outputs.new_tag }}
         git push --atomic origin main refs/tags/latest refs/tags/${{ steps.version.outputs.new_tag }} --force
-      # use 2>/dev/null || true to ignore error if there is nothing to commit or no 'latest' tag to delete
+      # use 2>/dev/null || true to ignore error if there is no 'latest' tag to delete
       # push changes made in 'main' along with tags (latest and new_tag) atomically. use --force to overwrite 'latest' tag
 
 ## Phase 4 - Publish artifacts
