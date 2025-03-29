@@ -108,7 +108,7 @@ runs:
       if: inputs.npmjs-token
       uses: actions/setup-node@v4
       with:
-        node-version: 23
+        node-version: 22 # Use Node 22 is pre-cached in Ubuntu 24
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in npm
