@@ -125,7 +125,7 @@ runs:
         git config --global user.name "CI User"
         git config --global user.email "user@ci.com"
         
-        # Fix any permission issues from earlier steps
+        # Fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
         
         git add -u
