@@ -10,7 +10,7 @@ Reusable GitHub Action `gha-release`
    2. push changes from step 2
 4. Publish artifacts
    1. S3 (tt-message, tt-web, tt-auth, db-evolution-runner, dev-env). Files need to be in `s3` directory. Supports dev-release
-   2. Docker - ECR (cleanup-lambda)
+   2. Docker - ECR (env-cleanup)
    3. maven - CodeArtifact (java-parent)
    4. npm - npmjs.com (envctl)
 5. Send new version to central repository `tt-gitops` (hardcoded)
