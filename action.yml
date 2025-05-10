@@ -19,6 +19,10 @@ inputs:
   npmjs-token:
     description: 'token to publish npm package in npmjs (not in CodeArtifact)'
     required: false
+  custom-version-update:
+    description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
+    required: false
+
 runs:
   using: "composite"
   steps:
@@ -115,6 +119,11 @@ runs:
       if: inputs.npmjs-token
       shell: bash
       run: npm version ${{ steps.version.outputs.new_tag }} --no-git-tag-version
+
+    - name: Custom version update
+      if: inputs.custom-version-update
+      shell: bash
+      run: new_version=${{ steps.version.outputs.new_tag }} && ${{ inputs.custom-version-update }}
 
 ## Phase 3 - Git push
 
