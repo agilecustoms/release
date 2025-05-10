@@ -5,6 +5,7 @@ Reusable GitHub Action `gha-release`
 2. Update version in code (`package.json`, `pom.xml`) and commit
    1. maven (java-parent)
    2. npm (envctl)
+   3. custom (envctl to update cache key!)
 3. Git push
    1. push two tags: new (generated) version and 'latest'
    2. push changes from step 2
