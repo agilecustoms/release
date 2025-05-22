@@ -74,7 +74,7 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
 
-## Phase 1 - Generate new version
+## Phase 1 - Generate a new version
 
     - name: Generate new version
       if: inputs.dev-release == 'false'
