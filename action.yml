@@ -207,6 +207,13 @@ runs:
         service: ${{ steps.init.outputs.service }}
         version: ${{ steps.version.outputs.new_tag }}
         token: ${{ inputs.gh-token }}
+    - name: Send to env-gitops
+      if: inputs.dev-release == 'false' && startsWith(github.repository, 'agilecustoms/env-')
+      uses: agilecustoms/env-gitops@main
+      with:
+        service: ${{ steps.init.outputs.service }}
+        version: ${{ steps.version.outputs.new_tag }}
+        token: ${{ inputs.gh-token }}
 
 outputs:
   version:
