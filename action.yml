@@ -1,27 +1,26 @@
 name: 'Release'
 description: 'generate new version, upload to s3, push tags and send to gitops'
-inputs:
-  aws-account:
-    description: 'AWS account (dist) to upload released artifacts to'
-    required: false
-  dev-release:
-    description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
-    required: false
-    default: 'false'
-  gh-token:
-    description: |
-      Powerful token that allows to call other GH actions in the organization
-      Needed only to push in tt-gitops, not used for dev release
-    required: false
-  publish:
-    description: 'One of the following: docker_ECR, maven_CodeArtifact'
-    required: false
-  npmjs-token:
-    description: 'token to publish npm package in npmjs (not in CodeArtifact)'
-    required: false
-  custom-version-update:
-    description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
-    required: false
+#inputs:
+#  version:
+#    description: 'Allows to explicitly specify version to release'
+#    required: false
+#    default: ''
+#  aws-account:
+#    description: 'AWS account (dist) to upload released artifacts to. Optional if there are no artifacts, just git tag'
+#    required: false
+#  dev-release:
+#    description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
+#    required: false
+#    default: 'false'
+#  publish:
+#    description: 'One of the following: docker_ECR, maven_CodeArtifact'
+#    required: false
+#  npmjs-token:
+#    description: 'token to publish npm package in npmjs (not in CodeArtifact)'
+#    required: false
+#  custom-version-update:
+#    description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
+#    required: false
 
 runs:
   using: "composite"
@@ -29,101 +28,96 @@ runs:
 
 ## Phase 0 - Init: validate inputs, infer defaults, login in AWS
 
-    - name: Init
-      id: init
-      shell: bash
-      # Validate 'publish': if provided, it should have one of allowed values
-      # convention: if 's3' directory exists, then upload to S3
-      # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
-      run: |
-        allowed_publish=("docker_ECR" "maven_CodeArtifact")
-        if [ -n "${{ inputs.publish }}" ]; then
-          if [[ ! " ${allowed_publish[@]} " =~ " ${{ inputs.publish }} " ]]; then
-            echo "Invalid 'publish' value: ${{ inputs.publish }}" >&2
-            echo "Allowed values are: ${allowed_publish[*]}" >&2
-            exit 1
-          fi
-        fi
-    
-        if [ -d s3 ]; then
-          echo "upload-s3=true" >> $GITHUB_OUTPUT
-          if [ -z "${{ inputs.aws-account }}" ]; then
-            echo "AWS account is required to upload files in S3" >&2
-            exit 1
-          fi
-        fi
-        
-        if [ "${{ inputs.dev-release }}" == "false" ] && [ "${{ startsWith(github.repository, 'agilecustoms/tt-') }}" == "true" ] && [ -z "${{ inputs.gh-token }}" ]; then
-          echo "GH token is required to push tags (dev-release = false)" >&2
-          exit 1
-        fi
-        
-        echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
-
-    - name: Login AWS
-      if: steps.init.outputs.upload-s3 || inputs.publish == 'docker_ECR' || inputs.publish == 'maven_CodeArtifact'
-      id: login-aws
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: us-east-1
-        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/ci/builder
-        output-credentials: true
-
-    - name: Login to Amazon ECR
-      if: inputs.publish == 'docker_ECR'
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
+#    - name: Init
+#      id: init
+#      shell: bash
+#      # Validate 'publish': if provided, it should have one of allowed values
+#      # convention: if 's3' directory exists, then upload to S3
+#      # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
+#      run: |
+#        allowed_publish=("docker_ECR" "maven_CodeArtifact")
+#        if [ -n "${{ inputs.publish }}" ]; then
+#          if [[ ! " ${allowed_publish[@]} " =~ " ${{ inputs.publish }} " ]]; then
+#            echo "Invalid 'publish' value: ${{ inputs.publish }}" >&2
+#            echo "Allowed values are: ${allowed_publish[*]}" >&2
+#            exit 1
+#          fi
+#        fi
+#
+#        if [ -d s3 ]; then
+#          echo "release-s3=true" >> $GITHUB_OUTPUT
+#          if [ -z "${{ inputs.aws-account }}" ]; then
+#            echo "AWS account is required to release files in S3" >&2
+#            exit 1
+#          fi
+#        fi
+#
+#        echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
+#
+#    - name: Login AWS
+#      if: steps.init.outputs.release-s3 || inputs.publish == 'docker_ECR' || inputs.publish == 'maven_CodeArtifact'
+#      id: login-aws
+#      uses: aws-actions/configure-aws-credentials@v4
+#      with:
+#        aws-region: us-east-1
+#        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/ci/builder
+#        output-credentials: true
+#
+#    - name: Login to Amazon ECR
+#      if: inputs.publish == 'docker_ECR'
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
 
 ## Phase 1 - Generate a new version
 
     - name: Generate new version
-      if: inputs.dev-release == 'false'
+#      if: inputs.dev-release == 'false' && inputs.version == ''
       id: version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
         DRY_RUN: true # just generate new version, do not push tag
 
-    - name: Generate S3 key
-      if: steps.init.outputs.upload-s3
-      id: s3_key
-      shell: bash
-      run: |
-        key="${{ steps.init.outputs.service }}/${{ steps.version.outputs.new_tag }},${{ steps.init.outputs.service }}/latest"
-        if [ "${{ inputs.dev-release }}" == "true" ]; then
-          key="${{ steps.init.outputs.service }}/${{ github.ref_name }}"
-        fi
-        echo "key=$key" >> $GITHUB_OUTPUT
+#    - name: Generate S3 key
+#      if: steps.init.outputs.release-s3
+#      id: s3_key
+#      shell: bash
+#      run: |
+#        key="${{ steps.init.outputs.service }}/${{ steps.version.outputs.new_tag }},${{ steps.init.outputs.service }}/latest"
+#        if [ "${{ inputs.dev-release }}" == "true" ]; then
+#          key="${{ steps.init.outputs.service }}/${{ github.ref_name }}"
+#        fi
+#        echo "key=$key" >> $GITHUB_OUTPUT
 
 ## Phase 2 - Update version in code
 
-    - name: Prepare Java
-      if: inputs.publish == 'maven_CodeArtifact'
-      uses: agilecustoms/gha-prepare-java@main
-      with:
-        aws-account: ${{ inputs.aws-account }}
-        role-name: builder
-
-    - name: Update version in maven
-      if: inputs.publish == 'maven_CodeArtifact'
-      shell: bash
-      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.new_tag }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
-
-    - name: Setup Node
-      if: inputs.npmjs-token
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22 # Use Node 22 is pre-cached in Ubuntu 24
-        registry-url: 'https://registry.npmjs.org'
-
-    - name: Update version in npm
-      if: inputs.npmjs-token
-      shell: bash
-      run: npm version ${{ steps.version.outputs.new_tag }} --no-git-tag-version
-
-    - name: Custom version update
-      if: inputs.custom-version-update
-      shell: bash
-      run: new_version=${{ steps.version.outputs.new_tag }} && ${{ inputs.custom-version-update }}
+#    - name: Prepare Java
+#      if: inputs.publish == 'maven_CodeArtifact'
+#      uses: agilecustoms/gha-prepare-java@main
+#      with:
+#        aws-account: ${{ inputs.aws-account }}
+#        role-name: builder
+#
+#    - name: Update version in maven
+#      if: inputs.publish == 'maven_CodeArtifact'
+#      shell: bash
+#      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.new_tag }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
+#
+#    - name: Setup Node
+#      if: inputs.npmjs-token
+#      uses: actions/setup-node@v4
+#      with:
+#        node-version: 22 # Use Node 22 is pre-cached in Ubuntu 24
+#        registry-url: 'https://registry.npmjs.org'
+#
+#    - name: Update version in npm
+#      if: inputs.npmjs-token
+#      shell: bash
+#      run: npm version ${{ steps.version.outputs.new_tag }} --no-git-tag-version
+#
+#    - name: Custom version update
+#      if: inputs.custom-version-update
+#      shell: bash
+#      run: new_version=${{ steps.version.outputs.new_tag }} && ${{ inputs.custom-version-update }}
 
 ## Phase 3 - Git push
 
@@ -134,12 +128,15 @@ runs:
         git config --global user.name "CI User"
         git config --global user.email "user@ci.com"
         
-        # Fix any permission issues from earlier steps (npm version can create files with root permissions)
+        new_tag="${{ steps.version.outputs.new_tag }}"
+        
+        # fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
         
+        # stage files that might be modified/deleted by previous steps; check if there are any changes and commit
         git add -u
         if ! git diff --cached --quiet; then
-          git commit -m "Release version ${{ steps.version.outputs.new_tag }} [skip ci]"
+          git commit -m "Release version $new_tag [skip ci]"
         else
           echo "No changes to commit."
         fi
@@ -149,71 +146,52 @@ runs:
         fi
         
         git tag latest
-        git tag ${{ steps.version.outputs.new_tag }}
-        git push --atomic origin main refs/tags/latest refs/tags/${{ steps.version.outputs.new_tag }} --force
+        git tag $new_tag
+        git push --atomic origin main refs/tags/latest refs/tags/$new_tag --force
       # push changes made in 'main' along with tags (latest and new_tag) atomically. use --force to overwrite 'latest' tag
 
 ## Phase 4 - Publish artifacts
 
-    - name: Upload S3
-      if: steps.init.outputs.upload-s3
-      uses: agilecustoms/gha-upload-s3@main
-      with:
-        access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
-        secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
-        session-token: ${{ steps.login-aws.outputs.aws-session-token }}
-        bucket: 'agilecustoms-dist'
-        bucket-dir: ${{ steps.s3_key.outputs.key }}
-        tags: Release=${{ inputs.dev-release == 'false' && 'true' || 'false' }}
-
-    - name: Push Docker image in ECR
-      if: inputs.publish == 'docker_ECR'
-      shell: bash
-      run: |
-        service="${{ steps.init.outputs.service }}"
-        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids imageTag=latest
-        ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/$service
-        docker tag $service $ECR_IMAGE:${{ steps.version.outputs.new_tag }}
-        docker tag $service $ECR_IMAGE:latest
-        docker push --all-tags $ECR_IMAGE
-
-    # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
-    # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
-    # it does repackage though! (this is for good, bcz pom versions changed)
-    # TODO: verify phase still run in build and release jobs
-    # TODO: checkstyle and enforcer still run in both jobs
-    - name: Upload to CodeArtifact
-      if: inputs.publish == 'maven_CodeArtifact'
-      shell: bash
-      run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
-
-    # get namespace from package.json: "name": "@agilecustoms/envctl"
-    # use namespace @agilecustoms to find npm registry url and token in .npmrc file prepared by prev step
-    - name: Publish in npmjs
-      if: inputs.npmjs-token
-      shell: bash
-      run: npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
-
-## Phase 5 - Send to gitops
-
-    # I can not use placeholders in 'uses' section, so workaround is to have a step per project: tt (TimeTravel), rc (RapidCBP), etc.
-    # TODO: improve this condition to remove hardcode and then add check that gh-token is present
-    - name: Send to tt-gitops
-      if: inputs.dev-release == 'false' && startsWith(github.repository, 'agilecustoms/tt-')
-      uses: agilecustoms/tt-gitops@main
-      with:
-        service: ${{ steps.init.outputs.service }}
-        version: ${{ steps.version.outputs.new_tag }}
-        token: ${{ inputs.gh-token }}
-    - name: Send to env-gitops
-      if: inputs.dev-release == 'false' && startsWith(github.repository, 'agilecustoms/env-')
-      uses: agilecustoms/env-gitops@main
-      with:
-        service: ${{ steps.init.outputs.service }}
-        version: ${{ steps.version.outputs.new_tag }}
-        token: ${{ inputs.gh-token }}
+#    - name: Release S3
+#      if: steps.init.outputs.release-s3
+#      uses: agilecustoms/gha-release-s3@main
+#      with:
+#        access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
+#        secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
+#        session-token: ${{ steps.login-aws.outputs.aws-session-token }}
+#        bucket: 'agilecustoms-dist'
+#        bucket-dir: ${{ steps.s3_key.outputs.key }}
+#        tags: Release=${{ inputs.dev-release == 'false' && 'true' || 'false' }}
+#
+#    - name: Push Docker image in ECR
+#      if: inputs.publish == 'docker_ECR'
+#      shell: bash
+#      run: |
+#        service="${{ steps.init.outputs.service }}"
+#        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids imageTag=latest
+#        ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/$service
+#        docker tag $service $ECR_IMAGE:${{ steps.version.outputs.new_tag }}
+#        docker tag $service $ECR_IMAGE:latest
+#        docker push --all-tags $ECR_IMAGE
+#
+#    # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
+#    # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
+#    # it does repackage though! (this is for good, bcz pom versions changed)
+#    # TODO: verify phase still run in build and release jobs
+#    # TODO: checkstyle and enforcer still run in both jobs
+#    - name: Upload to CodeArtifact
+#      if: inputs.publish == 'maven_CodeArtifact'
+#      shell: bash
+#      run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
+#
+#    # get namespace from package.json: "name": "@agilecustoms/envctl"
+#    # use namespace @agilecustoms to find npm registry url and token in .npmrc file prepared by prev step
+#    - name: Publish in npmjs
+#      if: inputs.npmjs-token
+#      shell: bash
+#      run: npm publish --access public
+#      env:
+#        NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
 
 outputs:
   version:

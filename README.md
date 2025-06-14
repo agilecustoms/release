@@ -1,7 +1,8 @@
 # About
 Reusable GitHub Action `gha-release`
 1. Generate new version
-    - based on latest tag + git commit message: #major, #minor, #patch
+   1. use input.version if provided
+   2. else: generate version based on the latest tag + git commit message: #major, #minor, #patch
 2. Update version in code (`package.json`, `pom.xml`) and commit
    1. maven (java-parent)
    2. npm (envctl)
@@ -14,17 +15,79 @@ Reusable GitHub Action `gha-release`
    2. Docker - ECR (env-cleanup)
    3. maven - CodeArtifact (java-parent)
    4. npm - npmjs.com (envctl)
-5. Send new version to central repository `tt-gitops` (hardcoded)
-   - do it only if `input.dev_release == false` and current repo name starts with `tt-` (hardcoded) 
-   - if `input.dev_release == true` then do nothing
-   - (future) get current repo prefix (like `tt-message` => `tt`) and then try to find `{prefix}-gitops`.
-     If not found (like `gha-prepare-terraform`, `java-parent`, `db-evolution-runner`) then do nothing. If found - send update in this repo.
-     That means some microservices as `db-evolution-runner` will be not automatically sent to gitops and need to be updated manually
 
 Note: first I do git "Git push" and then "Publish artifacts", so that if publish fails, I can re-run release workflow.
-Ofcourse the price is dangling git tag. If publish fails painfully, we can easily roll back git tag!
+Of course, the price is dangling git tag. If publish fails painfully, we can easily roll back git tag!
 
 ## Test via 'test' workflow
-1. Make a branch 'feature' (this repo unlikely incur many changes)
+1. Make a branch 'feature' (this repo unlikely to incur many changes)
 2. Push branch and get feedback
 3. Once satisfied, revert any debug changes and merge to `main` 
+
+## Inputs
+- `version` - version to use, if not provided, will be generated based on latest tag and commit message
+
+## Outputs
+- `version` - version that was used/generated
+
+## Setup
+1. Pick AWS account for publishing artifacts, place it in `vars.AWS_ACCOUNT_DIST`
+2. Create S3 bucket to publish raw artifacts, ECR repository for Docker images, CodeArtifact for software packages
+3. Create IAM role `ci/publisher` with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.<br>
+   Reference role can be found in `iam.tf` file in this repo
+4. (Important!) we're not going to use `aws-access-key-id` and `aws-secret-access-key` in the action, even through variables, this is not secure
+   Instead we'll use OpenID provider, see example in `iam.tf` file in this repo
+
+## Main use cases
+
+### git tag only
+For example, for repository with terraform code only - no binaries, just add git tag<br>
+Version will be automatically generated based on current tags + consider commit message tag `#major`, `#minor`, `#patch`<br>
+Ex: if current tag is `1.2.3` and commit has #patch, then the new tag will be `1.2.4`.
+Also tags `1`, `1.2` and `latest` will be overwritten to point to the same commit as `1.2.4`
+```yaml
+steps:
+  - name: Release
+    uses: agilecustoms/gha-release@main
+```
+Note: adding/overwriting tags requires GH job permissions `content: write`
+
+### publish in S3
+Convention: there should be `s3` directory in cwd. All content of this directory will be uploaded in S3 bucket<br>
+Ex: if current tag is '1.2.3' and commit has #patch, then files will be uploaded to `s3-bucket/s3-bucket-dir/1.2.4`
+Also files will be uploaded in dirs `/1`, `/1.2` and `/latest` - previous content of these dirs will be cleaned up
+```yaml
+steps:
+  - name: Release
+    uses: agilecustoms/gha-release@main
+    with:
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+      aws-region: us-east-1
+      aws-role: 'ci/publisher' # default
+      s3-bucket: '{company-name}-dist' # recommended, no default
+      s3-bucket-dir: '' # empty by default
+```
+Note: `s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/1.2.4`.<br>
+Note: If you have `./s3` directory, but miss one of required variables, the action will fail with descriptive error message.<br>
+
+### publish in ECR
+TBD
+
+### publish in CodeArtifact
+TBD
+
+### publish in npm
+TBD
+
+
+
+## Additional use cases
+
+### specify version explicitly
+TBD
+
+### dev release
+TBD
+
+### custom-version-update
+TBD
