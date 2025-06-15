@@ -1,6 +1,13 @@
 name: 'Release'
 description: 'generate new version, upload to s3, push tags and send to gitops'
-#inputs:
+inputs:
+  tag-context:
+    description: |
+      Context for tag generation: 'repo' (default) or 'branch'
+      Use 'branch' to release from non-main long-living branches such as v1-support (given v2 is in main)
+      When 'branch' is, make sure to use actions/checkout with 'fetch-depth: 0'
+    required: false
+    default: 'repo'
 #  version:
 #    description: 'Allows to explicitly specify version to release'
 #    required: false
@@ -71,10 +78,10 @@ runs:
 ## Phase 1 - Generate a new version
 
     - name: Generate new version
-#      if: inputs.dev-release == 'false' && inputs.version == ''
       id: version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
+        TAG_CONTEXT: ${{ inputs.tag-context }} # given branches main v2.x.y and legacy v1.x.y - generate next version based on current branch
         DRY_RUN: true # just generate new version, do not push tag
 
 #    - name: Generate S3 key

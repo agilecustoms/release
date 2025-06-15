@@ -25,6 +25,9 @@ Of course, the price is dangling git tag. If publish fails painfully, we can eas
 3. Once satisfied, revert any debug changes and merge to `main` 
 
 ## Inputs
+- `tag-context` - Context for tag generation: 'repo' (default) or 'branch'.
+  Use 'branch' to release from non-main long-living branches such as v1-support (given v2 is in main).
+  Also use 'actions/checkout' with 'fetch-depth: 0'
 - `version` - version to use, if not provided, will be generated based on latest tag and commit message
 
 ## Outputs
@@ -46,9 +49,17 @@ Version will be automatically generated based on current tags + consider commit 
 Ex: if current tag is `1.2.3` and commit has #patch, then the new tag will be `1.2.4`.
 Also tags `1`, `1.2` and `latest` will be overwritten to point to the same commit as `1.2.4`
 ```yaml
-steps:
-  - name: Release
-    uses: agilecustoms/gha-release@main
+jobs:
+   Release:
+      runs-on: ubuntu-latest
+      permissions:
+         contents: write
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v4
+
+         - name: Release
+           uses: agilecustoms/gha-release@main
 ```
 Note: adding/overwriting tags requires GH job permissions `content: write`
 
@@ -82,6 +93,34 @@ TBD
 
 
 ## Additional use cases
+
+### release from non-main branch
+Assume main development (v2.x) is conducted in 'main' branch, while version 1.x is maintained in 'v1-support' branch.
+If you want to make release in support branch, you need
+1. run actions/checkout with with 'fetch-depth: 0'
+2. pass parameter 'tag-context: branch'
+```yaml
+on:
+   push:
+      branches:
+         - v1-support
+jobs:
+   Release:
+      runs-on: ubuntu-latest
+      permissions:
+         contents: write
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v4
+           with:
+              fetch-depth: 0
+
+         - name: Release
+           id: release
+           uses: agilecustoms/gha-release@main
+           with:
+               tag-context: branch
+```
 
 ### specify version explicitly
 TBD
