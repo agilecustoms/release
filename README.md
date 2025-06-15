@@ -75,7 +75,7 @@ Note: adding/overwriting tags requires GH job permissions `content: write`
 
 ### publish in AWS S3
 Convention: there should be `s3` directory in cwd. All content of this directory will be uploaded in S3 bucket<br>
-Ex: if current tag is '1.2.3' and commit has #patch, then files will be uploaded to `s3-bucket/s3-bucket-dir/1.2.4`
+Ex: if current tag is '1.2.3' and commit has #patch, then files will be uploaded to `aws-s3-bucket/aws-s3-bucket-dir/1.2.4`
 Also files will be uploaded in dirs `/1`, `/1.2` and `/latest` - previous content of these dirs will be cleaned up
 ```yaml
 steps:
@@ -83,10 +83,10 @@ steps:
     uses: agilecustoms/release@main
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
-      aws-region: us-east-1 # required, no default
-      aws-role: 'ci/builder' # no default
-      aws-s3-bucket: '{company-name}-dist' # no default
-      aws-s3-bucket-dir: '{current-repo-name}' # default
+      aws-region: us-east-1  # required, no default
+      aws-role: 'ci/builder' # required, no default
+      aws-s3-bucket: '{company-name}-dist' # default '' meaning: do not publish in S3
+      aws-s3-bucket-dir: '{current-repo-name}' # default '' meaning: use current repo name as directory name
 ```
 `s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
@@ -103,14 +103,28 @@ steps:
   - name: Release
     uses: agilecustoms/release@main
     with:
-      aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
-      aws-region: us-east-1 # required, no default
-      aws-role: 'ci/builder' # no default
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+      aws-region: us-east-1
+      aws-role: 'ci/builder'
       aws-ecr: true # default '' (effectively false)
 ```
 
 ### publish in AWS CodeArtifact Maven repository
-TBD
+This action releases maven artifacts in AWS CodeArtifact repository.
+Note: it doesn't compile source code, nor run tests, it just updates version in `pom.xml` and publishes it.
+So make sure you maven "heavy lifting" (compile, test, package) prior to this action.
+See .. for details how to setup settings.xml, pom.xml and how to use artifacts published by this action.
+```yaml
+steps:
+  - name: Release
+    id: release
+    uses: agilecustoms/release@main
+    with:
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+      aws-region: us-east-1
+      aws-role: 'ci/builder'
+      aws-codeartifact-maven: true # default '' (effectively false)
+```
 
 ### publish in npmjs
 TBD
@@ -159,8 +173,6 @@ TBD
 TBD
 
 ## Roadmap
-- support explicit version as input parameter
-- support push in non-main branch
 - support `on: pull_request` event
 - multi-region support
 

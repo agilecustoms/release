@@ -27,6 +27,14 @@ inputs:
     description: 'If true, then push docker image to ECR'
     required: false
     default: ''
+  aws-s3-bucket:
+    description: 'S3 bucket to upload released artifacts to'
+    required: false
+    default: ''
+  aws-s3-bucket-dir:
+    description: 'S3 bucket directory to upload released artifacts to, by default = current repo name'
+    required: false
+    default: ''
   tag-context:
     description: |
       Context for tag generation: 'repo' (default) or 'branch'
@@ -74,6 +82,11 @@ runs:
             echo "Error: aws-codeartifact-domain and aws-codeartifact-repository must be provided when aws-codeartifact-maven is true" >&2
             exit 1
           fi
+        fi
+        
+        if [ -d s3 ] && [ -z "${{ inputs.aws-s3-bucket }}" ] ; then
+          echo "Error: aws-s3-bucket must be provided when using S3" >&2
+          exit 1
         fi
         
         echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
@@ -198,14 +211,14 @@ runs:
 
 ## Phase 4 - Publish artifacts
 
-#    - name: Release S3
-#      if: steps.init.outputs.release-s3
-#      uses: agilecustoms/gha-release-s3@main
+#    - name: Upload in S3
+#      if: steps.init.outputs.aws-s3
+#      uses: agilecustoms/release-s3@main
 #      with:
 #        access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
 #        secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
 #        session-token: ${{ steps.login-aws.outputs.aws-session-token }}
-#        bucket: 'agilecustoms-dist'
+#        bucket: ${{ inputs.aws-s3-bucket }}
 #        bucket-dir: ${{ steps.s3_key.outputs.key }}
 #        tags: Release=${{ inputs.dev-release == 'false' && 'true' || 'false' }}
 
