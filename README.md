@@ -91,3 +91,6 @@ TBD
 
 ### custom-version-update
 TBD
+
+## Future
+- multi-region support

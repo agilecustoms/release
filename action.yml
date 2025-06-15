@@ -122,13 +122,15 @@ runs:
 ## Phase 3 - Git push
 
     - name: Git push
-      if: inputs.dev-release == 'false'
+#      if: inputs.dev-release == 'false'
       shell: bash
       run: |
         git config --global user.name "CI User"
         git config --global user.email "user@ci.com"
         
-        new_tag="${{ steps.version.outputs.new_tag }}"
+        patch_tag="${{ steps.version.outputs.new_tag }}"
+        major_tag="$(echo "$patch_tag" | awk -F. '{print $1}')"
+        minor_tag="$(echo "$patch_tag" | awk -F. '{print $1"."$2}')"
         
         # fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
@@ -136,19 +138,19 @@ runs:
         # stage files that might be modified/deleted by previous steps; check if there are any changes and commit
         git add -u
         if ! git diff --cached --quiet; then
-          git commit -m "Release version $new_tag [skip ci]"
+          git commit -m "Release version $patch_tag [skip ci]"
         else
           echo "No changes to commit."
         fi
         
-        if git rev-parse --verify --quiet latest; then
-          git tag -d latest
-        fi
+        git tag -d $minor_tag $major_tag latest 2>/dev/null || true
         
+        git tag $patch_tag
+        git tag $minor_tag
+        git tag $major_tag
         git tag latest
-        git tag $new_tag
-        git push --atomic origin main refs/tags/latest refs/tags/$new_tag --force
-      # push changes made in 'main' along with tags (latest and new_tag) atomically. use --force to overwrite 'latest' tag
+        git push --atomic origin main refs/tags/$patch_tag refs/tags/$minor_tag refs/tags/$major_tag refs/tags/latest --force
+      # push changes made in 'main' along with tags (latest and patch_tag) atomically. use --force to overwrite 'minor/major/latest' tags
 
 ## Phase 4 - Publish artifacts
 
