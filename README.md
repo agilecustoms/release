@@ -66,7 +66,7 @@ jobs:
            uses: actions/checkout@v4
 
          - name: Release
-           uses: agilecustoms/gha-release@main
+           uses: agilecustoms/release@main
 ```
 Note: adding/overwriting tags requires GH job permissions `content: write`
 
@@ -77,12 +77,12 @@ Also files will be uploaded in dirs `/1`, `/1.2` and `/latest` - previous conten
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/gha-release@main
+    uses: agilecustoms/release@main
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
       aws-region: us-east-1 # required, no default
-      aws-role: 'ci/publisher' # default
-      aws-s3-bucket: '{company-name}-dist' # recommended, no default
+      aws-role: 'ci/publisher' # no default
+      aws-s3-bucket: '{company-name}-dist' # no default
       aws-s3-bucket-dir: '{current-repo-name}' # default
 ```
 `s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`
@@ -90,7 +90,17 @@ steps:
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
 
 ### publish in AWS ECR
-TBD
+```yaml
+steps:
+  - name: Release
+    uses: agilecustoms/release@main
+    with:
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
+      aws-region: us-east-1 # required, no default
+      aws-role: 'ci/publisher' # no default
+      aws-ecr: true # default '' (effectively false)
+```
+ 
 
 ### publish in AWS CodeArtifact
 TBD

@@ -1,6 +1,26 @@
 name: 'Release'
 description: 'generate new version, upload to s3, push tags and send to gitops'
 inputs:
+  aws-account:
+    description: 'AWS account (dist) to upload released artifacts to. Optional if there are no artifacts, just git tag'
+    required: false
+    default: ''
+  aws-region:
+    description: 'AWS region'
+    required: false
+    default: ''
+  aws-role:
+    description: AWS role to assume for release
+    required: false
+    default: ''
+  aws-codeartifact-maven:
+    description: 'If true, then publish maven artifacts to AWS CodeArtifact'
+    required: false
+    default: ''
+  aws-ecr:
+    description: 'If true, then push docker image to ECR'
+    required: false
+    default: ''
   tag-context:
     description: |
       Context for tag generation: 'repo' (default) or 'branch'
@@ -8,9 +28,6 @@ inputs:
       When 'branch' is, make sure to use actions/checkout with 'fetch-depth: 0'
     required: false
     default: 'repo'
-#  aws-account:
-#    description: 'AWS account (dist) to upload released artifacts to. Optional if there are no artifacts, just git tag'
-#    required: false
 #  dev-release:
 #    description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
 #    required: false
@@ -31,61 +48,69 @@ runs:
 
 ## Phase 0 - Init: validate inputs, infer defaults, login in AWS
 
-#    - name: Init
-#      id: init
-#      shell: bash
-#      # Validate 'publish': if provided, it should have one of allowed values
-#      # convention: if 's3' directory exists, then upload to S3
-#      # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
-#      run: |
-#        allowed_publish=("docker_ECR" "maven_CodeArtifact")
-#        if [ -n "${{ inputs.publish }}" ]; then
-#          if [[ ! " ${allowed_publish[@]} " =~ " ${{ inputs.publish }} " ]]; then
-#            echo "Invalid 'publish' value: ${{ inputs.publish }}" >&2
-#            echo "Allowed values are: ${allowed_publish[*]}" >&2
-#            exit 1
-#          fi
-#        fi
+    - name: Init
+      id: init
+      shell: bash
+      # Validate 'publish': if provided, it should have one of allowed values
+      # convention: if 's3' directory exists, then upload to S3
+      # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
+      run: |
+        if [ -d s3 ]; then
+          echo "$aws_s3=true" >> $GITHUB_OUTPUT
+        fi
+        
+        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ]; then
+          if [ -z "${{ inputs.aws-account }}" ] || [ -z "${{ inputs.aws-region }}" ] || [ -z "${{ inputs.aws-role }}" ]; then
+            echo "Error: aws-account, aws-region, and aws-role must all be provided." >&2
+            exit 1
+          fi
+        fi
+
+        echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
+
+    - name: Login AWS
+      if: steps.init.outputs.aws-s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
+      id: login-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
+        output-credentials: true
 #
-#        if [ -d s3 ]; then
-#          echo "release-s3=true" >> $GITHUB_OUTPUT
-#          if [ -z "${{ inputs.aws-account }}" ]; then
-#            echo "AWS account is required to release files in S3" >&2
-#            exit 1
-#          fi
-#        fi
-#
-#        echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
-#
-#    - name: Login AWS
-#      if: steps.init.outputs.release-s3 || inputs.publish == 'docker_ECR' || inputs.publish == 'maven_CodeArtifact'
-#      id: login-aws
-#      uses: aws-actions/configure-aws-credentials@v4
-#      with:
-#        aws-region: us-east-1
-#        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/ci/builder
-#        output-credentials: true
-#
-#    - name: Login to Amazon ECR
-#      if: inputs.publish == 'docker_ECR'
-#      id: login-ecr
-#      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
+    - name: Login to Amazon ECR
+      if: inputs.aws-ecr
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
 
 ## Phase 1 - Generate a new version
 
     - name: Generate new version
-      id: version
+      id: _version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
         TAG_CONTEXT: ${{ inputs.tag-context }} # given branches main v2.x.y and legacy v1.x.y - generate next version based on current branch
         DRY_RUN: true # just generate new version, do not push tag
+
+    - name: Finalize version
+      id: version
+      shell: bash
+      run: |
+        version="${{ steps._version.outputs.new_tag }}"
+        patch=$version
+        major="$(echo "$version" | awk -F. '{print $1}')"
+        minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
+        
+        echo "version=$version" >> $GITHUB_OUTPUT
+        echo "patch=$patch" >> $GITHUB_OUTPUT
+        echo "major=$major" >> $GITHUB_OUTPUT
+        echo "minor=$minor" >> $GITHUB_OUTPUT
 
 #    - name: Generate S3 key
 #      if: steps.init.outputs.release-s3
 #      id: s3_key
 #      shell: bash
 #      run: |
-#        key="${{ steps.init.outputs.service }}/${{ steps.version.outputs.new_tag }},${{ steps.init.outputs.service }}/latest"
+#        key="${{ steps.init.outputs.service }}/${{ steps.version.outputs.version }},${{ steps.init.outputs.service }}/latest"
 #        if [ "${{ inputs.dev-release }}" == "true" ]; then
 #          key="${{ steps.init.outputs.service }}/${{ github.ref_name }}"
 #        fi
@@ -103,7 +128,7 @@ runs:
 #    - name: Update version in maven
 #      if: inputs.publish == 'maven_CodeArtifact'
 #      shell: bash
-#      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.new_tag }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
+#      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
 #
 #    - name: Setup Node
 #      if: inputs.npmjs-token
@@ -115,12 +140,12 @@ runs:
 #    - name: Update version in npm
 #      if: inputs.npmjs-token
 #      shell: bash
-#      run: npm version ${{ steps.version.outputs.new_tag }} --no-git-tag-version
+#      run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 #
 #    - name: Custom version update
 #      if: inputs.custom-version-update
 #      shell: bash
-#      run: new_version=${{ steps.version.outputs.new_tag }} && ${{ inputs.custom-version-update }}
+#      run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.custom-version-update }}
 
 ## Phase 3 - Git push
 
@@ -137,14 +162,14 @@ runs:
         # stage files that might be modified/deleted by previous steps; check if there are any changes and commit
         git add -u
         if ! git diff --cached --quiet; then
-          git commit -m "Release version ${{ steps.version.outputs.new_tag }} [skip ci]"
+          git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
         else
           echo "No changes to commit."
         fi
         
-        patch_tag="${{ steps.version.outputs.new_tag }}"
-        major_tag="$(echo "$patch_tag" | awk -F. '{print $1}')"
-        minor_tag="$(echo "$patch_tag" | awk -F. '{print $1"."$2}')"
+        patch_tag="${{ steps.version.outputs.patch }}"
+        minor_tag="${{ steps.version.outputs.minor }}"
+        major_tag="${{ steps.version.outputs.major }}"
         
         git tag -d $patch_tag $minor_tag $major_tag latest 2>/dev/null || true
         
@@ -167,18 +192,22 @@ runs:
 #        bucket: 'agilecustoms-dist'
 #        bucket-dir: ${{ steps.s3_key.outputs.key }}
 #        tags: Release=${{ inputs.dev-release == 'false' && 'true' || 'false' }}
-#
-#    - name: Push Docker image in ECR
-#      if: inputs.publish == 'docker_ECR'
-#      shell: bash
-#      run: |
-#        service="${{ steps.init.outputs.service }}"
-#        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids imageTag=latest
-#        ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/$service
-#        docker tag $service $ECR_IMAGE:${{ steps.version.outputs.new_tag }}
-#        docker tag $service $ECR_IMAGE:latest
-#        docker push --all-tags $ECR_IMAGE
-#
+
+    - name: Push Docker image in ECR
+      if: inputs.aws-ecr
+      shell: bash
+      run: |
+        service="${{ steps.init.outputs.service }}"
+        ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/$service
+        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids \
+         imageTag=${{ steps.version.outputs.patch }} imageTag=${{ steps.version.outputs.minor }} imageTag=${{ steps.version.outputs.major }} \
+         imageTag=latest || true
+        docker tag $service $ECR_IMAGE:${{ steps.version.outputs.patch }}
+        docker tag $service $ECR_IMAGE:${{ steps.version.outputs.minor }}
+        docker tag $service $ECR_IMAGE:${{ steps.version.outputs.major }}
+        docker tag $service $ECR_IMAGE:latest
+        docker push --all-tags $ECR_IMAGE
+
 #    # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
 #    # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
 #    # it does repackage though! (this is for good, bcz pom versions changed)
