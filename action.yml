@@ -13,6 +13,12 @@ inputs:
     description: AWS role to assume for release
     required: false
     default: ''
+  aws-codeartifact-domain:
+    description: 'CodeArtifact domain name'
+    required: true
+  aws-codeartifact-repository:
+    description: 'CodeArtifact repository name'
+    required: true
   aws-codeartifact-maven:
     description: 'If true, then publish maven artifacts to AWS CodeArtifact'
     required: false
@@ -32,9 +38,6 @@ inputs:
 #    description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
 #    required: false
 #    default: 'false'
-#  publish:
-#    description: 'One of the following: docker_ECR, maven_CodeArtifact'
-#    required: false
 #  npmjs-token:
 #    description: 'token to publish npm package in npmjs (not in CodeArtifact)'
 #    required: false
@@ -59,13 +62,20 @@ runs:
           echo "$aws_s3=true" >> $GITHUB_OUTPUT
         fi
         
-        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ]; then
+        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
           if [ -z "${{ inputs.aws-account }}" ] || [ -z "${{ inputs.aws-region }}" ] || [ -z "${{ inputs.aws-role }}" ]; then
-            echo "Error: aws-account, aws-region, and aws-role must all be provided." >&2
+            echo "Error: aws-account, aws-region, and aws-role must all be provided" >&2
             exit 1
           fi
         fi
 
+        if [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
+          if [ -z "${{ inputs.aws-codeartifact-domain }}" ] || [ -z "${{ inputs.aws-codeartifact-repository }}" ]; then
+            echo "Error: aws-codeartifact-domain and aws-codeartifact-repository must be provided when aws-codeartifact-maven is true" >&2
+            exit 1
+          fi
+        fi
+        
         echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
 
     - name: Login AWS
@@ -118,18 +128,24 @@ runs:
 
 ## Phase 2 - Update version in code
 
-#    - name: Prepare Java
-#      if: inputs.publish == 'maven_CodeArtifact'
-#      uses: agilecustoms/gha-prepare-java@main
-#      with:
-#        aws-account: ${{ inputs.aws-account }}
-#        role-name: builder
-#
-#    - name: Update version in maven
-#      if: inputs.publish == 'maven_CodeArtifact'
-#      shell: bash
-#      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
-#
+    - name: Setup Java
+      if: inputs.aws-codeartifact-maven
+      uses: agilecustoms/setup-java-codeartifact@main
+      with:
+        aws-account: ${{ inputs.aws-account }}
+        aws-region: ${{ inputs.aws-region }}
+        aws-role: ${{ inputs.aws-role }}
+        aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
+        aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
+        aws-login: false # we already logged in AWS in a previous step
+        cache: maven
+        java-distribution: 'temurin' # use temurin as it is available by default in GitHub Actions runners
+
+    - name: Update version in maven
+      if: inputs.aws-codeartifact-maven
+      shell: bash
+      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
+
 #    - name: Setup Node
 #      if: inputs.npmjs-token
 #      uses: actions/setup-node@v4
@@ -208,15 +224,15 @@ runs:
         docker tag $service $ECR_IMAGE:latest
         docker push --all-tags $ECR_IMAGE
 
-#    # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
-#    # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
-#    # it does repackage though! (this is for good, bcz pom versions changed)
-#    # TODO: verify phase still run in build and release jobs
-#    # TODO: checkstyle and enforcer still run in both jobs
-#    - name: Upload to CodeArtifact
-#      if: inputs.publish == 'maven_CodeArtifact'
-#      shell: bash
-#      run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
+    # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
+    # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
+    # it does repackage though! (this is for good, bcz pom versions changed)
+    # TODO: verify phase still run in build and release jobs
+    # TODO: checkstyle and enforcer still run in both jobs
+    - name: Upload to CodeArtifact
+      if: inputs.aws-codeartifact-maven
+      shell: bash
+      run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
 #
 #    # get namespace from package.json: "name": "@agilecustoms/envctl"
 #    # use namespace @agilecustoms to find npm registry url and token in .npmrc file prepared by prev step

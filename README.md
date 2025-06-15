@@ -109,7 +109,7 @@ steps:
       aws-ecr: true # default '' (effectively false)
 ```
 
-### publish in AWS CodeArtifact
+### publish in AWS CodeArtifact Maven repository
 TBD
 
 ### publish in npmjs
