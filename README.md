@@ -81,15 +81,17 @@ steps:
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
       aws-region: us-east-1 # required, no default
-      aws-role: 'ci/publisher' # no default
+      aws-role: 'ci/builder' # no default
       aws-s3-bucket: '{company-name}-dist' # no default
       aws-s3-bucket-dir: '{current-repo-name}' # default
 ```
-`s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`
-
+`s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
 
 ### publish in AWS ECR
+First you build docker image, and then you release it with this action.
+Same as git tags, when you release version `1.2.3` with commit message `#patch`,
+new docker image will be tagged as `1.2.4`, and tags `1`, `1.2` and `latest` will be overwritten to point to the same image as `1.2.4`
 ```yaml
 steps:
   - name: Docker build
@@ -100,10 +102,9 @@ steps:
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
       aws-region: us-east-1 # required, no default
-      aws-role: 'ci/publisher' # no default
+      aws-role: 'ci/builder' # no default
       aws-ecr: true # default '' (effectively false)
 ```
- 
 
 ### publish in AWS CodeArtifact
 TBD
@@ -137,7 +138,7 @@ jobs:
               fetch-depth: 0
 
          - name: Release
-           uses: agilecustoms/gha-release@main
+           uses: agilecustoms/release@main
            with:
                tag-context: branch
 ```
