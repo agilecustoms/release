@@ -8,10 +8,6 @@ inputs:
       When 'branch' is, make sure to use actions/checkout with 'fetch-depth: 0'
     required: false
     default: 'repo'
-#  version:
-#    description: 'Allows to explicitly specify version to release'
-#    required: false
-#    default: ''
 #  aws-account:
 #    description: 'AWS account (dist) to upload released artifacts to. Optional if there are no artifacts, just git tag'
 #    required: false
@@ -135,22 +131,22 @@ runs:
         git config --global user.name "CI User"
         git config --global user.email "user@ci.com"
         
-        patch_tag="${{ steps.version.outputs.new_tag }}"
-        major_tag="$(echo "$patch_tag" | awk -F. '{print $1}')"
-        minor_tag="$(echo "$patch_tag" | awk -F. '{print $1"."$2}')"
-        
         # fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
         
         # stage files that might be modified/deleted by previous steps; check if there are any changes and commit
         git add -u
         if ! git diff --cached --quiet; then
-          git commit -m "Release version $patch_tag [skip ci]"
+          git commit -m "Release version ${{ steps.version.outputs.new_tag }} [skip ci]"
         else
           echo "No changes to commit."
         fi
         
-        git tag -d $minor_tag $major_tag latest 2>/dev/null || true
+        patch_tag="${{ steps.version.outputs.new_tag }}"
+        major_tag="$(echo "$patch_tag" | awk -F. '{print $1}')"
+        minor_tag="$(echo "$patch_tag" | awk -F. '{print $1"."$2}')"
+        
+        git tag -d $patch_tag $minor_tag $major_tag latest 2>/dev/null || true
         
         git tag $patch_tag
         git tag $minor_tag

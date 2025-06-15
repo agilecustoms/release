@@ -1,28 +1,35 @@
 # About
-Reusable GitHub Action `gha-release`
-1. Generate new version
-   1. use input.version if provided
-   2. else: generate version based on the latest tag + git commit message: #major, #minor, #patch
+Reusable GitHub Action `gha-release` allows to release microservices that hold application code and infrastructure code (like Terraform).
+Since Terraform is distributed as source code via git tags, the action uses git tags as source of truth for versioning.
+It generates new version based on current git tags and commit tags `#patch`, `#minor`, `#major`, then synchronously pushes new git tag and publishes artifacts with same version
+
+1. Generate new version based on the latest tag + git commit message: #major, #minor, #patch
 2. Update version in code (`package.json`, `pom.xml`) and commit
    1. maven (java-parent)
    2. npm (envctl)
    3. custom (envctl to update cache key!)
 3. Git push
-   1. push two tags: new (generated) version and 'latest'
-   2. push changes from step 2
+   1. commit changes from step 2
+   2. add tags 'major', 'major.minor', 'major.minor.patch' and 'latest'
+   3. atomically push commit and tags to the remote repository
 4. Publish artifacts
-   1. S3 (tt-message, tt-web, tt-auth, db-evolution-runner, env-api). Files need to be in `s3` directory. Supports dev-release
-   2. Docker - ECR (env-cleanup)
-   3. maven - CodeArtifact (java-parent)
-   4. npm - npmjs.com (envctl)
+   1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory. Supports dev-release
+   2. AWS ECR - publish Docker image in ECR repository
+   3. AWS CodeArtifact maven - publish maven package in CodeArtifact repository
+   4. npmjs - publish npm package in npmjs.com repository
+
+Limitations:
+- only `on: push` event is supported - covers both direct push and PR merge. `on: pull_request` is not supported
+- when use `on: push` then semver tag `#patch`, `#minor`, `#major` is taken only from last commit message, keep it in mind when merging PRs
+- only `main` branch is supported for now
+These limitations should be gone in future, see roadmap
 
 Note: first I do git "Git push" and then "Publish artifacts", so that if publish fails, I can re-run release workflow.
 Of course, the price is dangling git tag. If publish fails painfully, we can easily roll back git tag!
 
-## Test via 'test' workflow
-1. Make a branch 'feature' (this repo unlikely to incur many changes)
-2. Push branch and get feedback
-3. Once satisfied, revert any debug changes and merge to `main` 
+Note for contributors: if you want to add support say for Google Cloud Docker Repository:
+- add parameters with prefix 'gc-'
+- if artifact is tag based, make sure you publish several tags: 'latest', 'major', 'major.minor', 'major.minor.patch'
 
 ## Inputs
 - `tag-context` - Context for tag generation: 'repo' (default) or 'branch'.
@@ -63,7 +70,7 @@ jobs:
 ```
 Note: adding/overwriting tags requires GH job permissions `content: write`
 
-### publish in S3
+### publish in AWS S3
 Convention: there should be `s3` directory in cwd. All content of this directory will be uploaded in S3 bucket<br>
 Ex: if current tag is '1.2.3' and commit has #patch, then files will be uploaded to `s3-bucket/s3-bucket-dir/1.2.4`
 Also files will be uploaded in dirs `/1`, `/1.2` and `/latest` - previous content of these dirs will be cleaned up
@@ -72,22 +79,23 @@ steps:
   - name: Release
     uses: agilecustoms/gha-release@main
     with:
-      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
-      aws-region: us-east-1
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
+      aws-region: us-east-1 # required, no default
       aws-role: 'ci/publisher' # default
-      s3-bucket: '{company-name}-dist' # recommended, no default
-      s3-bucket-dir: '' # empty by default
+      aws-s3-bucket: '{company-name}-dist' # recommended, no default
+      aws-s3-bucket-dir: '{current-repo-name}' # default
 ```
-Note: `s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/1.2.4`.<br>
-Note: If you have `./s3` directory, but miss one of required variables, the action will fail with descriptive error message.<br>
+`s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`
 
-### publish in ECR
+Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
+
+### publish in AWS ECR
 TBD
 
-### publish in CodeArtifact
+### publish in AWS CodeArtifact
 TBD
 
-### publish in npm
+### publish in npmjs
 TBD
 
 
@@ -95,10 +103,10 @@ TBD
 ## Additional use cases
 
 ### release from non-main branch
-Assume main development (v2.x) is conducted in 'main' branch, while version 1.x is maintained in 'v1-support' branch.
+Assume main development (v2.x) is conducted in `main` branch, while version 1.x is maintained in `v1-support` branch.
 If you want to make release in support branch, you need
-1. run actions/checkout with with 'fetch-depth: 0'
-2. pass parameter 'tag-context: branch'
+1. run actions/checkout with with `fetch-depth: 0`
+2. pass parameter `tag-context: branch`
 ```yaml
 on:
    push:
@@ -116,11 +124,13 @@ jobs:
               fetch-depth: 0
 
          - name: Release
-           id: release
            uses: agilecustoms/gha-release@main
            with:
                tag-context: branch
 ```
+Note: tag `latest` is only added to default (typically `main`) branch,
+so if you release new `#patch` version in "support" branch w/ and most recent tag is "1.2.3",
+then new tag will be `1.2.4` plus tags `1`, `1.2` will be overwritten to point to the same commit as `1.2.4`, but `latest` tag will not be changed
 
 ### specify version explicitly
 TBD
@@ -131,5 +141,16 @@ TBD
 ### custom-version-update
 TBD
 
-## Future
+## Roadmap
+- support explicit version as input parameter
+- support push in non-main branch
+- support `on: pull_request` event
 - multi-region support
+
+## Testing (work in progress)
+1. Make a branch 'feature' (this repo unlikely to incur many changes)
+2. Push branch and get feedback
+3. Once satisfied, revert any debug changes and merge to `main`
+
+## Credits
+- https://github.com/anothrNick/github-tag-action
