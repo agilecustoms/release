@@ -230,4 +230,4 @@ runs:
 outputs:
   version:
     description: "Newly released version"
-    value: ${{ steps.version.outputs.new_tag }}
+    value: ${{ steps.version.outputs.version }}

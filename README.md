@@ -92,6 +92,9 @@ Convention: publishing of all AWS types of artifacts require `aws-account`, `aws
 ### publish in AWS ECR
 ```yaml
 steps:
+  - name: Docker build
+    run: docker build
+
   - name: Release
     uses: agilecustoms/release@main
     with:
