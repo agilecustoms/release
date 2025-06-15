@@ -1,9 +1,10 @@
 # About
 Reusable GitHub Action `gha-release` allows to release microservices that hold application code and infrastructure code (like Terraform).
 Since Terraform is distributed as source code via git tags, the action uses git tags as source of truth for versioning.
-It generates new version based on current git tags and commit tags `#patch`, `#minor`, `#major`, then synchronously pushes new git tag and publishes artifacts with same version
+It generates new version based on current git tags and SemVer commit tags `#patch`, `#minor`, `#major`,
+then synchronously pushes new git tag and publishes artifacts with same version
 
-1. Generate new version based on the latest tag + git commit message: #major, #minor, #patch
+1. Generate new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
 2. Update version in code (`package.json`, `pom.xml`) and commit
    1. maven (java-parent)
    2. npm (envctl)
@@ -19,17 +20,19 @@ It generates new version based on current git tags and commit tags `#patch`, `#m
    4. npmjs - publish npm package in npmjs.com repository
 
 Limitations:
-- only `on: push` event is supported - covers both direct push and PR merge. `on: pull_request` is not supported
-- when use `on: push` then semver tag `#patch`, `#minor`, `#major` is taken only from last commit message, keep it in mind when merging PRs
+- only `on: push` event is supported - covers both direct push and PR merge. `on: pull_request` is not yet supported
+- when use `on: push` then SemVer tag `#patch`, `#minor`, `#major` is taken only from last commit message, keep it in mind when merging PRs
 - only `main` branch is supported for now
 These limitations should be gone in future, see roadmap
 
-Note: first I do git "Git push" and then "Publish artifacts", so that if publish fails, I can re-run release workflow.
-Of course, the price is dangling git tag. If publish fails painfully, we can easily roll back git tag!
+*Consistency*. This GH action does two modify operations: git "Git push" and then "Publish artifacts".
+Some of them need to go first, and then you need to be prepared what to do if second fails.
+If publish fails, you get gangling git tag no backed by any artifact,
+but you can fix what caused publish issue and re-run Release workflow! Worst case scenario you can delete git tags.
 
-Note for contributors: if you want to add support say for Google Cloud Docker Repository:
+*Note for contributors*: if you want to add support say for Google Cloud Docker Repository:
 - add parameters with prefix 'gc-'
-- if artifact is tag based, make sure you publish several tags: 'latest', 'major', 'major.minor', 'major.minor.patch'
+- if artifact is tag-based, make sure you publish several tags: 'latest', 'major', 'major.minor', 'major.minor.patch'
 
 ## Inputs
 - `tag-context` - Context for tag generation: 'repo' (default) or 'branch'.
@@ -43,9 +46,9 @@ Note for contributors: if you want to add support say for Google Cloud Docker Re
 ## Setup
 1. Pick AWS account for publishing artifacts, place it in `vars.AWS_ACCOUNT_DIST`
 2. Create S3 bucket to publish raw artifacts, ECR repository for Docker images, CodeArtifact for software packages
-3. Create IAM role `ci/publisher` with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.<br>
+3. Create IAM role (ex. `ci/builder`) with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.<br>
    Reference role can be found in `iam.tf` file in this repo
-4. (Important!) we're not going to use `aws-access-key-id` and `aws-secret-access-key` in the action, even through variables, this is not secure
+4. Passing `aws-access-key-id` and `aws-secret-access-key` is discouraged (less secure)
    Instead we'll use OpenID provider, see example in `iam.tf` file in this repo
 
 ## Main use cases
@@ -146,7 +149,7 @@ Note: tag `latest` is only added to default (typically `main`) branch,
 so if you release new `#patch` version in "support" branch w/ and most recent tag is "1.2.3",
 then new tag will be `1.2.4` plus tags `1`, `1.2` will be overwritten to point to the same commit as `1.2.4`, but `latest` tag will not be changed
 
-### specify version explicitly
+### explicit version
 TBD
 
 ### dev release
