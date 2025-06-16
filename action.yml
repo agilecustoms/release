@@ -210,9 +210,15 @@ runs:
       shell: bash
       run: |
         set +e
-        npm publish --access public
+        output=$(npm publish --access public 2>&1)
         error_code=$?
-        echo "Error code: $error_code"
+        echo "$output"
+        if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
+          if echo "$output" | grep -q "You cannot publish over the previously published versions"; then
+            echo "Ignore error 'version already exist' for run attempt ${{ github.run_attempt }}"
+            exit 0
+          fi
+        fi
         exit $error_code
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
