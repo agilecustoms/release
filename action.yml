@@ -65,7 +65,7 @@ runs:
         echo "service=$service" >> $GITHUB_OUTPUT
         
         if [ -d s3 ]; then
-          echo "$aws_s3=true" >> $GITHUB_OUTPUT
+          echo "aws_s3=true" >> $GITHUB_OUTPUT
           aws_s3_dir="${{ inputs.aws-s3-dir }}"; [ -z "$aws_s3_dir" ] && aws_s3_dir="$service"
           echo "aws_s3_dir=$aws_s3_dir" >> $GITHUB_OUTPUT
         fi
