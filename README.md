@@ -86,9 +86,9 @@ steps:
       aws-region: us-east-1
       aws-role: 'ci/builder'
       aws-s3-bucket: '{company-name}-dist'
-      aws-s3-bucket-dir: '{current-repo-name}'
+      aws-s3-dir: '{current-repo-name}'
 ```
-`s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
+`aws-s3-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
 
 ### publish in AWS ECR
