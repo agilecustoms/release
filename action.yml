@@ -208,7 +208,12 @@ runs:
     - name: Publish in npmjs
       if: inputs.npmjs-token
       shell: bash
-      run: npm publish --access public
+      run: |
+        set +e
+        npm publish --access public
+        error_code=$?
+        echo "Error code: $error_code"
+        exit $error_code
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
 
