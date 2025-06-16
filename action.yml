@@ -198,6 +198,10 @@ runs:
 
 ## Phase 4 - Publish artifacts
 
+    - name: Error
+      shell: bash
+      run: exit 1
+
     - name: Upload in S3
       if: steps.init.outputs.aws_s3
       uses: agilecustoms/release-s3@main
