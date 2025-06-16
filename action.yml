@@ -225,9 +225,9 @@ runs:
 
 ## Phase 4 - Git push
 
-    - name: Error
-      shell: bash
-      run: exit 1
+#    - name: Error to test publish idempotency
+#      shell: bash
+#      run: exit 1
 
     - name: Git push
       #      if: inputs.dev-release == 'false'
