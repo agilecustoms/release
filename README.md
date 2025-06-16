@@ -9,15 +9,16 @@ then synchronously pushes new git tag and publishes artifacts with same version
    1. maven (java-parent)
    2. npm (envctl)
    3. custom (envctl to update cache key!)
-3. Git push
-   1. commit changes from step 2
-   2. add tags 'major', 'major.minor', 'major.minor.patch' and 'latest'
-   3. atomically push commit and tags to the remote repository
-4. Publish artifacts
+3. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory. Supports dev-release
    2. AWS ECR - publish Docker image in ECR repository
    3. AWS CodeArtifact maven - publish maven package in CodeArtifact repository
    4. npmjs - publish npm package in npmjs.com repository
+4. Git push
+   1. commit changes from step 2
+   2. add tags 'major', 'major.minor', 'major.minor.patch' and 'latest'
+   3. atomically push commit and tags to the remote repository
+
 
 Limitations:
 - only `on: push` event is supported - covers both direct push and PR merge. `on: pull_request` is not yet supported
@@ -25,10 +26,10 @@ Limitations:
 - only `main` branch is supported for now
 These limitations should be gone in future, see roadmap
 
-*Consistency*. This GH action does two modify operations: git "Git push" and then "Publish artifacts".
+*Consistency*. This GH action does two modify operations: "Publish artifacts" and then "Git push"
 Some of them need to go first, and then you need to be prepared what to do if second fails.
-If publish fails, you get gangling git tag no backed by any artifact,
-but you can fix what caused publish issue and re-run Release workflow! Worst case scenario you can delete git tags.
+Rationale to have "Git push" the last: 1) it is least likely to fail; 2) provided that all publish steps are idempotent,
+you can fix "Git push" issue and re-run the workflow w/o side effects.
 
 *Note for contributors*: if you want to add support say for Google Cloud Docker Repository:
 - add parameters with prefix 'gc-'
