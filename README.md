@@ -6,9 +6,9 @@ then synchronously pushes new git tag and publishes artifacts with same version
 
 1. Generate new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
 2. Update version in code (`package.json`, `pom.xml`) and commit
-   1. maven (java-parent)
-   2. npm (envctl)
-   3. custom (envctl to update cache key!)
+   1. maven
+   2. npm
+   3. custom (can use to update cache key!)
 3. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory. Supports dev-release
    2. AWS ECR - publish Docker image in ECR repository
@@ -30,10 +30,8 @@ These limitations should be gone in future, see roadmap
 Some of them need to go first, and then you need to be prepared what to do if second fails.
 Rationale to have "Git push" the last: 1) it is least likely to fail; 2) provided that all publish steps are idempotent,
 you can fix "Git push" issue and re-run the workflow w/o side effects.
-
-*Note for contributors*: if you want to add support say for Google Cloud Docker Repository:
-- add parameters with prefix 'gc-'
-- if artifact is tag-based, make sure you publish several tags: 'latest', 'major', 'major.minor', 'major.minor.patch'
+Some publish commands are not idempotent (like npm publish), so as workaround - just ignore 'same version already exists' type of errors 
+if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 ## Inputs
 - `tag-context` - Context for tag generation: 'repo' (default) or 'branch'.
@@ -184,6 +182,13 @@ TBD
 - publish in private npmjs repository
 - support `on: pull_request` event
 - multi-region support
+
+## Contribution guideline
+to add support of new Cloud Provider, for ex Google Cloud:
+- add parameters with prefix 'gc-'
+to add new publish artifact type:
+- make sure it is idempotent (can be re-run w/o side effects)
+- if artifact is tag-based, make sure you publish several tags: 'latest', 'major', 'major.minor', 'major.minor.patch'
 
 ## Testing (work in progress)
 1. Make a branch 'feature' (this repo unlikely to incur many changes)
