@@ -21,7 +21,7 @@ then synchronously pushes new git tag and publishes artifacts with same version
 
 
 Limitations:
-- only `on: push` event is supported - covers both direct push and PR merge. `on: pull_request` is not yet supported
+- only `on: push` event is supported — it covers both direct push and PR merge. `on: pull_request` is not yet supported
 - when use `on: push` then SemVer tag `#patch`, `#minor`, `#major` is taken only from last commit message, keep it in mind when merging PRs
 - only `main` branch is supported for now
 These limitations should be gone in future, see roadmap
