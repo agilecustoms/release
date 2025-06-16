@@ -4,15 +4,12 @@ inputs:
   aws-account:
     description: 'AWS account (dist) to upload released artifacts to. Optional if there are no artifacts, just git tag'
     required: false
-    default: ''
   aws-region:
     description: 'AWS region'
     required: false
-    default: ''
   aws-role:
     description: AWS role to assume for release
     required: false
-    default: ''
   aws-codeartifact-domain:
     description: 'CodeArtifact domain name'
     required: true
@@ -22,19 +19,22 @@ inputs:
   aws-codeartifact-maven:
     description: 'If true, then publish maven artifacts to AWS CodeArtifact'
     required: false
-    default: ''
   aws-ecr:
     description: 'If true, then push docker image to ECR'
     required: false
-    default: ''
   aws-s3-bucket:
     description: 'S3 bucket to upload released artifacts to'
     required: false
-    default: ''
   aws-s3-bucket-dir:
     description: 'S3 bucket directory to upload released artifacts to, by default = current repo name'
     required: false
-    default: ''
+  node-version:
+    description: 'Node.js version to use, default is 22 (pre-cached in Ubuntu 24)'
+    required: false
+    default: '22'
+  npmjs-token:
+    description: 'token to publish npm package in npmjs'
+    required: false
   tag-context:
     description: |
       Context for tag generation: 'repo' (default) or 'branch'
@@ -42,16 +42,13 @@ inputs:
       When 'branch' is, make sure to use actions/checkout with 'fetch-depth: 0'
     required: false
     default: 'repo'
+  version-update-script:
+    description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
+    required: false
 #  dev-release:
 #    description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
 #    required: false
 #    default: 'false'
-#  npmjs-token:
-#    description: 'token to publish npm package in npmjs (not in CodeArtifact)'
-#    required: false
-#  custom-version-update:
-#    description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
-#    required: false
 
 runs:
   using: "composite"
@@ -62,9 +59,6 @@ runs:
     - name: Init
       id: init
       shell: bash
-      # Validate 'publish': if provided, it should have one of allowed values
-      # convention: if 's3' directory exists, then upload to S3
-      # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has format of 'agilecustoms/tt-web'
       run: |
         if [ -d s3 ]; then
           echo "$aws_s3=true" >> $GITHUB_OUTPUT
@@ -89,6 +83,7 @@ runs:
           exit 1
         fi
         
+        # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has a format of 'company/service'
         echo "service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')" >> $GITHUB_OUTPUT
 
     - name: Login AWS
@@ -108,17 +103,17 @@ runs:
 ## Phase 1 - Generate a new version
 
     - name: Generate new version
-      id: _version
+      id: generate_version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
         TAG_CONTEXT: ${{ inputs.tag-context }} # given branches main v2.x.y and legacy v1.x.y - generate next version based on current branch
-        DRY_RUN: true # just generate new version, do not push tag
+        DRY_RUN: true # just generate a new version, do not push tag
 
     - name: Finalize version
       id: version
       shell: bash
       run: |
-        version="${{ steps._version.outputs.new_tag }}"
+        version="${{ steps.generate_version.outputs.new_tag }}"
         patch=$version
         major="$(echo "$version" | awk -F. '{print $1}')"
         minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
@@ -159,22 +154,22 @@ runs:
       shell: bash
       run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
 
-#    - name: Setup Node
-#      if: inputs.npmjs-token
-#      uses: actions/setup-node@v4
-#      with:
-#        node-version: 22 # Use Node 22 is pre-cached in Ubuntu 24
-#        registry-url: 'https://registry.npmjs.org'
-#
-#    - name: Update version in npm
-#      if: inputs.npmjs-token
-#      shell: bash
-#      run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
-#
-#    - name: Custom version update
-#      if: inputs.custom-version-update
-#      shell: bash
-#      run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.custom-version-update }}
+    - name: Setup Node
+      if: inputs.npmjs-token
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Update version in npm
+      if: inputs.npmjs-token
+      shell: bash
+      run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+
+    - name: Custom version update script
+      if: inputs.version-update-script
+      shell: bash
+      run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.version-update-script }}
 
 ## Phase 3 - Git push
 
@@ -246,15 +241,15 @@ runs:
       if: inputs.aws-codeartifact-maven
       shell: bash
       run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
-#
-#    # get namespace from package.json: "name": "@agilecustoms/envctl"
-#    # use namespace @agilecustoms to find npm registry url and token in .npmrc file prepared by prev step
-#    - name: Publish in npmjs
-#      if: inputs.npmjs-token
-#      shell: bash
-#      run: npm publish --access public
-#      env:
-#        NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
+
+    # get namespace from package.json: "name": "@company/envctl", then find mapping namespace => npm repo in .npmrc file
+    # since there is no .npmrc file, do publish in npmjs.com npm registry
+    - name: Publish in npmjs
+      if: inputs.npmjs-token
+      shell: bash
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
 
 outputs:
   version:

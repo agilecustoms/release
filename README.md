@@ -82,11 +82,11 @@ steps:
   - name: Release
     uses: agilecustoms/release@main
     with:
-      aws-account: ${{ vars.AWS_ACCOUNT_DIST }} # required, no default
-      aws-region: us-east-1  # required, no default
-      aws-role: 'ci/builder' # required, no default
-      aws-s3-bucket: '{company-name}-dist' # default '' meaning: do not publish in S3
-      aws-s3-bucket-dir: '{current-repo-name}' # default '' meaning: use current repo name as directory name
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+      aws-region: us-east-1
+      aws-role: 'ci/builder'
+      aws-s3-bucket: '{company-name}-dist'
+      aws-s3-bucket-dir: '{current-repo-name}'
 ```
 `s3-bucket-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
@@ -106,7 +106,7 @@ steps:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
       aws-role: 'ci/builder'
-      aws-ecr: true # default '' (effectively false)
+      aws-ecr: true
 ```
 
 ### publish in AWS CodeArtifact Maven repository
@@ -117,17 +117,24 @@ See .. for details how to setup settings.xml, pom.xml and how to use artifacts p
 ```yaml
 steps:
   - name: Release
-    id: release
     uses: agilecustoms/release@main
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
       aws-role: 'ci/builder'
-      aws-codeartifact-maven: true # default '' (effectively false)
+      aws-codeartifact-maven: true
 ```
 
-### publish in npmjs
-TBD
+### publish in public npmjs repo
+Publish in *public* npmjs repository. Contribute to support private npmjs repositories if needed.
+This will generate new version, update version in `package.json`, commit, push commit + tags and publish in npmjs.com
+```yaml
+steps:
+  - name: Release
+    uses: agilecustoms/release@main
+    with:
+      npmjs-token: ${{ secrets.NPMJS_TOKEN }}
+```
 
 
 
@@ -173,6 +180,7 @@ TBD
 TBD
 
 ## Roadmap
+- publish in private npmjs repository
 - support `on: pull_request` event
 - multi-region support
 
