@@ -236,11 +236,11 @@ runs:
 
 ## Phase 4 - Git push
 
-#    - name: Error to test publish idempotency
-#      shell: bash
-#      run: |
-#        echo "intentional error" >&2
-#        exit 1
+    - name: Error to test publish idempotency
+      shell: bash
+      run: |
+        echo "intentional error" >&2
+        exit 1
 
     - name: Git push
       #      if: inputs.dev-release == 'false'
