@@ -201,7 +201,18 @@ runs:
     - name: Upload to CodeArtifact
       if: inputs.aws-codeartifact-maven
       shell: bash
-      run: mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true
+      run: |
+        set +e
+        output=$(mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
+        error_code=$?
+        echo "$output"
+        if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
+          if echo "$output" | grep -q "status code: 409"; then
+            echo "Ignore error 'version already exist' for run attempt ${{ github.run_attempt }}"
+            exit 0
+          fi
+        fi
+        exit $error_code
 
     # get namespace from package.json: "name": "@company/envctl", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
