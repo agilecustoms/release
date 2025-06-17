@@ -2,7 +2,17 @@
 Reusable GitHub Action `gha-release` allows to release microservices that hold application code and infrastructure code (like Terraform).
 Since Terraform is distributed as source code via git tags, the action uses git tags as source of truth for versioning.
 It generates new version based on current git tags and SemVer commit tags `#patch`, `#minor`, `#major`,
-then synchronously pushes new git tag and publishes artifacts with same version
+then publishes artifacts and pushes git tags so your artifacts and git tags are in sync.
+
+This table shows supported artifact types and their features:
+
+| Name                   | Multi-tags | Idempotency | dev-release | version update |
+|------------------------|------------|-------------|-------------|----------------|
+| git                    | ✅          | ✅           | ✅           | N/A            |
+| AWS S3                 | ✅          | ✅           | planned     | N/A            |
+| AWS ECR                | ✅          | ✅           | planned     | N/A            |
+| AWS CodeArtifact maven | N/A        | ⚠️          | ❌           | ✅              |
+| npmjs public repo      | N/A        | ⚠️          | ❌           | ✅              |
 
 1. Generate new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
 2. Update version in code (`package.json`, `pom.xml`) and commit
@@ -18,7 +28,6 @@ then synchronously pushes new git tag and publishes artifacts with same version
    1. commit changes from step 2
    2. add tags 'major', 'major.minor', 'major.minor.patch' and 'latest'
    3. atomically push commit and tags to the remote repository
-
 
 Limitations:
 - only `on: push` event is supported — it covers both direct push and PR merge. `on: pull_request` is not yet supported
