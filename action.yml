@@ -184,9 +184,8 @@ runs:
       run: |
         service="${{ steps.init.outputs.service }}"
         ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/$service
-        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids \
-         imageTag=${{ steps.version.outputs.patch }} imageTag=${{ steps.version.outputs.minor }} imageTag=${{ steps.version.outputs.major }} \
-         imageTag=latest || true
+        tags=$(echo "${{ steps.version.outputs.tags }}" | sed 's/[^ ]\+/imageTag=&/g')
+        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
         tags="${{ steps.version.outputs.tags }}"
         for tag in $tags; do
           docker tag $service $ECR_IMAGE:$tag
