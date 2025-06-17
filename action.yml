@@ -242,6 +242,7 @@ runs:
 #        exit 1
 
     - name: Git push
+      id: git
       #      if: inputs.dev-release == 'false'
       shell: bash
       run: |
@@ -255,6 +256,7 @@ runs:
         git add -u
         if ! git diff --cached --quiet; then
           git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
+          echo "changes_detected=true" >> $GITHUB_OUTPUT
         else
           echo "No changes to commit."
         fi
@@ -275,3 +277,6 @@ outputs:
   version:
     description: "Newly released version"
     value: ${{ steps.version.outputs.version }}
+  changes-detected:
+    description: "Whether there were any changes detected in the repository"
+    value: ${{ steps.git.outputs.changes_detected }}
