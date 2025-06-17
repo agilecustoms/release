@@ -274,9 +274,9 @@ runs:
         git push --atomic origin main $refs --force
 
 outputs:
-  version:
-    description: "Newly released version"
-    value: ${{ steps.version.outputs.version }}
   changes-detected:
     description: "Whether there were any changes detected in the repository"
     value: ${{ steps.git.outputs.changes_detected }}
+  version:
+    description: "Newly released version"
+    value: ${{ steps.version.outputs.version }}
