@@ -139,8 +139,6 @@ runs:
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
         aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
         aws-login: false # we already logged in AWS in a previous step
-        cache: maven
-        java-distribution: 'temurin' # use temurin as it is available by default in GitHub Actions runners
 
     - name: Update version in maven
       if: inputs.aws-codeartifact-maven
