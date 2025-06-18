@@ -206,3 +206,4 @@ to add new publish artifact type:
 
 ## Credits
 - https://github.com/anothrNick/github-tag-action
+
