@@ -54,7 +54,7 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 ## Setup
 1. Pick AWS account for publishing artifacts, place it in `vars.AWS_ACCOUNT_DIST`
 2. Create S3 bucket to publish raw artifacts, ECR repository for Docker images, CodeArtifact for software packages
-3. Create IAM role (ex. `ci/builder`) with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.<br>
+3. Create IAM role (ex. `ci/publisher`) with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.<br>
    Reference role can be found in `iam.tf` file in this repo
 4. Passing `aws-access-key-id` and `aws-secret-access-key` is discouraged (less secure)
    Instead we'll use OpenID provider, see example in `iam.tf` file in this repo
@@ -92,7 +92,7 @@ steps:
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
-      aws-role: 'ci/builder'
+      aws-role: 'ci/publisher'
       aws-s3-bucket: '{company-name}-dist'
       aws-s3-dir: '{current-repo-name}'
 ```
@@ -113,7 +113,7 @@ steps:
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
-      aws-role: 'ci/builder'
+      aws-role: 'ci/publisher'
       aws-ecr: true
 ```
 
@@ -129,7 +129,7 @@ steps:
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
-      aws-role: 'ci/builder'
+      aws-role: 'ci/publisher'
       aws-codeartifact-maven: true
 ```
 
