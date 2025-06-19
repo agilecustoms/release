@@ -100,6 +100,7 @@ runs:
 ## Phase 1 - Generate a new version
 
     - name: Generate new version
+      if: inputs.dev-release == 'false'
       id: generate_version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
@@ -263,7 +264,7 @@ runs:
         git push --atomic origin main $refs --force
 
 outputs:
-  changes-detected:
+  changes_detected:
     description: "Whether there were any changes detected in the repository"
     value: ${{ steps.git.outputs.changes_detected }}
   version:
