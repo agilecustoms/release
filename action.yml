@@ -111,13 +111,19 @@ runs:
       id: version
       shell: bash
       run: |
-        version="${{ steps.generate_version.outputs.new_tag }}"
-        patch=$version
-        major="$(echo "$version" | awk -F. '{print $1}')"
-        minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
+        if [ "${{ inputs.dev-release }}" = "true" ]; then
+          version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
+          tags="$version"
+        else
+          version="${{ steps.generate_version.outputs.new_tag }}"
+          patch=$version
+          major="$(echo "$version" | awk -F. '{print $1}')"
+          minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
+          tags="$patch $minor $major latest"
+        fi
         
         echo "version=$version" >> $GITHUB_OUTPUT
-        echo "tags=$patch $minor $major latest" >> $GITHUB_OUTPUT
+        echo "tags=$tags" >> $GITHUB_OUTPUT
 
 ## Phase 2 - Update version in code
 
@@ -233,7 +239,7 @@ runs:
 
     - name: Git push
       id: git
-      #      if: inputs.dev-release == 'false'
+      if: inputs.dev-release == 'false'
       shell: bash
       run: |
         git config --global user.name "CI User"

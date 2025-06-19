@@ -194,6 +194,7 @@ steps:
       aws-s3-bucket: 'mycompany-dist'
       dev-release: true
 ```
+If branch name is `feature/abc` then the version will be `feature-abc`
 
 
 ### explicit version
