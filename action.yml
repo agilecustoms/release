@@ -28,6 +28,10 @@ inputs:
   aws-s3-dir:
     description: 'S3 bucket directory to upload released artifacts to, by default = current repo name'
     required: false
+  dev-release:
+    description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
+    required: false
+    default: 'false'
   node-version:
     description: 'Node.js version to use to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
@@ -45,10 +49,6 @@ inputs:
   version-update-script:
     description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
     required: false
-#  dev-release:
-#    description: 'Used to make dev release - no release tagging, just upload binaries - works only for s3 (not for CodeArtifact), may be for ECR'
-#    required: false
-#    default: 'false'
 
 runs:
   using: "composite"
@@ -63,12 +63,6 @@ runs:
         # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has a format of 'company/service'
         service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')
         echo "service=$service" >> $GITHUB_OUTPUT
-        
-        if [ -d s3 ]; then
-          echo "aws_s3=true" >> $GITHUB_OUTPUT
-          aws_s3_dir="${{ inputs.aws-s3-dir }}"; [ -z "$aws_s3_dir" ] && aws_s3_dir="$service"
-          echo "aws_s3_dir=$aws_s3_dir" >> $GITHUB_OUTPUT
-        fi
         
         if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
           if [ -z "${{ inputs.aws-account }}" ] || [ -z "${{ inputs.aws-region }}" ] || [ -z "${{ inputs.aws-role }}" ]; then
@@ -97,7 +91,7 @@ runs:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
         output-credentials: true
-#
+
     - name: Login to Amazon ECR
       if: inputs.aws-ecr
       id: login-ecr
@@ -123,9 +117,6 @@ runs:
         
         echo "version=$version" >> $GITHUB_OUTPUT
         echo "tags=$patch $minor $major latest" >> $GITHUB_OUTPUT
-#        echo "patch=$patch" >> $GITHUB_OUTPUT
-#        echo "major=$major" >> $GITHUB_OUTPUT
-#        echo "minor=$minor" >> $GITHUB_OUTPUT
 
 ## Phase 2 - Update version in code
 
@@ -172,9 +163,9 @@ runs:
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
         session-token: ${{ steps.login-aws.outputs.aws-session-token }}
         bucket: ${{ inputs.aws-s3-bucket }}
-        bucket-dir: ${{ steps.init.outputs.aws_s3_dir }}
+        bucket-dir: ${{ inputs.aws-s3-dir }}
         versions: ${{ steps.version.outputs.tags }}
-#        tags: Release=${{ inputs.dev-release == 'false' && 'true' || 'false' }}
+        dev-release: ${{ inputs.dev-release }}
 
     - name: Push Docker image in ECR
       if: inputs.aws-ecr

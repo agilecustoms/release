@@ -6,13 +6,13 @@ then publishes artifacts and pushes git tags so your artifacts and git tags are 
 
 This table shows supported artifact types and their features:
 
-| Name                   | Multi-tags | Idempotency | dev-release | version update |
-|------------------------|------------|-------------|-------------|----------------|
-| git                    | ✅          | ✅           | ✅           | N/A            |
-| AWS S3                 | ✅          | ✅           | planned     | N/A            |
-| AWS ECR                | ✅          | ✅           | planned     | N/A            |
-| AWS CodeArtifact maven | N/A        | ⚠️          | ❌           | ✅              |
-| npmjs public repo      | N/A        | ⚠️          | ❌           | ✅              |
+| Name                   | Multi-tags | Idempotency | version update | dev-release |
+|------------------------|------------|-------------|----------------|-------------|
+| git                    | ✅          | ✅           | N/A            | ✅           |
+| AWS S3                 | ✅          | ✅           | N/A            | ✅           |
+| AWS ECR                | ✅          | ✅           | N/A            | planned     |
+| AWS CodeArtifact maven | N/A        | ⚠️          | ✅              | ❌           |
+| npmjs public repo      | N/A        | ⚠️          | ✅              | ❌           |
 
 1. Generate new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
 2. Update version in code (`package.json`, `pom.xml`) and commit
@@ -92,11 +92,10 @@ steps:
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
-      aws-role: 'ci/publisher'
-      aws-s3-bucket: '{company-name}-dist'
-      aws-s3-dir: '{current-repo-name}'
+      aws-role: 'ci/publisher' # default
+      aws-s3-bucket: 'mycompany-dist'
 ```
-`aws-s3-dir` is empty by default, so files will be uploaded to `s3-bucket/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
+Additionally, you can specify `aws-s3-dir`, then files will be uploaded to `s3-bucket/{aws-s3-dir}/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
 
 ### publish in AWS ECR
@@ -178,10 +177,26 @@ Note: tag `latest` is only added to default (typically `main`) branch,
 so if you release new `#patch` version in "support" branch w/ and most recent tag is "1.2.3",
 then new tag will be `1.2.4` plus tags `1`, `1.2` will be overwritten to point to the same commit as `1.2.4`, but `latest` tag will not be changed
 
-### explicit version
-TBD
-
 ### dev release
+Dev release allows to publish artifacts temporarily for testing purposes:
+- you push your changes to the feature branch, branch name becomes this dev release version, hence `dev-release` do not create git tags
+- dev release publishes artifacts in same artifact repositories, but not all artifact types support dev release, see table above
+
+"dev-release" is cross-cutting feature, so it can be used with any supported artifact type, see s3 example:
+```yaml
+steps:
+  - name: Release
+    uses: agilecustoms/release@main
+    with:
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+      aws-region: us-east-1
+      aws-role: 'ci/publisher' # default
+      aws-s3-bucket: 'mycompany-dist'
+      dev-release: true
+```
+
+
+### explicit version
 TBD
 
 ### custom-version-update
