@@ -68,6 +68,12 @@ runs:
         service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')
         echo "service=$service" >> $GITHUB_OUTPUT
         
+        # add check that in inputs.npmjs-token is provided and dev-release is true then error out
+        if [ -n "${{ inputs.npmjs-token }}" ] && [ "${{ inputs.dev-release }}" = "true" ]; then
+          echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2
+          exit 1
+        fi
+        
         if [ "${{ inputs.dev-release }}" = "true" ] && [ -n "${{ inputs.dev-branch-prefix }}" ]; then
           branch="${GITHUB_REF#refs/heads/}"
           if [[ "$branch" != "${{ inputs.dev-branch-prefix }}"* ]]; then
