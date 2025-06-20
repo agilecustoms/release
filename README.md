@@ -190,6 +190,8 @@ you push your changes to the feature branch, branch name becomes this dev releas
 - semver is _not_ generated
 - no git tags created — your branch name is all you need
 - if branch name is `dev/feature` then the version will be `dev-feature`
+- parameter `dev-release-prefix` enforces branch naming for dev releases, it helps to automatically dispose dev release artifacts.
+set to empty string to disable such enforcement
 - for each artifact type, dev-release might have different semantics, see `dev-release` section for each artifact type
 
 Example of 'dev-release' usage with AWS S3:
@@ -203,6 +205,7 @@ steps:
       aws-role: 'ci/publisher' # default
       aws-s3-bucket: 'mycompany-dist'
       dev-release: true
+      dev-release-prefix: 'dev/' # default
 ```
 
 

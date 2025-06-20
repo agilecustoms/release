@@ -32,6 +32,10 @@ inputs:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
     default: 'false'
+  dev-branch-prefix:
+    description: 'Enforce branch prefix for dev-releases'
+    required: false
+    default: 'dev/'
   node-version:
     description: 'Node.js version to use to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
@@ -63,6 +67,14 @@ runs:
         # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has a format of 'company/service'
         service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')
         echo "service=$service" >> $GITHUB_OUTPUT
+        
+        if [ "${{ inputs.dev-release }}" = "true" ] && [ -n "${{ inputs.dev-branch-prefix }}" ]; then
+          branch="${GITHUB_REF#refs/heads/}"
+          if [[ "$branch" != "${{ inputs.dev-branch-prefix }}"* ]]; then
+            echo "Error: current branch '$branch' must start with '${{ inputs.dev-branch-prefix }}' when dev-release is true" >&2
+            exit 1
+          fi
+        fi
         
         if [ -d s3 ]; then
           echo "aws_s3=true" >> $GITHUB_OUTPUT
