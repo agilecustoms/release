@@ -98,6 +98,9 @@ steps:
 Additionally, you can specify `aws-s3-dir`, then files will be uploaded to `s3-bucket/{aws-s3-dir}/{current-repo-name}/{version}/{files from ./s3 directory}`<br>
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
 
+**dev-release** will publish files in `s3-bucket/{aws-s3-dir}/{current-repo-name}/{branch-name}/` directory.
+Each S3 file will be tagged with `Release=false`, so you can setup lifecycle rule to delete such files after 30 days!
+   
 ### publish in AWS ECR
 First you build docker image, and then you release it with this action.
 Same as git tags, when you release version `1.2.3` with commit message `#patch`,
@@ -179,10 +182,14 @@ then new tag will be `1.2.4` plus tags `1`, `1.2` will be overwritten to point t
 
 ### dev release
 Dev release allows to publish artifacts temporarily for testing purposes:
-- you push your changes to the feature branch, branch name becomes this dev release version, hence `dev-release` do not create git tags
-- dev release publishes artifacts in same artifact repositories, but not all artifact types support dev release, see table above
+you push your changes to the feature branch, branch name becomes this dev release version:
+- semver is _not_ generated
+- no git tags created — your branch name is all you need
+- if branch name is `feature/abc` then the version will be `feature-abc`
+- not every artifact type supports dev-release
+- for each artifact type, dev-release might have different meaning, see `dev-release` section for each artifact type
 
-"dev-release" is cross-cutting feature, so it can be used with any supported artifact type, see s3 example:
+Example of 'dev-release' usage with AWS S3:
 ```yaml
 steps:
   - name: Release
@@ -194,7 +201,6 @@ steps:
       aws-s3-bucket: 'mycompany-dist'
       dev-release: true
 ```
-If branch name is `feature/abc` then the version will be `feature-abc`
 
 
 ### explicit version
