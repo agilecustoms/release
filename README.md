@@ -11,7 +11,7 @@ This table shows supported artifact types and their features:
 | git                    | ✅          | ✅           | N/A            | ✅           |
 | AWS S3                 | ✅          | ✅           | N/A            | ✅           |
 | AWS ECR                | ✅          | ✅           | N/A            | ✅           |
-| AWS CodeArtifact maven | N/A        | ⚠️          | ✅              | ❌           |
+| AWS CodeArtifact maven | N/A        | ⚠️          | ✅              | ⚠️          |
 | npmjs public repo      | N/A        | ⚠️          | ✅              | ❌           |
 
 1. Generate new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
@@ -138,6 +138,9 @@ steps:
       aws-role: 'ci/publisher'
       aws-codeartifact-maven: true
 ```
+**dev-release** works is nothing else than just a normal release, but instead of semver `<version>1.2.4</version>`
+you'll get `<version>{branch-name}</version>`. Particularly, there is no way to automatically delete such "dev versions".
+Such versions will live in CodeArtifact repository forever until you delete them
 
 ### publish in public npmjs repo
 Publish in *public* npmjs repository. Contribute to support private npmjs repositories if needed.
