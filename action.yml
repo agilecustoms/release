@@ -64,6 +64,10 @@ runs:
         service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')
         echo "service=$service" >> $GITHUB_OUTPUT
         
+        if [ -d s3 ]; then
+          echo "aws_s3=true" >> $GITHUB_OUTPUT
+        fi
+        
         if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
           if [ -z "${{ inputs.aws-account }}" ] || [ -z "${{ inputs.aws-region }}" ] || [ -z "${{ inputs.aws-role }}" ]; then
             echo "Error: aws-account, aws-region, and aws-role must all be provided" >&2
