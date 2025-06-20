@@ -10,7 +10,7 @@ This table shows supported artifact types and their features:
 |------------------------|------------|-------------|----------------|-------------|
 | git                    | ✅          | ✅           | N/A            | ✅           |
 | AWS S3                 | ✅          | ✅           | N/A            | ✅           |
-| AWS ECR                | ✅          | ✅           | N/A            | planned     |
+| AWS ECR                | ✅          | ✅           | N/A            | ✅           |
 | AWS CodeArtifact maven | N/A        | ⚠️          | ✅              | ❌           |
 | npmjs public repo      | N/A        | ⚠️          | ✅              | ❌           |
 
@@ -99,7 +99,7 @@ Additionally, you can specify `aws-s3-dir`, then files will be uploaded to `s3-b
 Convention: publishing of all AWS types of artifacts require `aws-account`, `aws-region` and `aws-role` parameters
 
 **dev-release** will publish files in `s3-bucket/{aws-s3-dir}/{current-repo-name}/{branch-name}/` directory.
-Each S3 file will be tagged with `Release=false`, so you can setup lifecycle rule to delete such files after 30 days!
+Each S3 file will be tagged with `Release=false`, so you can set up lifecycle rule to delete such files after 30 days!
    
 ### publish in AWS ECR
 First you build docker image, and then you release it with this action.
@@ -118,6 +118,10 @@ steps:
       aws-role: 'ci/publisher'
       aws-ecr: true
 ```
+
+**dev-release** works smoothly with ECR: Docker image gets published with tag equal to branch name.
+ECR allows to configure lifecycle rules by tag prefix, so if you adopt `dev/` prefix for your dev-release branches,
+then you can set up ECR lifecycle rule to delete images with prefix `dev-` after 30 days automatically!
 
 ### publish in AWS CodeArtifact Maven repository
 This action releases maven artifacts in AWS CodeArtifact repository.
@@ -185,9 +189,8 @@ Dev release allows to publish artifacts temporarily for testing purposes:
 you push your changes to the feature branch, branch name becomes this dev release version:
 - semver is _not_ generated
 - no git tags created — your branch name is all you need
-- if branch name is `feature/abc` then the version will be `feature-abc`
-- not every artifact type supports dev-release
-- for each artifact type, dev-release might have different meaning, see `dev-release` section for each artifact type
+- if branch name is `dev/feature` then the version will be `dev-feature`
+- for each artifact type, dev-release might have different semantics, see `dev-release` section for each artifact type
 
 Example of 'dev-release' usage with AWS S3:
 ```yaml
