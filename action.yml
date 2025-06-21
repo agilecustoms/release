@@ -63,7 +63,8 @@ runs:
     - name: Validate npmjs token
       if: inputs.npmjs-token && inputs.dev-release
       shell: bash
-      run: echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
+      run: |
+        echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
 
     - name: Init
       id: init
