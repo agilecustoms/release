@@ -288,8 +288,8 @@ runs:
         
         # turn "1 1.0 1.0.0 latest" into "refs/tags/1 refs/tags/1.0 refs/tags/1.0.0 refs/tags/latest"
         refs=$(echo "${{ steps.version.outputs.tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
-        # push changes made in 'main' along with tags (latest and patch_tag) atomically. use --force to overwrite old tags
-        git push --atomic origin main $refs --force
+        # push changes along with tags (latest and patch_tag) atomically. use --force to overwrite old tags
+        git push --atomic origin ${{ github.ref_name }} $refs --force
 
 outputs:
   changes_detected:
