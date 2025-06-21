@@ -12,10 +12,10 @@ inputs:
     required: false
   aws-codeartifact-domain:
     description: 'CodeArtifact domain name'
-    required: true
+    required: false
   aws-codeartifact-repository:
     description: 'CodeArtifact repository name'
-    required: true
+    required: false
   aws-codeartifact-maven:
     description: 'If true, then publish maven artifacts to AWS CodeArtifact'
     required: false
@@ -26,7 +26,7 @@ inputs:
     description: 'S3 bucket to upload released artifacts to'
     required: false
   aws-s3-dir:
-    description: 'S3 bucket directory to upload released artifacts to, by default = current repo name'
+    description: 'Allows to specifyS3 bucket directory to upload released artifacts to'
     required: false
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
