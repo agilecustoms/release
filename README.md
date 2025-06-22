@@ -51,7 +51,7 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 - `tag-context` - Context for tag generation: 'repo' (default) or 'branch'.
   Use 'branch' to release from non-main long-living branches such as v1-support (given v2 is in main).
   Also use 'actions/checkout' with 'fetch-depth: 0'
-- `version` - version to use, if not provided, will be generated based on latest tag and commit message
+- `version` - Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags). Cannot be used with dev-release=true
 
 ## Outputs
 - `version` - version that was used/generated
@@ -199,8 +199,7 @@ you push your changes to the feature branch, branch name becomes this dev releas
 - semver is _not_ generated
 - no git tags created — your branch name is all you need
 - if branch name is `dev/feature` then the version will be `dev-feature`
-- parameter `dev-release-prefix` enforces branch naming for dev releases, it helps to automatically dispose dev release artifacts.
-set to empty string to disable such enforcement
+- parameter `dev-release-prefix` (default value is `dev/`) enforces branch naming for dev releases, it helps to automatically dispose dev release artifacts. Set to empty string to disable such enforcement
 - for each artifact type, dev-release might have different semantics, see `dev-release` section for each artifact type
 
 Example of 'dev-release' usage with AWS S3:
@@ -219,7 +218,23 @@ steps:
 
 
 ### explicit version
-TBD
+Use the `version` input parameter to specify an exact version instead of auto-generating one. When provided, only this single version/tag will be created (no `latest`, `major`, or `minor` tags).
+Explicit version works for all types of artifacts
+
+Example of 'version' usage with AWS ECR:
+```yaml
+steps:
+  - name: Release
+    uses: agilecustoms/release@main
+    with:
+      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+      aws-region: us-east-1
+      aws-role: 'ci/publisher'
+      aws-ecr: true
+      version: '2.3.8'
+# Creates only tag: 2.3.8
+```
+
 
 ### custom-version-update
 TBD

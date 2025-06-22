@@ -53,6 +53,9 @@ inputs:
   version-update-script:
     description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
     required: false
+  version:
+    description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags)'
+    required: false
 
 runs:
   using: "composite"
@@ -65,6 +68,12 @@ runs:
       shell: bash
       run: |
         echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
+
+    - name: Validate version
+      if: inputs.version && inputs.dev-release == 'true'
+      shell: bash
+      run: |
+        echo "Error: explicit version cannot be used with dev-release=true" >&2; exit 1
 
     - name: Init
       id: init
@@ -122,7 +131,7 @@ runs:
 ## Phase 1 - Generate a new version
 
     - name: Generate new version
-      if: inputs.dev-release == 'false'
+      if: inputs.dev-release == 'false' && !inputs.version
       id: generate_version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
@@ -135,6 +144,9 @@ runs:
       run: |
         if [ "${{ inputs.dev-release }}" = "true" ]; then
           version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
+          tags="$version"
+        elif [ -n "${{ inputs.version }}" ]; then
+          version="${{ inputs.version }}"
           tags="$version"
         else
           version="${{ steps.generate_version.outputs.new_tag }}"
