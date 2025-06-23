@@ -3,11 +3,10 @@ Release software artifacts and git tags together in one action
 
 ![Cover](docs/images/cover.png)
 
-Main usecase - microservices that hold application code and infrastructure code (like Terraform).
+Main use case - microservices that hold application code and infrastructure code (like Terraform).
 Since Terraform is distributed as source code via git tags, the action uses git tags as source of truth for versioning.
 It generates new version based on current git tags and SemVer commit tags `#patch`, `#minor`, `#major`,
 then publishes artifacts and pushes git tags so your artifacts and git tags are in sync.
-
 
 This table shows supported artifact types and features:
 
@@ -40,12 +39,13 @@ Limitations:
 - only `main` branch is supported for now
 These limitations should be gone in future, see roadmap
 
-*Consistency*. This GH action does two modify operations: "Publish artifacts" and then "Git push"
+**Consistency**. This GH action does two modify operations: "Publish artifacts" and then "Git push"
 Some of them need to go first, and then you need to be prepared what to do if second fails.
 Rationale to have "Git push" the last: 1) it is least likely to fail; 2) provided that all publish steps are idempotent,
 you can fix "Git push" issue and re-run the workflow w/o side effects.
 Some publish commands are not idempotent (like npm publish), so as workaround - just ignore 'same version already exists' type of errors 
 if it is already not first workflow run (use `${{ github.run_attempt }}`)
+
 
 ## Inputs
 - `tag-context` - Context for tag generation: 'repo' (default) or 'branch'.
@@ -53,8 +53,10 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
   Also use 'actions/checkout' with 'fetch-depth: 0'
 - `version` - Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags). Cannot be used with dev-release=true
 
+
 ## Outputs
 - `version` - version that was used/generated
+
 
 ## Setup
 1. Pick AWS account for publishing artifacts, place it in `vars.AWS_ACCOUNT_DIST`
@@ -64,7 +66,9 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 4. Passing `aws-access-key-id` and `aws-secret-access-key` is discouraged (less secure)
    Instead we'll use OpenID provider, see example in `iam.tf` file in this repo
 
+
 ## Main use cases
+
 
 ### git tag only
 For example, for repository with terraform code only - no binaries, just add git tag<br>
@@ -86,6 +90,7 @@ jobs:
 ```
 Note: adding/overwriting tags requires GH job permissions `content: write`
 
+
 ### publish in AWS S3
 Convention: there should be `s3` directory in cwd. All content of this directory will be uploaded in S3 bucket<br>
 Ex: if current tag is '1.2.3' and commit has #patch, then files will be uploaded to `aws-s3-bucket/aws-s3-bucket-dir/1.2.4`
@@ -105,7 +110,8 @@ Convention: publishing of all AWS types of artifacts require `aws-account`, `aws
 
 **dev-release** will publish files in `s3-bucket/{aws-s3-dir}/{current-repo-name}/{branch-name}/` directory.
 Each S3 file will be tagged with `Release=false`, so you can set up lifecycle rule to delete such files after 30 days!
-   
+
+
 ### publish in AWS ECR
 First you build docker image, and then you release it with this action.
 Same as git tags, when you release version `1.2.3` with commit message `#patch`,
@@ -127,6 +133,7 @@ steps:
 **dev-release** works smoothly with ECR: Docker image gets published with tag equal to branch name.
 ECR allows to configure lifecycle rules by tag prefix, so if you adopt `dev/` prefix for your dev-release branches,
 then you can set up ECR lifecycle rule to delete images with prefix `dev-` after 30 days automatically!
+
 
 ### publish in AWS CodeArtifact Maven repository
 This action releases maven artifacts in AWS CodeArtifact repository.
@@ -163,6 +170,7 @@ Best alternative is to publish a specific version say latest is `1.2.3` and you 
 
 ## Additional use cases
 
+
 ### release from non-main branch
 Assume main development (v2.x) is conducted in `main` branch, while version 1.x is maintained in `v1-support` branch.
 If you want to make release in support branch, you need
@@ -193,6 +201,7 @@ Note: tag `latest` is only added to default (typically `main`) branch,
 so if you release new `#patch` version in "support" branch w/ and most recent tag is "1.2.3",
 then new tag will be `1.2.4` plus tags `1`, `1.2` will be overwritten to point to the same commit as `1.2.4`, but `latest` tag will not be changed
 
+
 ### dev release
 Dev release allows to publish artifacts temporarily for testing purposes:
 you push your changes to the feature branch, branch name becomes this dev release version:
@@ -218,10 +227,15 @@ steps:
 
 
 ### explicit version
-Use the `version` input parameter to specify an exact version instead of auto-generating one. When provided, only this single version/tag will be created (no `latest`, `major`, or `minor` tags).
-Explicit version works for all types of artifacts
+Use the `version` input parameter to specify an exact version instead of auto-generating one.
+When provided, only this single version/tag will be created (no `latest`, `major`, or `minor` tags).
+Typically, you use normal release flow (for trunk based development)
+or `tag-context: branch` to release a new version from non-default branch (such as old version support).
+You would use `dev-release: true` to test some feature before merging it. Use explicit **version** as last resort:
+1. to fix existing version in-place
+2. instead of dev-release when it is not supported
 
-Example of 'version' usage with AWS ECR:
+Example of `version` usage with AWS ECR:
 ```yaml
 steps:
   - name: Release
@@ -231,24 +245,24 @@ steps:
       aws-region: us-east-1
       aws-role: 'ci/publisher'
       aws-ecr: true
-      version: '2.3.8'
-# Creates only tag: 2.3.8
+      version: '1.1.8'
+# Creates only tag: 1.1.8
 ```
+**Use with great caution** as it may break your release cycle, imagine release chain (all in one branch):
+```
+1.1.6
+1.1.7
+1.2.0
+1.2.1
+1.1.8 <-- you just released with manual version
+```
+Then you make a normal `#minor` release (no explicit version) and you'll get another `1.2.0`
+So be very careful with doing explicit version in the right branch!
 
 
 ### custom-version-update
 TBD
 
-## Roadmap
-- publish in private npmjs repository
-- support `on: pull_request` event
-- multi-region support
-
-## Testing (work in progress)
-1. Make a branch 'feature' (this repo unlikely to incur many changes)
-2. Push branch and get feedback
-3. Once satisfied, revert any debug changes and merge to `main`
 
 ## Credits
 - https://github.com/anothrNick/github-tag-action
-
