@@ -172,7 +172,7 @@ Best alternative is to publish a specific version say latest is `1.2.3` and you 
 
 
 ### release from non-main branch
-Assume main development (v2.x) is conducted in `main` branch, while version 1.x is maintained in `v1-support` branch.
+Assume the main development (v2.x) is conducted in `main` branch, while version 1.x is maintained in `v1-support` branch.
 If you want to make release in support branch, you need
 1. run actions/checkout with with `fetch-depth: 0`
 2. pass parameter `tag-context: branch`
@@ -229,10 +229,10 @@ steps:
 ### explicit version
 Use the `version` input parameter to specify an exact version instead of auto-generating one.
 When provided, only this single version/tag will be created (no `latest`, `major`, or `minor` tags).
-Typically, you use normal release flow (for trunk based development)
+Typically, you use normal release flow (for trunk-based development)
 or `tag-context: branch` to release a new version from non-default branch (such as old version support).
 You would use `dev-release: true` to test some feature before merging it. Use explicit **version** as last resort:
-1. to fix existing version in-place
+1. to fix an existing version in-place
 2. instead of dev-release when it is not supported
 
 Example of `version` usage with AWS ECR:
@@ -248,16 +248,8 @@ steps:
       version: '1.1.8'
 # Creates only tag: 1.1.8
 ```
-**Use with great caution** as it may break your release cycle, imagine release chain (all in one branch):
-```
-1.1.6
-1.1.7
-1.2.0
-1.2.1
-1.1.8 <-- you just released with manual version
-```
-Then you make a normal `#minor` release (no explicit version) and you'll get another `1.2.0`
-So be very careful with doing explicit version in the right branch!
+**Use with great caution** as it may break your release sequence: `1.0, 1.1, 2.0` and then boom! `1.2` in same branch.
+Either checkout old tag to re-release it or make a branch from relevant commit and release an explicit version from this branch.
 
 
 ### custom-version-update
