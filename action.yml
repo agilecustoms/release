@@ -47,11 +47,14 @@ inputs:
     description: 'Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches'
     required: false
     default: 'repo'
-  version-update-script:
-    description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
-    required: false
   version:
     description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags)'
+    required: false
+  version-prefix:
+    description: 'Optional prefix for version, ex. `v` to generate `v1.0.0` instead of `1.0.0`. Used only when version is auto-generated'
+    required: false
+  version-update-script:
+    description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
 
 runs:
@@ -114,7 +117,7 @@ runs:
     - name: Login AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
       id: login-aws
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v4.2.1 # v4 doesn't point to latest version
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
@@ -132,8 +135,9 @@ runs:
       id: generate_version
       uses: anothrNick/github-tag-action@v1 # https://github.com/anothrNick/github-tag-action?tab=readme-ov-file
       env:
-        TAG_CONTEXT: ${{ inputs.tag-context }} # given branches main v2.x.y and legacy v1.x.y - generate next version based on current branch
         DRY_RUN: true # just generate a new version, do not push tag
+        TAG_CONTEXT: ${{ inputs.tag-context }} # given branches main v2.x.y and legacy v1.x.y - generate next version based on current branch
+        TAG_PREFIX: ${{ inputs.version-prefix }}
 
     - name: Finalize version
       id: version

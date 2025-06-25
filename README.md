@@ -47,24 +47,25 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 ## Inputs
 
-| Name                        | Description                                                                                                                                          | Default   |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
-| aws-account                 | AWS account to release (upload) artifacts to. Not needed if there are no artifacts, just git tag                                                     |           |
-| aws-region                  | AWS region                                                                                                                                           |           |
-| aws-role                    | IAM role to assume for release, ex. `/ci/publisher`                                                                                                  |           |
-| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                            |           |
-| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                            |           |
-| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                            |           |
-| aws-ecr                     | If true, then push docker image to ECR                                                                                                               |           |
-| aws-s3-bucket               | S3 bucket to upload released artifacts to                                                                                                            |           |
-| aws-s3-dir                  | Allows to specify S3 bucket directory to upload released artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                     |           |
-| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                       | false     |
-| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/      |
-| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22        |
-| npmjs-token                 | If specified - will publish npm package in npmjs                                                                                                     |           |
-| tag-context                 | Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches                                 | repo      |
-| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |           |
-| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |           |
+| Name                        | Description                                                                                                                                          | Default |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| aws-account                 | AWS account to release (upload) artifacts to. Not needed if there are no artifacts, just git tag                                                     |         |
+| aws-region                  | AWS region                                                                                                                                           |         |
+| aws-role                    | IAM role to assume for release, ex. `/ci/publisher`                                                                                                  |         |
+| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                            |         |
+| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                            |         |
+| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                            |         |
+| aws-ecr                     | If true, then push docker image to ECR                                                                                                               |         |
+| aws-s3-bucket               | S3 bucket to upload released artifacts to                                                                                                            |         |
+| aws-s3-dir                  | Allows to specify S3 bucket directory to upload released artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                     |         |
+| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                       | false   |
+| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/    |
+| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22      |
+| npmjs-token                 | If specified - will publish npm package in npmjs                                                                                                     |         |
+| tag-context                 | Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches                                 | repo    |
+| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |         |
+| version-prefix              | Optional prefix for version, ex. `v` to generate `v1.0.0` instead of `1.0.0`. Used only when version is auto-generated                               |         |
+| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |         |
 
 
 ## Outputs
