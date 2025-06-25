@@ -3,9 +3,9 @@ Release software artifacts and git tags together in one action
 
 ![Cover](docs/images/cover.png)
 
-Main use case - microservices that hold application code and infrastructure code (like Terraform).
-Since Terraform is distributed as source code via git tags, the action uses git tags as source of truth for versioning.
-It generates new version based on current git tags and SemVer commit tags `#patch`, `#minor`, `#major`,
+Main use case — microservices that hold application code and infrastructure code (like Terraform).
+Since Terraform is distributed as source code via git tags, the action uses git tags as a source of truth for versioning.
+It generates a new version based on current git tags and SemVer commit tags `#patch`, `#minor`, `#major`,
 then publishes artifacts and pushes git tags so your artifacts and git tags are in sync.
 
 This table shows supported artifact types and features:
@@ -18,11 +18,11 @@ This table shows supported artifact types and features:
 | AWS CodeArtifact maven | N/A        | ⚠️          | ✅              | ⚠️          |
 | npmjs public repo      | N/A        | ⚠️          | ✅              | ❌           |
 
-1. Generate new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
+1. Generate a new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
 2. Update version in code (`package.json`, `pom.xml`) and commit
    1. maven
    2. npm
-   3. custom (can use to update cache key!)
+   3. custom (can use to update a cache key!)
 3. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory. Supports dev-release
    2. AWS ECR - publish Docker image in ECR repository
@@ -35,9 +35,7 @@ This table shows supported artifact types and features:
 
 Limitations:
 - only `on: push` event is supported — it covers both direct push and PR merge. `on: pull_request` is not yet supported
-- when use `on: push` then SemVer tag `#patch`, `#minor`, `#major` is taken only from last commit message, keep it in mind when merging PRs
-- only `main` branch is supported for now
-These limitations should be gone in future, see roadmap
+- when merge/rebase a PR of multiple commits w/o squash, then SemVer tag `#patch`, `#minor`, `#major` is taken only from last commit message
 
 **Consistency**. This GH action does two modify operations: "Publish artifacts" and then "Git push"
 Some of them need to go first, and then you need to be prepared what to do if second fails.
@@ -48,20 +46,38 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 
 ## Inputs
-- `tag-context` - Context for tag generation: 'repo' (default) or 'branch'.
-  Use 'branch' to release from non-main long-living branches such as v1-support (given v2 is in main).
-  Also use 'actions/checkout' with 'fetch-depth: 0'
-- `version` - Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags). Cannot be used with dev-release=true
+
+| Name                        | Description                                                                                                                                          | Default   |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| aws-account                 | AWS account to release (upload) artifacts to. Not needed if there are no artifacts, just git tag                                                     |           |
+| aws-region                  | AWS region                                                                                                                                           |           |
+| aws-role                    | IAM role to assume for release, ex. `/ci/publisher`                                                                                                  |           |
+| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                            |           |
+| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                            |           |
+| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                            |           |
+| aws-ecr                     | If true, then push docker image to ECR                                                                                                               |           |
+| aws-s3-bucket               | S3 bucket to upload released artifacts to                                                                                                            |           |
+| aws-s3-dir                  | Allows to specify S3 bucket directory to upload released artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                     |           |
+| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                       | false     |
+| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/      |
+| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22        |
+| npmjs-token                 | If specified - will publish npm package in npmjs                                                                                                     |           |
+| tag-context                 | Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches                                 | repo      |
+| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |           |
+| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |           |
 
 
 ## Outputs
-- `version` - version that was used/generated
 
+| Name              | Description                                                                                                                                                                                                                                                                                                            |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| changes_detected  | true if some changes were commited. Many artifacts release assumes changes such as pom.xml and package.json. Also you might have custom script that made some changes. OR you could have made change right before calling this `release` action. If there any changes - `release` action commit them and return `true` |
+| version           | Version that was generated (or provided via `version` input)                                                                                                                                                                                                                                                           |
 
 ## Setup
-1. Pick AWS account for publishing artifacts, place it in `vars.AWS_ACCOUNT_DIST`
+1. Pick an AWS account for publishing artifacts, place it in `vars.AWS_ACCOUNT_DIST`
 2. Create S3 bucket to publish raw artifacts, ECR repository for Docker images, CodeArtifact for software packages
-3. Create IAM role (ex. `ci/publisher`) with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.<br>
+3. Create an IAM role (ex. `ci/publisher`) with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.
    Reference role can be found in `iam.tf` file in this repo
 4. Passing `aws-access-key-id` and `aws-secret-access-key` is discouraged (less secure)
    Instead we'll use OpenID provider, see example in `iam.tf` file in this repo
@@ -131,15 +147,15 @@ steps:
 ```
 
 **dev-release** works smoothly with ECR: Docker image gets published with tag equal to branch name.
-ECR allows to configure lifecycle rules by tag prefix, so if you adopt `dev/` prefix for your dev-release branches,
+ECR allows you to configure lifecycle rules by tag prefix, so if you adopt `dev/` prefix for your dev-release branches,
 then you can set up ECR lifecycle rule to delete images with prefix `dev-` after 30 days automatically!
 
 
 ### publish in AWS CodeArtifact Maven repository
 This action releases maven artifacts in AWS CodeArtifact repository.
-Note: it doesn't compile source code, nor run tests, it just updates version in `pom.xml` and publishes it.
-So make sure you maven "heavy lifting" (compile, test, package) prior to this action.
-See .. for details how to setup settings.xml, pom.xml and how to use artifacts published by this action.
+Note: it doesn't compile source code, nor run tests, it just updates a version in `pom.xml` and publishes it.
+So put your maven "heavy lifting" (compile, test, package) prior to this action.
+See .. for details how to set up settings.xml, pom.xml and how to use artifacts published by this action.
 ```yaml
 steps:
   - name: Release
@@ -208,7 +224,7 @@ you push your changes to the feature branch, branch name becomes this dev releas
 - semver is _not_ generated
 - no git tags created — your branch name is all you need
 - if branch name is `dev/feature` then the version will be `dev-feature`
-- parameter `dev-release-prefix` (default value is `dev/`) enforces branch naming for dev releases, it helps to automatically dispose dev release artifacts. Set to empty string to disable such enforcement
+- parameter `dev-branch-prefix` (default value is `dev/`) enforces branch naming for dev releases, it helps to automatically dispose dev release artifacts. Set to empty string to disable such enforcement
 - for each artifact type, dev-release might have different semantics, see `dev-release` section for each artifact type
 
 Example of 'dev-release' usage with AWS S3:
@@ -234,27 +250,3 @@ or `tag-context: branch` to release a new version from non-default branch (such 
 You would use `dev-release: true` to test some feature before merging it. Use explicit **version** as last resort:
 1. to fix an existing version in-place
 2. instead of dev-release when it is not supported
-
-Example of `version` usage with AWS ECR:
-```yaml
-steps:
-  - name: Release
-    uses: agilecustoms/release@main
-    with:
-      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
-      aws-region: us-east-1
-      aws-role: 'ci/publisher'
-      aws-ecr: true
-      version: '1.1.8'
-# Creates only tag: 1.1.8
-```
-**Use with great caution** as it may break your release sequence: `1.0, 1.1, 2.0` and then boom! `1.2` in same branch.
-Either checkout old tag to re-release it or make a branch from relevant commit and release an explicit version from this branch.
-
-
-### custom-version-update
-TBD
-
-
-## Credits
-- https://github.com/anothrNick/github-tag-action

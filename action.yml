@@ -2,19 +2,19 @@ name: 'Release'
 description: 'generate new version, upload to s3, push tags and send to gitops'
 inputs:
   aws-account:
-    description: 'AWS account (dist) to upload released artifacts to. Optional if there are no artifacts, just git tag'
+    description: 'AWS account to release (upload) artifacts to. Not needed if there are no artifacts, just git tag'
     required: false
   aws-region:
     description: 'AWS region'
     required: false
   aws-role:
-    description: AWS role to assume for release
+    description: 'IAM role to assume for release, ex. `/ci/publisher`'
     required: false
   aws-codeartifact-domain:
-    description: 'CodeArtifact domain name'
+    description: 'CodeArtifact domain name, ex. `mycompany`'
     required: false
   aws-codeartifact-repository:
-    description: 'CodeArtifact repository name'
+    description: 'CodeArtifact repository name, ex. `maven`'
     required: false
   aws-codeartifact-maven:
     description: 'If true, then publish maven artifacts to AWS CodeArtifact'
@@ -26,32 +26,29 @@ inputs:
     description: 'S3 bucket to upload released artifacts to'
     required: false
   aws-s3-dir:
-    description: 'Allows to specifyS3 bucket directory to upload released artifacts to'
+    description: 'Allows to specify S3 bucket directory to upload released artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
     required: false
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
     default: 'false'
   dev-branch-prefix:
-    description: 'Enforce branch prefix for dev-releases'
+    description: 'Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement'
     required: false
     default: 'dev/'
   node-version:
-    description: 'Node.js version to use to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
+    description: 'Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
     default: '22'
   npmjs-token:
-    description: 'token to publish npm package in npmjs'
+    description: 'If specified - will publish npm package in npmjs'
     required: false
   tag-context:
-    description: |
-      Context for tag generation: 'repo' (default) or 'branch'
-      Use 'branch' to release from non-main long-living branches such as v1-support (given v2 is in main)
-      When 'branch' is, make sure to use actions/checkout with 'fetch-depth: 0'
+    description: 'Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches'
     required: false
     default: 'repo'
   version-update-script:
-    description: 'sh script that allows to update version in custom file(s), not just pom.xml or package.json'
+    description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
   version:
     description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags)'
@@ -105,7 +102,7 @@ runs:
         if [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
           if [ -z "${{ inputs.aws-codeartifact-domain }}" ] || [ -z "${{ inputs.aws-codeartifact-repository }}" ]; then
             echo "Error: aws-codeartifact-domain and aws-codeartifact-repository must be provided when aws-codeartifact-maven is true" >&2
-            exit 1
+            exit 1`
           fi
         fi
         
