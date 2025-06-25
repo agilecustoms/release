@@ -79,7 +79,7 @@ runs:
       id: init
       shell: bash
       run: |
-        # this action is called in context of the microservice repo, so GITHUB_REPOSITORY has a format of 'company/service'
+        # GITHUB_REPOSITORY has a format of 'company/service'
         service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')
         echo "service=$service" >> $GITHUB_OUTPUT
         
@@ -105,7 +105,7 @@ runs:
         if [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
           if [ -z "${{ inputs.aws-codeartifact-domain }}" ] || [ -z "${{ inputs.aws-codeartifact-repository }}" ]; then
             echo "Error: aws-codeartifact-domain and aws-codeartifact-repository must be provided when aws-codeartifact-maven is true" >&2
-            exit 1`
+            exit 1
           fi
         fi
         
