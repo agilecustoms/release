@@ -164,7 +164,7 @@ runs:
 
     - name: Setup Java
       if: inputs.aws-codeartifact-maven
-      uses: agilecustoms/setup-maven-codeartifact@main
+      uses: agilecustoms/setup-maven-codeartifact@v1
       with:
         aws-account: ${{ inputs.aws-account }}
         aws-region: ${{ inputs.aws-region }}
@@ -199,7 +199,7 @@ runs:
 
     - name: Upload in S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/release-s3@main
+      uses: agilecustoms/release-s3@v1
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}

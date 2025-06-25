@@ -103,7 +103,7 @@ jobs:
            uses: actions/checkout@v4
 
          - name: Release
-           uses: agilecustoms/release@main
+           uses: agilecustoms/release@v1
 ```
 Note: adding/overwriting tags requires GH job permissions `content: write`
 
@@ -115,7 +115,7 @@ Also files will be uploaded in dirs `/1`, `/1.2` and `/latest` - previous conten
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/release@main
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
@@ -139,7 +139,7 @@ steps:
     run: docker build
 
   - name: Release
-    uses: agilecustoms/release@main
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
@@ -160,7 +160,7 @@ See .. for details how to set up settings.xml, pom.xml and how to use artifacts 
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/release@main
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
@@ -177,7 +177,7 @@ This will generate new version, update version in `package.json`, commit, push c
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/release@main
+    uses: agilecustoms/release@v1
     with:
       npmjs-token: ${{ secrets.NPMJS_TOKEN }}
 ```
@@ -210,7 +210,7 @@ jobs:
               fetch-depth: 0
 
          - name: Release
-           uses: agilecustoms/release@main
+           uses: agilecustoms/release@v1
            with:
                tag-context: branch
 ```
@@ -232,7 +232,7 @@ Example of 'dev-release' usage with AWS S3:
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/release@main
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1

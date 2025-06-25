@@ -16,7 +16,7 @@ jobs:
 
       - name: Release
         id: release
-        uses: agilecustoms/release@main
+        uses: agilecustoms/release@v1
         with:
           version-prefix: "v"
 
