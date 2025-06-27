@@ -2,13 +2,13 @@ name: 'Release'
 description: 'generate new version, upload to s3, push tags and send to gitops'
 inputs:
   aws-account:
-    description: 'AWS account to release (upload) artifacts to. Not needed if there are no artifacts, just git tag'
+    description: 'AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag'
     required: false
   aws-region:
     description: 'AWS region'
     required: false
   aws-role:
-    description: 'IAM role to assume for release, ex. `/ci/publisher`'
+    description: 'IAM role to assume to publish, ex. `/ci/publisher`'
     required: false
   aws-codeartifact-domain:
     description: 'CodeArtifact domain name, ex. `mycompany`'
@@ -23,10 +23,10 @@ inputs:
     description: 'If true, then push docker image to ECR'
     required: false
   aws-s3-bucket:
-    description: 'S3 bucket to upload released artifacts to'
+    description: 'S3 bucket to upload artifacts to'
     required: false
   aws-s3-dir:
-    description: 'Allows to specify S3 bucket directory to upload released artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
+    description: 'Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
     required: false
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
@@ -36,6 +36,10 @@ inputs:
     description: 'Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement'
     required: false
     default: 'dev/'
+  floating-tags:
+    description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
+    required: false
+    default: 'true'
   node-version:
     description: 'Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
@@ -151,10 +155,13 @@ runs:
           tags="$version"
         else
           version="${{ steps.generate_version.outputs.new_tag }}"
-          patch=$version
-          major="$(echo "$version" | awk -F. '{print $1}')"
-          minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
-          tags="$patch $minor $major latest"
+          tags="$version"
+          if [ "${{ inputs.floating-tags }}" = "true" ]; then
+            patch="$version"
+            major="$(echo "$version" | awk -F. '{print $1}')"
+            minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
+            tags="$patch $minor $major latest"
+          fi
         fi
         
         echo "version=$version" >> $GITHUB_OUTPUT
@@ -199,7 +206,7 @@ runs:
 
     - name: Upload in S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/release-s3@v1
+      uses: agilecustoms/publish-s3@main
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
