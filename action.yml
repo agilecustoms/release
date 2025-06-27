@@ -23,10 +23,10 @@ inputs:
     description: 'If true, then push docker image to ECR'
     required: false
   aws-s3-bucket:
-    description: 'S3 bucket to upload artifacts to'
+    description: 'Required if uploading to S3 (i.e. s3/ directory exists)'
     required: false
   aws-s3-dir:
-    description: 'Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
+    description: 'Allows specifying S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
     required: false
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
