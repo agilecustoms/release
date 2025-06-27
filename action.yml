@@ -284,8 +284,8 @@ runs:
       if: inputs.dev-release == 'false'
       shell: bash
       run: |
-        git config --global user.name "CI User"
-        git config --global user.email "user@ci.com"
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         
         # fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
