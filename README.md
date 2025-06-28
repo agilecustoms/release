@@ -19,20 +19,25 @@ This table shows supported artifact types and features:
 | AWS CodeArtifact maven | N/A           | ⚠️          | ✅              | ⚠️          |
 | npmjs public repo      | N/A           | ⚠️          | ✅              | ❌           |
 
-1. Generate a new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
-2. Update version in code (`package.json`, `pom.xml`) and commit
-   1. maven
-   2. npm
-   3. custom (can use to update a cache key!)
-3. Publish artifacts
+1. Validate
+2. Generate a new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
+3. Prepare (update versions, edit files)
+   1. update version in `pom.xml` (for maven)
+   2. update version in `package.json` (for npm)
+   3. run a custom script (can use to update a cache key!)
+   4. (TBD) update CHANGELOG.md
+   5. Commit
+4. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory
    2. AWS ECR - publish Docker image in ECR repository
    3. AWS CodeArtifact maven - publish maven package in CodeArtifact repository
    4. npmjs - publish npm package in npmjs.com repository
-4. Git push
-   1. commit changes from step 2
+5. Git push
+   1. commit changes from step 3
    2. besides SemVer 'major.minor.patch', also add floating tags 'major', 'major.minor' and 'latest'
    3. atomically push commit and tags to the remote repository
+6. GitHub release
+   1. create a GitHub release tied to the most recent tag
 
 **Limitations**:
 - only `on: push` event is supported — it covers both direct push and PR merge. `on: pull_request` is not yet supported

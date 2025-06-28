@@ -65,7 +65,7 @@ runs:
   using: "composite"
   steps:
 
-## Phase 0 - Init: validate inputs, infer defaults, login in AWS
+## Phase 1 - Init: validate inputs, infer defaults, login in AWS
 
     - name: Validate npmjs token
       if: inputs.npmjs-token && inputs.dev-release == 'true'
@@ -132,7 +132,7 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
 
-## Phase 1 - Generate a new version
+## Phase 2 - Generate a new version
 
     - name: Generate new version
       if: inputs.dev-release == 'false' && !inputs.version
@@ -167,7 +167,7 @@ runs:
         echo "version=$version" >> $GITHUB_OUTPUT
         echo "tags=$tags" >> $GITHUB_OUTPUT
 
-## Phase 2 - Update version in code
+## Phase 3 - Prepare (update versions, edit files)
 
     - name: Setup Java
       if: inputs.aws-codeartifact-maven
@@ -202,7 +202,7 @@ runs:
       shell: bash
       run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.version-update-script }}
 
-## Phase 3 - Publish artifacts
+## Phase 4 - Publish artifacts
 
     - name: Upload in S3
       if: steps.init.outputs.aws_s3
@@ -271,7 +271,7 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
 
-## Phase 4 - Git push
+## Phase 5 - Git push
 
 #    - name: Error to test publish idempotency
 #      shell: bash
@@ -310,6 +310,21 @@ runs:
         refs=$(echo "${{ steps.version.outputs.tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
         # push changes along with tags (latest and patch_tag) atomically. use --force to overwrite old tags
         git push --atomic origin ${{ github.ref_name }} $refs --force
+
+## Phase 6 - GitHub Release
+
+#    - name: Create GitHub Release
+#      if: inputs.dev-release == 'false'
+#      uses: softprops/action-gh-release@v2
+#      with:
+#        tag_name: ${{ steps.version.outputs.version }}
+#        name: Release ${{ steps.version.outputs.version }}
+#        body: |
+#          Automated release triggered from CI.
+#          Version: `${{ steps.version.outputs.version }}`
+#          Artifacts: S3, ECR, CodeArtifact, npmjs (as applicable)
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 outputs:
   changes_detected:
