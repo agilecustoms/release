@@ -315,6 +315,8 @@ runs:
       shell: bash
       run: |
         gh release create ${{ steps.version.outputs.version }}
+#      env:
+#        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 outputs:
   changes_detected:
