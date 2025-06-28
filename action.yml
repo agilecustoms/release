@@ -44,9 +44,6 @@ inputs:
     description: 'Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
     default: '22'
-  npmjs-token:
-    description: 'If specified - will publish npm package in npmjs'
-    required: false
   tag-context:
     description: 'Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches'
     required: false
@@ -68,7 +65,7 @@ runs:
 ## Phase 1 - Init: validate inputs, infer defaults, login in AWS
 
     - name: Validate npmjs token
-      if: inputs.npmjs-token && inputs.dev-release == 'true'
+      if: env.NODE_AUTH_TOKEN && inputs.dev-release == 'true'
       shell: bash
       run: |
         echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
@@ -183,17 +180,17 @@ runs:
     - name: Update version in maven
       if: inputs.aws-codeartifact-maven
       shell: bash
-      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=\* -DgroupId=\* -DartifactId=\*
+      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
     - name: Setup Node
-      if: inputs.npmjs-token
+      if: env.NODE_AUTH_TOKEN
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in npm
-      if: inputs.npmjs-token
+      if: env.NODE_AUTH_TOKEN
       shell: bash
       run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
@@ -254,7 +251,7 @@ runs:
     # get namespace from package.json: "name": "@company/envctl", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: inputs.npmjs-token
+      if: env.NODE_AUTH_TOKEN
       shell: bash
       run: |
         set +e
@@ -269,7 +266,7 @@ runs:
         fi
         exit $error_code
       env:
-        NODE_AUTH_TOKEN: ${{ inputs.npmjs-token }}
+        NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
 
 ## Phase 5 - Git push
 

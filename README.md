@@ -67,11 +67,16 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 | dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/    |
 | floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                             | true    |
 | node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22      |
-| npmjs-token                 | If specified - will publish npm package in npmjs                                                                                                     |         |
 | tag-context                 | Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches                                 | repo    |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |         |
 | version-prefix              | Optional prefix for version, ex. `v` to generate `v1.0.0` instead of `1.0.0`. Used only when version is auto-generated                               |         |
 | version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |         |
+
+## Environment variables
+
+| Name            | Description                                             |
+|-----------------|---------------------------------------------------------|
+| NODE_AUTH_TOKEN | If specified - will publish public npm package in npmjs |
 
 ## Outputs
 
@@ -82,12 +87,10 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 ## Setup
 
-1. Pick an AWS account for publishing artifacts, place it in `vars.AWS_ACCOUNT_DIST`
+1. Pick an AWS account for publishing artifacts, place it in org variable `AWS_ACCOUNT_DIST`
 2. Create S3 bucket to publish raw artifacts, ECR repository for Docker images, CodeArtifact for software packages
 3. Create an IAM role (ex. `ci/publisher`) with respective permissions: `s3:PutObject`, `ecr:PutImage`, `codeartifact:PublishPackageVersion` etc.
-   Reference role can be found in `iam.tf` file in this repo
-4. Passing `aws-access-key-id` and `aws-secret-access-key` is discouraged (less secure)
-   Instead we'll use OpenID provider, see example in `iam.tf` file in this repo
+   See example terraform module [terraform-aws-ci-publisher](https://github.com/agilecustoms/terraform-aws-ci-publisher)
 
 ## Main use cases
 
