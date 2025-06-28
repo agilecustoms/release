@@ -310,18 +310,11 @@ runs:
 
 ## Phase 6 - GitHub Release
 
-#    - name: Create GitHub Release
-#      if: inputs.dev-release == 'false'
-#      uses: softprops/action-gh-release@v2
-#      with:
-#        tag_name: ${{ steps.version.outputs.version }}
-#        name: Release ${{ steps.version.outputs.version }}
-#        body: |
-#          Automated release triggered from CI.
-#          Version: `${{ steps.version.outputs.version }}`
-#          Artifacts: S3, ECR, CodeArtifact, npmjs (as applicable)
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create GitHub Release
+      if: inputs.dev-release == 'false'
+      shell: bash
+      run: |
+        gh release create ${{ steps.version.outputs.version }}
 
 outputs:
   changes_detected:
