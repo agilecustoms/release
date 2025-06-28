@@ -310,11 +310,11 @@ runs:
 
 ## Phase 6 - GitHub Release
 
-    - name: Create GitHub Release
+    - name: GitHub Release
       if: inputs.dev-release == 'false'
       shell: bash
       run: |
-        gh release create ${{ steps.version.outputs.version }} --generate-notes
+        gh release create ${{ steps.version.outputs.version }} --generate-notes --notes "some text"
 
 
 outputs:
