@@ -314,9 +314,8 @@ runs:
       if: inputs.dev-release == 'false'
       shell: bash
       run: |
-        gh release create ${{ steps.version.outputs.version }}
-#      env:
-#        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        gh release create ${{ steps.version.outputs.version }} --generate-notes
+
 
 outputs:
   changes_detected:
