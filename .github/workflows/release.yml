@@ -8,13 +8,13 @@ on:
 jobs:
   Release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+#    permissions:
+#      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-#        with:
-#          persist-credentials: false
+        with:
+          persist-credentials: false
 
       - name: Release
         id: release
@@ -22,7 +22,8 @@ jobs:
         with:
           release: false
           version-prefix: v
-#        env:
+        env:
+          GH_TOKEN: ${{ secrets.GH_ACTIONS_TOKEN }}
 #          GH_TOKEN: ${{ github.token }}
 
       - name: Summary
