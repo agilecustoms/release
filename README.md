@@ -42,6 +42,7 @@ This table shows supported artifact types and features:
 **Limitations**:
 - only `on: push` event is supported — it covers both direct push and PR merge. `on: pull_request` is not yet supported
 - when merge/rebase a PR of multiple commits w/o squash, then SemVer tag `#patch`, `#minor`, `#major` is taken only from last commit message
+- not designed/tested for monorepos where tags have package/prefixes like `package/v1.2.3`
 
 **Consistency**. This GH action does two modify operations: "Publish artifacts" and then "Git push"
 Some of them need to go first, and then you need to be prepared what to do if second fails.
