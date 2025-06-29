@@ -120,7 +120,7 @@ jobs:
       - name: Release
         uses: agilecustoms/publish@v1
         env:
-           GH_TOKEN: ${{ github.token }} # required for GitHub release
+           GH_TOKEN: ${{ github.token }} # == ${{ secrets.GITHUB_TOKEN }}, required for GitHub release
 ```
 
 **Use PAT**. Default token has lots of permissions, so alternatively you can use PAT with explicit permissions:
