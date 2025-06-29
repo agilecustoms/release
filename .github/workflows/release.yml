@@ -8,8 +8,6 @@ on:
 jobs:
   Release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,9 +19,8 @@ jobs:
         uses: agilecustoms/publish@main
         with:
           version-prefix: v
-#        env:
-#          GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
-#          GH_TOKEN: ${{ github.token }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
 
       - name: Summary
         run: echo "### Released ${{ steps.release.outputs.version }} :pushpin:" >> $GITHUB_STEP_SUMMARY
