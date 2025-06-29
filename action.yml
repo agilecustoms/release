@@ -141,6 +141,14 @@ runs:
 
 ## Phase 2 - Generate a new version
 
+    - name: Release dry-run
+      uses: agilecustoms/release-gen@main
+
+    - name: Debug
+      shell: bash
+      run: |
+        ls -la
+
     - name: Generate new version
       if: inputs.dev-release == 'false' && !inputs.version
       id: generate_version
