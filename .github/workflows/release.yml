@@ -21,9 +21,9 @@ jobs:
         uses: agilecustoms/publish@main
         with:
           version-prefix: v
-        env:
+#        env:
 #          GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
-          GH_TOKEN: ${{ github.token }}
+#          GH_TOKEN: ${{ github.token }}
 
       - name: Summary
         run: echo "### Released ${{ steps.release.outputs.version }} :pushpin:" >> $GITHUB_STEP_SUMMARY
