@@ -76,9 +76,10 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 ## Environment variables
 
-| Name            | Description                                             |
-|-----------------|---------------------------------------------------------|
-| NODE_AUTH_TOKEN | If specified - will publish public npm package in npmjs |
+| Name            | Description                                                                                                            |
+|-----------------|------------------------------------------------------------------------------------------------------------------------|
+| NODE_AUTH_TOKEN | If specified - will publish an npm package in public npmjs repo                                                        |
+| GH_TOKEN        | Required if `release: true` (default). Can be default token `${{ github.token }}` or PAT `${{ secrets.GITHUB_TOKEN }}` |
 
 ## Outputs
 
@@ -96,12 +97,7 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 ## Main use cases
 
-### git tag only
-
-| action     | permission                                                                                                                                       |
-|------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| git push   | Either default token with `permissions: contents: write` or pass `env: GH_TOKEN: write?` If specified - will publish public npm package in npmjs |
-| gh release | If specified - will publish public npm package in npmjs                                                                                          |
+### No artifacts (git tags + GH release)
 
 For example, for repository with terraform code only - no binaries, just add git tag<br>
 Version will be automatically generated based on current tags + consider commit message tag `#major`, `#minor`, `#patch`<br>
@@ -124,7 +120,7 @@ jobs:
       - name: Release
         uses: agilecustoms/publish@v1
         env:
-           GH_TOKEN: ${{ github.token }}
+           GH_TOKEN: ${{ github.token }} # required for GitHub release
 ```
 
 **Use PAT**. Default token has lots of permissions, so alternatively you can use PAT with explicit permissions:
@@ -141,7 +137,7 @@ jobs:
       - name: Release
         uses: agilecustoms/publish@v1
         with:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # or your PAT 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # your PAT 
 ```
 
 ### publish in AWS S3
