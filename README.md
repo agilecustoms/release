@@ -97,6 +97,11 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 ### git tag only
 
+| action     | permission                                                                                                                                       |
+|------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| git push   | Either default token with `permissions: contents: write` or pass `env: GH_TOKEN: write?` If specified - will publish public npm package in npmjs |
+| gh release | If specified - will publish public npm package in npmjs                                                                                          |
+
 For example, for repository with terraform code only - no binaries, just add git tag<br>
 Version will be automatically generated based on current tags + consider commit message tag `#major`, `#minor`, `#patch`<br>
 Ex: if current tag is `1.2.3` and commit has #patch, then the new tag will be `1.2.4`.

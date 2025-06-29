@@ -20,6 +20,7 @@ jobs:
         id: release
         uses: agilecustoms/publish@main
         with:
+          release: false
           version-prefix: v
 #        env:
 #          GH_TOKEN: ${{ github.token }}

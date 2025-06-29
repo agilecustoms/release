@@ -44,6 +44,10 @@ inputs:
     description: 'Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
     default: '22'
+  release:
+    description: 'If true, then create a GitHub release with the same name as the tag'
+    required: false
+    default: 'true'
   tag-context:
     description: 'Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches'
     required: false
@@ -63,6 +67,12 @@ runs:
   steps:
 
 ## Phase 1 - Init: validate inputs, infer defaults, login in AWS
+
+    - name: Validate release
+      if: inputs.release == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
+      shell: bash
+      run: |
+        echo "Error: env: GH_TOKEN is required to create GH release, you can pass $${{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npmjs token
       if: env.NODE_AUTH_TOKEN && inputs.dev-release == 'true'
@@ -276,6 +286,14 @@ runs:
 #        echo "intentional error" >&2
 #        exit 1
 
+    # by default (job permissions: contents: write) git remote origin already pre-configured with a ${{ github.token }}
+    # alternatively user may want to use explicit PAT token, then need to configure git to use it for push command
+    - name: Git configure
+      if: env.GH_TOKEN
+      shell: bash
+      run: |
+        git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+
     - name: Git push
       id: git
       if: inputs.dev-release == 'false'
@@ -303,20 +321,15 @@ runs:
           git tag "$tag"
         done
         
-        # Set remote URL to use PAT for authentication
-        # git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${GITHUB_REPOSITORY}.git
-        
         # turn "1 1.0 1.0.0 latest" into "refs/tags/1 refs/tags/1.0 refs/tags/1.0.0 refs/tags/latest"
         refs=$(echo "${{ steps.version.outputs.tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
         # push changes along with tags (latest and patch_tag) atomically. use --force to overwrite old tags
         git push --atomic origin ${{ github.ref_name }} $refs --force
-#      env:
-#        GH_PAT: ${{ env.GH_PAT }}
 
 ## Phase 6 - GitHub Release
 
     - name: GitHub Release
-      if: inputs.dev-release == 'false'
+      if: inputs.release == 'true' && inputs.dev-release == 'false'
       shell: bash
       run: |
         gh release create ${{ steps.version.outputs.version }} --generate-notes --notes "some text"
