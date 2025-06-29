@@ -69,6 +69,7 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 | floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                             | true    |
 | node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22      |
 | tag-context                 | Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches                                 | repo    |
+| release                     | If true, then create a GitHub release with the same name as the tag                                                                                  | true    |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |         |
 | version-prefix              | Optional prefix for version, ex. `v` to generate `v1.0.0` instead of `1.0.0`. Used only when version is auto-generated                               |         |
 | version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |         |
@@ -122,6 +123,8 @@ jobs:
 
       - name: Release
         uses: agilecustoms/publish@v1
+        env:
+           GH_TOKEN: ${{ github.token }}
 ```
 
 **Use PAT**. Default token has lots of permissions, so alternatively you can use PAT with explicit permissions:
