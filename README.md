@@ -106,7 +106,9 @@ For example, for repository with terraform code only - no binaries, just add git
 Version will be automatically generated based on current tags + consider commit message tag `#major`, `#minor`, `#patch`<br>
 Ex: if current tag is `1.2.3` and commit has #patch, then the new tag will be `1.2.4`.
 Also tags `1`, `1.2` and `latest` will be overwritten to point to the same commit as `1.2.4`
+
 Adding/overwriting tags write access. It can be done in two ways:
+
 **Use default GitHub token** (note permissions `contents: write`):
 ```yaml
 jobs:
@@ -136,7 +138,7 @@ jobs:
       - name: Release
         uses: agilecustoms/publish@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }} # or your PAT 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # or your PAT 
 ```
 
 ### publish in AWS S3
