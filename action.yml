@@ -72,7 +72,7 @@ runs:
       if: inputs.release == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
       shell: bash
       run: |
-        echo "Error: env: GH_TOKEN is required to create GH release, you can pass $${{ github.token }} or PAT" >&2; exit 1
+        echo "Error: env: GH_TOKEN is required to create GH release, you can pass \${{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npmjs token
       if: env.NODE_AUTH_TOKEN && inputs.dev-release == 'true'
