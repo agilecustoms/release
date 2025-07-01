@@ -138,11 +138,15 @@ runs:
 
 ## Phase 2 - Generate a new version
 
+    # generate next_version (available as output), release notes (output notes) and also update file CHANGELOG.md
+    # note: if explicit version is provided, then next_version is still generated, but not used (see next step)
     - name: Release generation
+      id: release_gen
       if: inputs.dev-release == 'false'
       uses: agilecustoms/release-gen@main
 
     - name: Debug
+      if: always() # need this to print debug info even if previous steps failed, OR it made a decision to CANCEL the workflow
       shell: bash
       run: |
         ls -la
@@ -158,7 +162,7 @@ runs:
           version="${{ inputs.version }}"
           tags="$version"
         else
-          version="${{ steps.generate_version.outputs.new_tag }}"
+          version="${{ steps.release_gen.outputs.next_version }}"
           tags="$version"
           if [ "${{ inputs.floating-tags }}" = "true" ]; then
             patch="$version"
