@@ -68,7 +68,6 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 | dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/    |
 | floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                             | true    |
 | node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22      |
-| tag-context                 | Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches                                 | repo    |
 | release-gh                  | If true, then create a GitHub release with the same name as the tag                                                                                  | true    |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |         |
 | version-prefix              | Optional prefix for version, ex. `v` to generate `v1.0.0` instead of `1.0.0`. Used only when version is auto-generated                               |         |
@@ -239,7 +238,6 @@ steps:
 Assume the main development (v2.x) is conducted in `main` branch, while version 1.x is maintained in `v1-support` branch.
 If you want to make release in support branch, you need
 1. run actions/checkout with with `fetch-depth: 0`
-2. pass parameter `tag-context: branch`
 ```yaml
 on:
    push:
@@ -258,8 +256,6 @@ jobs:
 
          - name: Release
            uses: agilecustoms/publish@v1
-           with:
-               tag-context: branch
 ```
 Note: tag `latest` is only added to default (typically `main`) branch,
 so if you release new `#patch` version in "support" branch w/ and most recent tag is "1.2.3",
