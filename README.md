@@ -69,17 +69,17 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 | floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                             | true    |
 | node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22      |
 | tag-context                 | Context for tag generation: `repo` (default) or `branch`. Use `branch` to release from non-main long-living branches                                 | repo    |
-| release                     | If true, then create a GitHub release with the same name as the tag                                                                                  | true    |
+| release-gh                  | If true, then create a GitHub release with the same name as the tag                                                                                  | true    |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |         |
 | version-prefix              | Optional prefix for version, ex. `v` to generate `v1.0.0` instead of `1.0.0`. Used only when version is auto-generated                               |         |
 | version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |         |
 
 ## Environment variables
 
-| Name            | Description                                                                                                            |
-|-----------------|------------------------------------------------------------------------------------------------------------------------|
-| NODE_AUTH_TOKEN | If specified - will publish an npm package in public npmjs repo                                                        |
-| GH_TOKEN        | Required if `release: true` (default). Can be default token `${{ github.token }}` or PAT `${{ secrets.GITHUB_TOKEN }}` |
+| Name            | Description                                                                                                              |
+|-----------------|--------------------------------------------------------------------------------------------------------------------------|
+| NODE_AUTH_TOKEN | If specified - will publish an npm package in public npmjs repo                                                          |
+| GH_TOKEN        | Required if `release-gh: true` (default). Can be default token `${{ github.token }}` or PAT `${{ secrets.MY_GH_TOKEN }}` |
 
 ## Outputs
 
@@ -137,7 +137,7 @@ jobs:
       - name: Release
         uses: agilecustoms/publish@v1
         with:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # your PAT 
+          GH_TOKEN: ${{ secrets.MY_GH_TOKEN }} # your PAT 
 ```
 
 ### publish in AWS S3
@@ -267,7 +267,7 @@ then new tag will be `1.2.4` plus tags `1`, `1.2` will be overwritten to point t
 
 ### Dev release
 
-Dev release allows to publish artifacts temporarily for testing purposes:
+Dev release allows publishing artifacts temporarily for testing purposes:
 you push your changes to the feature branch, branch name becomes this dev-release version:
 - semver is _not_ generated
 - no git tags created — your branch name is all you need
@@ -298,3 +298,6 @@ or `tag-context: branch` to release a new version from non-default branch (such 
 You would use `dev-release: true` to test some feature before merging it. Use explicit **version** as last resort:
 1. to fix an existing version in-place
 2. instead of dev-release when it is not supported
+
+### Credits and Links
+- https://github.com/anothrNick/github-tag-action — easy and powerful action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release

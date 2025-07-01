@@ -44,7 +44,7 @@ inputs:
     description: 'Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
     default: '22'
-  release:
+  release-gh:
     description: 'If true, then create a GitHub release with the same name as the tag'
     required: false
     default: 'true'
@@ -66,10 +66,10 @@ runs:
   using: "composite"
   steps:
 
-## Phase 1 - Init: validate inputs, infer defaults, login in AWS
+## Phase 1.1 - Validate secrets (tokens) passed via env variables
 
     - name: Validate release
-      if: inputs.release == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
+      if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
       shell: bash
       run: |
         echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
@@ -80,16 +80,17 @@ runs:
       run: |
         echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
 
-    - name: Validate version
-      if: inputs.version && inputs.dev-release == 'true'
-      shell: bash
-      run: |
-        echo "Error: explicit version cannot be used with dev-release=true" >&2; exit 1
+## Phase 1.2 - Validate the rest of inputs, infer defaults, login in AWS
 
     - name: Init
       id: init
       shell: bash
       run: |
+        # Validate version: explicit version cannot be used with dev-release=true
+        if [ -n "${{ inputs.version }}" ] && [ "${{ inputs.dev-release }}" = "true" ]; then
+          echo "Error: explicit version cannot be used with dev-release=true" >&2
+          exit 1
+        fi
         # GITHUB_REPOSITORY has a format of 'company/service'
         service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')
         echo "service=$service" >> $GITHUB_OUTPUT
@@ -141,7 +142,8 @@ runs:
 
 ## Phase 2 - Generate a new version
 
-    - name: Release dry-run
+    - name: Release generation
+      if: inputs.dev-release == 'false'
       uses: agilecustoms/release-gen@main
 
     - name: Debug
@@ -337,7 +339,7 @@ runs:
 ## Phase 6 - GitHub Release
 
     - name: GitHub Release
-      if: inputs.release == 'true' && inputs.dev-release == 'false'
+      if: inputs.release-gh == 'true' && inputs.dev-release == 'false'
       shell: bash
       run: |
         gh release create ${{ steps.version.outputs.version }} --generate-notes --notes "some text"
