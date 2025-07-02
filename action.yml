@@ -145,12 +145,6 @@ runs:
       if: inputs.dev-release == 'false'
       uses: agilecustoms/release-gen@main
 
-    - name: Debug
-      if: always() # need this to print debug info even if previous steps failed, OR it made a decision to CANCEL the workflow
-      shell: bash
-      run: |
-        ls -la
-
     - name: Finalize version
       id: version
       shell: bash
