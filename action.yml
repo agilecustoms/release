@@ -48,11 +48,12 @@ inputs:
     description: 'If true, then create a GitHub release with the same name as the tag'
     required: false
     default: 'true'
+  tag-format:
+    description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
+    required: false
+    default: 'v${version}'
   version:
     description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags)'
-    required: false
-  version-prefix:
-    description: 'Optional prefix for version, ex. `v` to generate `v1.0.0` instead of `1.0.0`. Used only when version is auto-generated'
     required: false
   version-update-script:
     description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
@@ -144,6 +145,8 @@ runs:
       id: release_gen
       if: inputs.dev-release == 'false'
       uses: agilecustoms/release-gen@main
+      with:
+        tag-format: ${{ inputs.tag-format }}
 
     - name: Finalize version
       id: version
