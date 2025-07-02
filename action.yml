@@ -123,20 +123,6 @@ runs:
           exit 1
         fi
 
-    - name: Login AWS
-      if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
-      id: login-aws
-      uses: aws-actions/configure-aws-credentials@v4.2.1 # v4 doesn't point to latest version
-      with:
-        aws-region: ${{ inputs.aws-region }}
-        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
-        output-credentials: true
-
-    - name: Login to Amazon ECR
-      if: inputs.aws-ecr
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
-
 ## Phase 2 - Generate a new version
 
     # generate next_version (available as output), release notes (output notes) and also update file CHANGELOG.md
@@ -172,7 +158,23 @@ runs:
         echo "version=$version" >> $GITHUB_OUTPUT
         echo "tags=$tags" >> $GITHUB_OUTPUT
 
-## Phase 3 - Prepare (update versions, edit files)
+## Phase 3 - Login in AWS
+
+    - name: Login AWS
+      if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
+      id: login-aws
+      uses: aws-actions/configure-aws-credentials@v4.2.1 # v4 doesn't point to latest version
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
+        output-credentials: true
+
+    - name: Login to Amazon ECR
+      if: inputs.aws-ecr
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
+
+## Phase 4 - Prepare (update versions, edit files)
 
     - name: Setup Java
       if: inputs.aws-codeartifact-maven
@@ -207,7 +209,7 @@ runs:
       shell: bash
       run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.version-update-script }}
 
-## Phase 4 - Publish artifacts
+## Phase 5 - Publish artifacts
 
     - name: Upload in S3
       if: steps.init.outputs.aws_s3
@@ -276,7 +278,7 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
 
-## Phase 5 - Git push
+## Phase 6 - Git push
 
 #    - name: Error to test publish idempotency
 #      shell: bash
@@ -324,7 +326,7 @@ runs:
         # push changes along with tags (latest and patch_tag) atomically. use --force to overwrite old tags
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
-## Phase 6 - GitHub Release
+## Phase 7 - GitHub Release
 
     - name: GitHub Release
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false'
