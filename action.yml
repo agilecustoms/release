@@ -291,8 +291,7 @@ runs:
     - name: Git configure
       if: env.GH_TOKEN
       shell: bash
-      run: |
-        git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+      run: git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
 
     - name: Git push
       id: git
@@ -332,9 +331,7 @@ runs:
     - name: GitHub Release
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false'
       shell: bash
-      run: |
-        echo "${{ steps.release_gen.outputs.notes }}" > /tmp/release_notes.txt
-        gh release create ${{ steps.version.outputs.version }} --notes-file /tmp/release_notes.txt
+      run: gh release create ${{ steps.version.outputs.version }} --notes-file ${{ steps.release_gen.outputs.notes_file }}
 
 
 outputs:
