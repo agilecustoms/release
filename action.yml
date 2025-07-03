@@ -328,11 +328,13 @@ runs:
 
 ## Phase 7 - GitHub Release
 
+    # standard --generate-notes just add one line "**Full Changelog**: https://github.com/agilecustoms/{repo}/compare/v0.1.3...v0.1.4"
     - name: GitHub Release
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false'
       shell: bash
       run: |
-        gh release create ${{ steps.version.outputs.version }} --generate-notes
+        echo "${{ steps.version.outputs.notes }}" > /tmp/release_notes.txt
+        gh release create ${{ steps.version.outputs.version }} --notes-file /tmp/release_notes.txt
 
 
 outputs:
