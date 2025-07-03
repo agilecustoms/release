@@ -20,14 +20,16 @@ This table shows supported artifact types and features:
 | npmjs public repo      | N/A           | ⚠️          | ✅              | ❌           |
 
 1. Validate
-2. Generate a new version based on the latest tag + git commit message: `#major`, `#minor`, `#patch`
+2. Release generation
+   1. generate a new version based on the latest tag + git commit messages
+   2. generate release notes (keep as step output)
 3. Login in AWS
-4. Prepare (update versions, edit files)
+4. Prepare: mainly bump versions in language/tool specific files
    1. update version in `pom.xml` (for maven)
    2. update version in `package.json` (for npm)
    3. run a custom script (can use to update a cache key!)
    4. (TBD) update CHANGELOG.md
-   5. Commit
+   5. git commit
 5. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory
    2. AWS ECR - publish Docker image in ECR repository
