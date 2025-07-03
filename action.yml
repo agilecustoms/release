@@ -332,7 +332,7 @@ runs:
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false'
       shell: bash
       run: |
-        gh release create ${{ steps.version.outputs.version }} --generate-notes --notes "some text"
+        gh release create ${{ steps.version.outputs.version }} --generate-notes
 
 
 outputs:
