@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.14.6](https://github.com/agilecustoms/publish/compare/v0.14.5...v0.14.6) (2025-07-06)
+
+
+### Bug Fixes
+
+* try just # Changelog ([cb8427a](https://github.com/agilecustoms/publish/commit/cb8427a782409bf377a2b07f4de516a8acc84f05))
+
+
+
 ## [0.14.5](https://github.com/agilecustoms/publish/compare/v0.14.4...v0.14.5) (2025-07-06)
 
 
