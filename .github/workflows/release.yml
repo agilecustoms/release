@@ -17,6 +17,8 @@ jobs:
       - name: Release
         id: release
         uses: agilecustoms/publish@main
+        with:
+          changelog-title: '# The Changelog'
         env:
           GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
 
