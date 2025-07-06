@@ -1,4 +1,13 @@
-# Changelog
+# The Changelog
+
+## [0.14.7](https://github.com/agilecustoms/publish/compare/v0.14.6...v0.14.7) (2025-07-06)
+
+
+### Bug Fixes
+
+* try non default changelog ([dfb3c44](https://github.com/agilecustoms/publish/commit/dfb3c44ab9219dabebe3640af71bee3ee3c53828))
+
+
 
 ## [0.14.6](https://github.com/agilecustoms/publish/compare/v0.14.5...v0.14.6) (2025-07-06)
 
