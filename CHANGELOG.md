@@ -1,4 +1,13 @@
-# The Changelog
+# Changelog
+
+# [0.15.0](https://github.com/agilecustoms/publish/compare/v0.14.7...v0.15.0) (2025-07-06)
+
+
+### Features
+
+* switch back to default changelog title ([2518a55](https://github.com/agilecustoms/publish/commit/2518a55e2da2838ce184ffc47ad2329c60233c58))
+
+
 
 ## [0.14.7](https://github.com/agilecustoms/publish/compare/v0.14.6...v0.14.7) (2025-07-06)
 
