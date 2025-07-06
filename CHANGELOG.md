@@ -1,4 +1,15 @@
-# Changelog\\n\\n
+# Changelog
+
+## [0.14.4](https://github.com/agilecustoms/publish/compare/v0.14.3...v0.14.4) (2025-07-06)
+
+
+### Bug Fixes
+
+* try multi-line default value ([50265a0](https://github.com/agilecustoms/publish/commit/50265a0f540d4c0cc0f502582d2b201366644272))
+
+
+
+\\n\\n
 
 ## [0.14.3](https://github.com/agilecustoms/publish/compare/v0.14.2...v0.14.3) (2025-07-06)
 
@@ -35,6 +46,3 @@
 ### Features
 
 * changelog file and title ([6ae1928](https://github.com/agilecustoms/publish/commit/6ae19280f0e29bde0d0bf909afab29a834082bd2))
-
-
-
