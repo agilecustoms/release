@@ -1,13 +1,15 @@
 # About
-Publish software artifacts and git tags together in one action. Terms 'publish' and 'release' are used interchangeably.
-Called it 'publish' to avoid confusion with GitHub Releases
+Your Swiss knife to do publish/release software in AWS with GitHub action.
+This action: 1) publish software artifacts; 2) git commit and push tags; 3) generate GH release.
+
+_Called it 'publish' bcz it takes most effort, whereas GitHub 'release' is optional and relatively simple.
+Terms 'publish' and 'release' are used interchangeably_
 
 ![Cover](docs/images/cover.png)
 
 Main use case — microservices that hold application code and infrastructure code (like Terraform).
-Since Terraform is distributed as source code via git tags, the action uses git tags as a source of truth for versioning.
-It generates a new version based on current git tags and SemVer commit tags `#patch`, `#minor`, `#major`,
-then publishes artifacts and pushes git tags so your artifacts and git tags are in sync.
+The action generates new version based on latest git version tag and SemVer commits tags `fix:`, `feat:` and `BREAKING CHANGE:`, see [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/).
+Then action publishes artifacts and pushes git tags so your artifacts and git tags are in sync. Also creates a GitHub release based off the that ta
 
 This table shows supported artifact types and features:
 
@@ -42,9 +44,16 @@ This table shows supported artifact types and features:
 7. GitHub release
    1. create a GitHub release tied to the most recent tag
 
+**Semantic Release usage**:
+NPM library [semantic-release](https://github.com/semantic-release) is used to generate next version and release notes.
+It is used in `dryRun` mode, so it doesn't commit changes, push tags, or create a GitHub release.
+Semantic-release has rich family of plugins and shared configuration. `agilecustoms/publish` action uses only two main plugins:
+[commit-analyzer](https://github.com/semantic-release/commit-analyzer) and [release-notes-generator](https://github.com/semantic-release/release-notes-generator)
+so they take configuration as per `semantic-release` documentation in extent that `dryRun` mode supports. Other plugins are not supported.
+Feel free to raise an issue / pull request or discussion if you need some specific plugin to be supported
+
 **Limitations**:
 - only `on: push` event is supported — it covers both direct push and PR merge. `on: pull_request` is not yet supported
-- when merge/rebase a PR of multiple commits w/o squash, then SemVer tag `#patch`, `#minor`, `#major` is taken only from last commit message
 - not designed/tested for monorepos where tags have package/prefixes like `package/v1.2.3`
 
 **Consistency**. This GH action does two modify operations: "Publish artifacts" and then "Git push"
@@ -102,8 +111,8 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 ### No artifacts (git tags + GH release)
 
 For example, for repository with terraform code only - no binaries, just add git tag<br>
-Version will be automatically generated based on current tags + consider commit message tag `#major`, `#minor`, `#patch`<br>
-Ex: if current tag is `1.2.3` and commit has #patch, then the new tag will be `1.2.4`.
+Version will be automatically generated based on latest version tag + commit messages<br>
+Ex: if latest tag is `1.2.3` and there is a single commit `fix: JIRA-123`, then the new tag will be `1.2.4`.
 Also tags `1`, `1.2` and `latest` will be overwritten to point to the same commit as `1.2.4`
 
 Adding/overwriting tags write access. It can be done in two ways:
@@ -145,7 +154,7 @@ jobs:
 ### publish in AWS S3
 
 Convention: there should be `s3` directory in cwd. All content of this directory will be uploaded in S3 bucket<br>
-Ex: if current tag is '1.2.3' and commit has #patch, then files will be uploaded to `aws-s3-bucket/aws-s3-bucket-dir/1.2.4`
+Ex: if latest tag is '1.2.3' and single commit on top of it `fix: JIRA-123`, then files will be uploaded to `aws-s3-bucket/aws-s3-bucket-dir/1.2.4`
 Also files will be uploaded in dirs `/1`, `/1.2` and `/latest` - previous content of these dirs will be cleaned up
 ```yaml
 steps:
@@ -167,7 +176,7 @@ Each S3 file will be tagged with `Release=false`, so you can set up lifecycle ru
 ### publish in AWS ECR
 
 First you build docker image, and then you release it with this action.
-Same as git tags, when you release version `1.2.3` with commit message `#patch`,
+Same as git tags, when you release version `1.2.3` with commit message `fix: JIRA-123`,
 new docker image will be tagged as `1.2.4`, and tags `1`, `1.2` and `latest` will be overwritten to point to the same image as `1.2.4`
 ```yaml
 steps:
@@ -260,7 +269,7 @@ jobs:
            uses: agilecustoms/publish@v1
 ```
 Note: tag `latest` is only added to default (typically `main`) branch,
-so if you release new `#patch` version in "support" branch w/ and most recent tag is "1.2.3",
+so if you release new "patch" version in "support" branch w/ and most recent tag is "1.2.3",
 then new tag will be `1.2.4` plus tags `1`, `1.2` will be overwritten to point to the same commit as `1.2.4`, but `latest` tag will not be changed
 
 ### Dev release
