@@ -1,3 +1,14 @@
+# Changelog\n\n
+
+## [0.14.2](https://github.com/agilecustoms/publish/compare/v0.14.1...v0.14.2) (2025-07-06)
+
+
+### Bug Fixes
+
+* default changelog title ([b985bd3](https://github.com/agilecustoms/publish/commit/b985bd3421589391121346b52ada39876ff8ad79))
+
+
+
 ## [0.14.1](https://github.com/agilecustoms/publish/compare/v0.14.0...v0.14.1) (2025-07-06)
 
 
