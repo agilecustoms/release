@@ -28,6 +28,13 @@ inputs:
   aws-s3-dir:
     description: 'Allows specifying S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
     required: false
+  changelog-file:
+    description: 'CHANGELOG.md file path. Pass empty string to disable changelog generation'
+    required: false
+    default: 'CHANGELOG.md'
+  changelog-title:
+    description: 'Title of the changelog file (first line of the file)'
+    required: false
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
@@ -132,6 +139,8 @@ runs:
       if: inputs.dev-release == 'false'
       uses: agilecustoms/release-gen@main
       with:
+        changelog-file: ${{ inputs.changelog-file }}
+        changelog-title: ${{ inputs.changelog-title }}
         tag-format: ${{ inputs.tag-format }}
 
     - name: Finalize version
@@ -304,8 +313,10 @@ runs:
         # fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
         
-        # stage files that might be modified/deleted by previous steps; check if there are any changes and commit
+        # stage files that might be modified/deleted by previous steps (ignore new files)
         git add -u
+        # one legitime new file is CHANGELOG.md, which is created by release-gen step
+        [ -f "${{ inputs.changelog-file }}" ] && git add "${{ inputs.changelog-file }}"
         if ! git diff --cached --quiet; then
           git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
           echo "changes_detected=true" >> $GITHUB_OUTPUT
