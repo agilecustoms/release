@@ -35,7 +35,7 @@ inputs:
   changelog-title:
     description: 'Title of the changelog file (first line of the file)'
     required: false
-    default: '# Changelog\n\n'
+    default: '# Changelog\\n\\n'
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
