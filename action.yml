@@ -37,8 +37,6 @@ inputs:
     required: false
     default: |
       # Changelog
-      
-
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
