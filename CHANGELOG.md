@@ -1,3 +1,12 @@
+## [0.14.1](https://github.com/agilecustoms/publish/compare/v0.14.0...v0.14.1) (2025-07-06)
+
+
+### Bug Fixes
+
+* add changelog title ([4ff90e5](https://github.com/agilecustoms/publish/commit/4ff90e50766017bcb20dfb239752f57a4aa8276b))
+
+
+
 # [0.14.0](https://github.com/agilecustoms/publish/compare/v0.13.4...v0.14.0) (2025-07-06)
 
 
