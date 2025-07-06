@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.14.5](https://github.com/agilecustoms/publish/compare/v0.14.4...v0.14.5) (2025-07-06)
+
+
+### Bug Fixes
+
+* try changelog title w/ no extra empty lines ([219e986](https://github.com/agilecustoms/publish/commit/219e9861cc2d3d48c978d983fe4ad057099235fb))
+
+
+
 ## [0.14.4](https://github.com/agilecustoms/publish/compare/v0.14.3...v0.14.4) (2025-07-06)
 
 
