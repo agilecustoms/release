@@ -22,3 +22,4 @@ jobs:
 
       - name: Summary
         run: echo "### Released ${{ steps.release.outputs.version }} :pushpin:" >> $GITHUB_STEP_SUMMARY
+
