@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/agilecustoms/publish/compare/v0.15.0...v0.15.1) (2025-07-08)
+
+### Bug Fixes
+
+* test ([082d8d4](https://github.com/agilecustoms/publish/commit/082d8d435ecd583632308f33ec4ffff6979c8c90))
+
+
 # [0.15.0](https://github.com/agilecustoms/publish/compare/v0.14.7...v0.15.0) (2025-07-06)
 
 
