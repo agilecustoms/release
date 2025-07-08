@@ -81,7 +81,7 @@ Short summary of the [angular(https://github.com/angular/angular/blob/main/contr
 | feat:            | minor                | Features                                      | New feature                                                                                       |
 | fix:             | patch                | Bug Fixes                                     | Bug fix                                                                                           |
 | perf:            | patch                | Performance Improvements                      | Performance improvement/fix                                                                       |
-| refactor:        | ?                    | ?                                             | Rewrite or restructure code without altering API or UI behavior                                   |
+| refactor:        | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Rewrite or restructure code without altering API or UI behavior                                   |
 | test:            | ?                    | ?                                             | Add missing tests or correct existing ones                                                        |
 | ci:              | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Changes to our CI configuration files and scripts (examples: Github Actions, SauceLabs)           |
 | style:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Address code style (like formatting) and do not affect application behavior                       |
