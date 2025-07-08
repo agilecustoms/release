@@ -75,18 +75,18 @@ This library uses [conventionalcommits](https://www.conventionalcommits.org/en/v
 You can change preset and effect for each prefix your own `.releaserc.json` in the root of repository.
 Short summary of the [angular(https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset:
 
-| prefix                                      | default version bump | release and changelog section                 | description                                                                                       |
-|---------------------------------------------|----------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
-| BREAKING&nbsp;CHANGE:<br> in message footer | major                | ?                                             | Breaking change OR just first major release                                                       |
-| feat:                                       | minor                | Features                                      | New feature                                                                                       |
-| fix:                                        | patch                | Bug Fixes                                     | Bug fix                                                                                           |
-| perf:                                       | patch                | Performance Improvements                      | Performance improvement/fix                                                                       |
-| build:                                      | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Build-related components such as build tools, dependencies, project version, CI/CD pipelines, ... |
-| ci:                                         | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Changes to our CI configuration files and scripts (examples: Github Actions, SauceLabs)           |
-| docs:                                       | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Documentation update/fix                                                                          |
-| refactor:                                   | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Rewrite or restructure code without altering API or UI behavior                                   |
-| test:                                       | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Add missing tests or correct existing ones                                                        |
-| _no prefix_                                 | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                 |
+| prefix                           | default version bump | release and changelog section                 | description                                                                                       |
+|----------------------------------|----------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
+| feat: with BREAKING&nbsp;CHANGE: | major                | Features  and  BREAKING CHANGES               | Breaking change OR just first major release. (Tag `BREAKING CHANGE:` must be in message footer)   |
+| feat:                            | minor                | Features                                      | New feature                                                                                       |
+| fix:                             | patch                | Bug Fixes                                     | Bug fix                                                                                           |
+| perf:                            | patch                | Performance Improvements                      | Performance improvement/fix                                                                       |
+| build:                           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Build-related components such as build tools, dependencies, project version, CI/CD pipelines, ... |
+| ci:                              | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Changes to our CI configuration files and scripts (examples: Github Actions, SauceLabs)           |
+| docs:                            | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Documentation update/fix                                                                          |
+| refactor:                        | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Rewrite or restructure code without altering API or UI behavior                                   |
+| test:                            | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Add missing tests or correct existing ones                                                        |
+| _no prefix_                      | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                 |
 
 Example 1
 ```text
@@ -354,4 +354,6 @@ You would use `dev-release: true` to test some feature before merging it. Use ex
 
 ### Credits and Links
 
-- https://github.com/anothrNick/github-tag-action — easy and powerful action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
+- https://github.com/semantic-release/semantic-release - NPM library to generate next version and release notes. Used as essential part of `agilecustoms/publish` action
+- https://github.com/cycjimmy/semantic-release-action - GH action wrapper for `semantic-release` library
+- https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
