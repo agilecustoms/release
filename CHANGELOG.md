@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.2](https://github.com/agilecustoms/publish/compare/v0.15.1...v0.15.2) (2025-07-08)
+
+### Performance Improvements
+
+* test ([ce95e55](https://github.com/agilecustoms/publish/commit/ce95e55d5cbd45cf242d9803b7bc869827010d0b))
+
+
 ## [0.15.1](https://github.com/agilecustoms/publish/compare/v0.15.0...v0.15.1) (2025-07-08)
 
 ### Bug Fixes
