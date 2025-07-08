@@ -83,7 +83,7 @@ Short summary of the [angular(https://github.com/angular/angular/blob/main/contr
 | perf:            | patch                | Performance Improvements                      | Performance improvement/fix                                                                       |
 | refactor:        | ?                    | ?                                             | Rewrite or restructure code without altering API or UI behavior                                   |
 | test:            | ?                    | ?                                             | Add missing tests or correct existing ones                                                        |
-| ci:              | ?                    | ?                                             | Changes to our CI configuration files and scripts (examples: Github Actions, SauceLabs)           |
+| ci:              | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Changes to our CI configuration files and scripts (examples: Github Actions, SauceLabs)           |
 | style:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Address code style (like formatting) and do not affect application behavior                       |
 | feat!:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | ?                                                                                                 |
 | build:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Build-related components such as build tools, dependencies, project version, CI/CD pipelines, ... |
