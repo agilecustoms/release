@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.0.0](https://github.com/agilecustoms/publish/compare/v0.15.2...v1.0.0) (2025-07-08)
+
+### Features
+
+* try major release ([f028002](https://github.com/agilecustoms/publish/commit/f028002f2b3579f6875e21c78030135f0a710890))
+
+
+### BREAKING CHANGES
+
+* try major release
+
+
 ## [0.15.2](https://github.com/agilecustoms/publish/compare/v0.15.1...v0.15.2) (2025-07-08)
 
 ### Performance Improvements
