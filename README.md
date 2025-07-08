@@ -82,9 +82,9 @@ Short summary of the `angular` preset:
 | fix:             | patch                | Bug Fixes                                     | Bug fix                                                                                                      |
 | perf:            | patch                | Performance Improvements                      | Performance improvement/fix                                                                                  |
 | refactor:        | ?                    | ?                                             | Rewrite or restructure code without altering API or UI behavior                                              |
-| style:           | ?                    | ?                                             | Address code style (like formatting) and do not affect application behavior                                  |
 | test:            | ?                    | ?                                             | Add missing tests or correct existing ones                                                                   |
 | ops:             | ?                    | ?                                             | Commits that affect operational components like infrastructure, deployment, backup, recovery procedures, ... |
+| style:           | no version bump      | ?                                             | Address code style (like formatting) and do not affect application behavior                                  |
 | feat!:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | ?                                                                                                            |
 | build:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Build-related components such as build tools, dependencies, project version, CI/CD pipelines, ...            |
 | docs:            | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Documentation update/fix                                                                                     |
