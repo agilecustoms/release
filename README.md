@@ -1,5 +1,5 @@
 # About
-Your Swiss knife to do publish/release software in AWS with GitHub action.
+Your Swiss Army knife to publish/release software in AWS with GitHub action.
 This action: 1) publish software artifacts; 2) git commit and push tags; 3) generate GH release.
 
 _Called it 'publish' bcz it takes most effort, whereas GitHub 'release' is optional and relatively simple.
@@ -7,87 +7,130 @@ Terms 'publish' and 'release' are used interchangeably_
 
 ![Cover](docs/images/cover.png)
 
-Main use case — microservices that hold application code and infrastructure code (like Terraform).
-The action generates new version based on latest git version tag and SemVer commits tags `fix:`, `feat:` and `BREAKING CHANGE:`, see [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/).
-Then action publishes artifacts and pushes git tags so your artifacts and git tags are in sync. Also creates a GitHub release based off the that ta
+Main use case — microservices that hold application code and infrastructure code (like Terraform). Not designed/tested for monorepos.
+The action generates a new version based on latest SemVer tag and semantic commits `fix:`, `feat:` and `BREAKING CHANGE:`, see [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/).
+Then action publishes artifacts and pushes git tags, so your artifacts and git tags are in sync. Also creates a GitHub release based off the that tag
 
 This table shows supported artifact types and features:
 
-| Name                   | floating-tags | idempotency | version update | dev-release |
-|------------------------|---------------|-------------|----------------|-------------|
-| git                    | ✅             | ✅           | N/A            | ✅           |
-| AWS S3                 | ✅             | ✅           | N/A            | ✅           |
-| AWS ECR                | ✅             | ✅           | N/A            | ✅           |
-| AWS CodeArtifact maven | N/A           | ⚠️          | ✅              | ⚠️          |
-| npmjs public repo      | N/A           | ⚠️          | ✅              | ❌           |
+| Name                   | floating tags | dev-release | idempotency |
+|------------------------|---------------|-------------|-------------|
+| git                    | ✅             | ✅           | ✅           |
+| AWS S3                 | ✅             | ✅           | ✅           |
+| AWS ECR                | ✅             | ✅           | ✅           |
+| AWS CodeArtifact maven | N/A           | ⚠️          | ⚠️          |
+| npmjs public repo      | TBD           | ❌️          | ⚠️          |
+
+Features:
+- **floating tags** — given current version is `1.2.3` and you release `1.2.4` then also release `1`, `1.2` and `latest` tags
+- **dev-release** — ability to publish artifacts for testing purposes, without creating git tags or GitHub release.
+Not the same as GitHub "prerelease". "prerelease" has chances to become normal release, while "dev-release" is temporary and will be deleted later
+- **idempotency** — ability to re-run the action w/o side effects, see below for more details
+
+## Action steps
+
+The action has 7 main phases, each phase has several steps:
 
 1. Validate
 2. Release generation
-   1. generate a new version based on the latest tag + git commit messages
-   2. generate release notes (keep as step output)
+   1. generate a new version based on the latest SemVer tag + git commit messages
+   2. generate release notes (write in /tmp file)
+   3. update CHANGELOG.md
 3. Login in AWS
-4. Prepare: mainly bump versions in language/tool specific files
+4. Prepare: mainly bump versions in language-specific files
    1. update version in `pom.xml` (for maven)
    2. update version in `package.json` (for npm)
    3. run a custom script (can use to update a cache key!)
-   4. (TBD) update CHANGELOG.md
-   5. git commit
 5. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory
    2. AWS ECR - publish Docker image in ECR repository
    3. AWS CodeArtifact maven - publish maven package in CodeArtifact repository
-   4. npmjs - publish npm package in npmjs.com repository
+   4. npmjs - publish npm package in public npmjs.com repository
 6. Git push
-   1. commit changes from step 3
+   1. commit changes from step 4
    2. besides SemVer 'major.minor.patch', also add floating tags 'major', 'major.minor' and 'latest'
    3. atomically push commit and tags to the remote repository
 7. GitHub release
    1. create a GitHub release tied to the most recent tag
 
-**Semantic Release usage**:
+**Consistency**. This GH action does three modify operations: "Publish artifacts", "Git push" and "GitHub release".
+Order is important to recover from failures.
+
+"Publish artifacts" goes first as it is most complex (highest chances to fail).
+It is idempotent, so if a later step fails, it is safe to re-run "Publish artifacts".<br>
+_Note: some publish commands are not idempotent (like npm publish), so as workaround just swallow 'same version already exists' type of errors
+if it is already not first workflow run (use `${{ github.run_attempt }}`)_
+
+"Git push" goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
+attempt to run it again will cause new tags creation!
+
+"GitHub release" goes last, as it is optional. It is also very simple — just one command
+(provided all release notes/files are generated on previous steps).
+If it fails, you can create release manually through GitHub UI
+
+## Semantic Release usage
+
 NPM library [semantic-release](https://github.com/semantic-release) is used to generate next version and release notes.
+This library uses [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/), specifically `angular` preset.
+You can change preset and effect for each prefix your own `.releaserc.json` in the root of repository.
+Short summary of the `angular` preset:
+
+| prefix           | default version bump | release and changelog section                 | description                                                                                                           |
+|------------------|----------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| BREAKING CHANGE: | major                | ?                                             | breaking change OR just first major release                                                                           |
+| feat!:           | major                | ?                                             | new major feature                                                                                                     |
+| feat:            | minor                | Features                                      | new feature                                                                                                           |
+| fix:             | patch                | Bug Fixes                                     | bug fix                                                                                                               |
+| perf:            | patch                | Performance Improvements                      | performance improvement/fix                                                                                           |
+| refactor:        | ?                    | ?                                             | Commits that rewrite or restructure code without altering API or UI behavior                                          |
+| style:           | ?                    | ?                                             | Commits that address code style (like formatting) and do not affect application behavior                              |
+| test:            | ?                    | ?                                             | Commits that add missing tests or correct existing ones                                                               |
+| docs:            | ?                    | ?                                             | Commits that exclusively affect documentation                                                                         |
+| build:           | ?                    | ?                                             | Commits that affect build-related components such as build tools, dependencies, project version, CI/CD pipelines, ... |
+| ops:             | ?                    | ?                                             | Commits that affect operational components like infrastructure, deployment, backup, recovery procedures, ...          |
+| chore:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                                     |
+| _no prefix_      | no version bump      | _not reflected in GH release in CHANGELOG.md_ | discouraged if you adopted conventional commits, same effect as `chore` prefix                                        |
+
+Example 1
+```text
+```
+
+Example 2
+```text
+```
+
+**semantic-release** usage details
+
 It is used in `dryRun` mode, so it doesn't commit changes, push tags, or create a GitHub release.
 Semantic-release has rich family of plugins and shared configuration. `agilecustoms/publish` action uses only two main plugins:
 [commit-analyzer](https://github.com/semantic-release/commit-analyzer) and [release-notes-generator](https://github.com/semantic-release/release-notes-generator)
 so they take configuration as per `semantic-release` documentation in extent that `dryRun` mode supports.
 Plugin [changelog](https://github.com/semantic-release/changelog) is not used, instead `agilecustoms/publish` implements its own logic to update `CHANGELOG.md` file,
-but you can use same options as for `changelog` plugin: `changelog-file` and `changelog-title`.
-Other plugins are not supported. Feel free to raise an issue / pull request or discussion if you need some specific plugin to be supported
-
-**Limitations**:
-- only `on: push` event is supported — it covers both direct push and PR merge. `on: pull_request` is not yet supported
-- not designed/tested for monorepos where tags have package/prefixes like `package/v1.2.3`
-
-**Consistency**. This GH action does two modify operations: "Publish artifacts" and then "Git push"
-Some of them need to go first, and then you need to be prepared what to do if second fails.
-Rationale to have "Git push" the last: 1) it is least likely to fail; 2) provided that all publish steps are idempotent,
-you can fix "Git push" issue and re-run the workflow w/o side effects.
-Some publish commands are not idempotent (like npm publish), so as workaround - just ignore 'same version already exists' type of errors 
-if it is already not first workflow run (use `${{ github.run_attempt }}`)
+but you can use same options as for `changelog` plugin: `changelog-file` and `changelog-title`
 
 ## Inputs
 
-| Name                        | Description                                                                                                                                          | Default         |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|
-| aws-account                 | AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag                                                              |                 |
-| aws-region                  | AWS region                                                                                                                                           |                 |
-| aws-role                    | IAM role to assume to publish, ex. `/ci/publisher`                                                                                                   |                 |
-| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                            |                 |
-| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                            |                 |
-| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                            |                 |
-| aws-ecr                     | If true, then push docker image to ECR                                                                                                               |                 |
-| aws-s3-bucket               | S3 bucket to upload artifacts to                                                                                                                     |                 |
-| aws-s3-dir                  | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                              |                 |
-| changelog-file              | CHANGELOG.md file path. Pass empty string to disable changelog generation                                                                            | CHANGELOG.md    |
-| changelog-title             | Title of the changelog file (first line of the file)                                                                                                 | # Changelog\n\n |
-| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                       | false           |
-| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/            |
-| floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                             | true            |
-| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22              |
-| release-gh                  | If true, then create a GitHub release with the same name as the tag                                                                                  | true            |
-| tag-format                  | By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix                                                                  | v${version}     |
-| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |                 |
-| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |                 |
+| Name                        | Description                                                                                                                                          | Default      |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| aws-account                 | AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag                                                              |              |
+| aws-region                  | AWS region                                                                                                                                           |              |
+| aws-role                    | IAM role to assume to publish, ex. `/ci/publisher`                                                                                                   |              |
+| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                            |              |
+| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                            |              |
+| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                            |              |
+| aws-ecr                     | If true, then push docker image to ECR                                                                                                               |              |
+| aws-s3-bucket               | S3 bucket to upload artifacts to                                                                                                                     |              |
+| aws-s3-dir                  | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                              |              |
+| changelog-file              | CHANGELOG.md file path. Pass empty string to disable changelog generation                                                                            | CHANGELOG.md |
+| changelog-title             | Title of the changelog file (first line of the file)                                                                                                 | # Changelog  |
+| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                       | false        |
+| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/         |
+| floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                             | true         |
+| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22           |
+| release-gh                  | If true, then create a GitHub release with the same name as the tag                                                                                  | true         |
+| tag-format                  | By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix                                                                  | v${version}  |
+| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |              |
+| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |              |
 
 ## Environment variables
 
@@ -116,7 +159,7 @@ if it is already not first workflow run (use `${{ github.run_attempt }}`)
 
 For example, for repository with terraform code only - no binaries, just add git tag<br>
 Version will be automatically generated based on latest version tag + commit messages<br>
-Ex: if latest tag is `1.2.3` and there is a single commit `fix: JIRA-123`, then the new tag will be `1.2.4`.
+Ex: if the latest tag is `1.2.3` and there is a single commit `fix: JIRA-123`, then the new tag will be `1.2.4`.
 Also tags `1`, `1.2` and `latest` will be overwritten to point to the same commit as `1.2.4`
 
 Adding/overwriting tags write access. It can be done in two ways:
@@ -310,5 +353,13 @@ You would use `dev-release: true` to test some feature before merging it. Use ex
 1. to fix an existing version in-place
 2. instead of dev-release when it is not supported
 
+## Misc
+
+### Contribution
+
+- For any bugs feel free to create an issue or raise a pull request wit fix
+- If you need some specific `semantic-release` plugin supported, please start a discussion
+
 ### Credits and Links
+
 - https://github.com/anothrNick/github-tag-action — easy and powerful action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release

@@ -85,7 +85,7 @@ runs:
       run: |
         echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
 
-## Phase 1.2 - Validate the rest of inputs, infer defaults, login in AWS
+## Phase 1.2 - Validate the rest of inputs, infer defaults
 
     - name: Init
       id: init
@@ -131,7 +131,7 @@ runs:
           exit 1
         fi
 
-## Phase 2 - Generate a new version
+## Phase 2 - Release generation
 
     # generate next_version (available as output), release notes (output notes) and also update file CHANGELOG.md
     # note: if explicit version is provided, then next_version is still generated, but not used (see next step)
@@ -184,7 +184,7 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
 
-## Phase 4 - Prepare (update versions, edit files)
+## Phase 4 - Prepare: mainly bump versions in language-specific files
 
     - name: Setup Java
       if: inputs.aws-codeartifact-maven
