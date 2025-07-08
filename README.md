@@ -8,7 +8,7 @@ Terms 'publish' and 'release' are used interchangeably_
 ![Cover](docs/images/cover.png)
 
 Main use case — microservices that hold application code and infrastructure code (like Terraform). Not designed/tested for monorepos.
-The action generates a new version based on latest SemVer tag and semantic commits `fix:`, `feat:` and `BREAKING CHANGE:`, see [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/).
+The action generates a new version based on latest [SemVer](https://semver.org) tag and semantic commits `fix:`, `feat:` and `BREAKING CHANGE:`, see [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/).
 Then action publishes artifacts and pushes git tags, so your artifacts and git tags are in sync. Also creates a GitHub release based off the that tag
 
 This table shows supported artifact types and features:
@@ -75,21 +75,21 @@ This library uses [conventionalcommits](https://www.conventionalcommits.org/en/v
 You can change preset and effect for each prefix your own `.releaserc.json` in the root of repository.
 Short summary of the `angular` preset:
 
-| prefix           | default version bump | release and changelog section                 | description                                                                                                           |
-|------------------|----------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| BREAKING CHANGE: | major                | ?                                             | breaking change OR just first major release                                                                           |
-| feat!:           | major                | ?                                             | new major feature                                                                                                     |
-| feat:            | minor                | Features                                      | new feature                                                                                                           |
-| fix:             | patch                | Bug Fixes                                     | bug fix                                                                                                               |
-| perf:            | patch                | Performance Improvements                      | performance improvement/fix                                                                                           |
-| refactor:        | ?                    | ?                                             | Commits that rewrite or restructure code without altering API or UI behavior                                          |
-| style:           | ?                    | ?                                             | Commits that address code style (like formatting) and do not affect application behavior                              |
-| test:            | ?                    | ?                                             | Commits that add missing tests or correct existing ones                                                               |
-| ops:             | ?                    | ?                                             | Commits that affect operational components like infrastructure, deployment, backup, recovery procedures, ...          |
-| build:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Commits that affect build-related components such as build tools, dependencies, project version, CI/CD pipelines, ... |
-| docs:            | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Commits that exclusively affect documentation                                                                         |
-| chore:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                                     |
-| _no prefix_      | no version bump      | _not reflected in GH release in CHANGELOG.md_ | discouraged if you adopted conventional commits, same effect as `chore` prefix                                        |
+| prefix           | default version bump | release and changelog section                 | description                                                                                                  |
+|------------------|----------------------|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| BREAKING CHANGE: | major                | ?                                             | Breaking change OR just first major release                                                                  |
+| feat:            | minor                | Features                                      | New feature                                                                                                  |
+| fix:             | patch                | Bug Fixes                                     | Bug fix                                                                                                      |
+| perf:            | patch                | Performance Improvements                      | Performance improvement/fix                                                                                  |
+| refactor:        | ?                    | ?                                             | Rewrite or restructure code without altering API or UI behavior                                              |
+| style:           | ?                    | ?                                             | Address code style (like formatting) and do not affect application behavior                                  |
+| test:            | ?                    | ?                                             | Add missing tests or correct existing ones                                                                   |
+| ops:             | ?                    | ?                                             | Commits that affect operational components like infrastructure, deployment, backup, recovery procedures, ... |
+| feat!:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | ?                                                                                                            |
+| build:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Build-related components such as build tools, dependencies, project version, CI/CD pipelines, ...            |
+| docs:            | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Documentation update/fix                                                                                     |
+| chore:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                            |
+| _no prefix_      | no version bump      | _not reflected in GH release in CHANGELOG.md_ | discouraged if you adopted conventional commits, same effect as `chore` prefix                               |
 
 Example 1
 ```text
@@ -354,11 +354,6 @@ You would use `dev-release: true` to test some feature before merging it. Use ex
 2. instead of dev-release when it is not supported
 
 ## Misc
-
-### Contribution
-
-- For any bugs feel free to create an issue or raise a pull request wit fix
-- If you need some specific `semantic-release` plugin supported, please start a discussion
 
 ### Credits and Links
 
