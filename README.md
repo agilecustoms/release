@@ -81,15 +81,12 @@ Short summary of the [angular(https://github.com/angular/angular/blob/main/contr
 | feat:            | minor                | Features                                      | New feature                                                                                       |
 | fix:             | patch                | Bug Fixes                                     | Bug fix                                                                                           |
 | perf:            | patch                | Performance Improvements                      | Performance improvement/fix                                                                       |
-| refactor:        | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Rewrite or restructure code without altering API or UI behavior                                   |
-| test:            | ?                    | ?                                             | Add missing tests or correct existing ones                                                        |
-| ci:              | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Changes to our CI configuration files and scripts (examples: Github Actions, SauceLabs)           |
-| style:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Address code style (like formatting) and do not affect application behavior                       |
-| feat!:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | ?                                                                                                 |
 | build:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Build-related components such as build tools, dependencies, project version, CI/CD pipelines, ... |
+| ci:              | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Changes to our CI configuration files and scripts (examples: Github Actions, SauceLabs)           |
 | docs:            | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Documentation update/fix                                                                          |
-| chore:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                 |
-| _no prefix_      | no version bump      | _not reflected in GH release in CHANGELOG.md_ | discouraged if you adopted conventional commits, same effect as `chore` prefix                    |
+| refactor:        | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Rewrite or restructure code without altering API or UI behavior                                   |
+| test:            | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Add missing tests or correct existing ones                                                        |
+| _no prefix_      | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                 |
 
 Example 1
 ```text
