@@ -85,7 +85,7 @@ Short summary of the `angular` preset:
 | refactor:        | ?                    | ?                                             | Commits that rewrite or restructure code without altering API or UI behavior                                          |
 | style:           | ?                    | ?                                             | Commits that address code style (like formatting) and do not affect application behavior                              |
 | test:            | ?                    | ?                                             | Commits that add missing tests or correct existing ones                                                               |
-| docs:            | ?                    | ?                                             | Commits that exclusively affect documentation                                                                         |
+| docs:            | no version bump      | ?                                             | Commits that exclusively affect documentation                                                                         |
 | build:           | ?                    | ?                                             | Commits that affect build-related components such as build tools, dependencies, project version, CI/CD pipelines, ... |
 | ops:             | ?                    | ?                                             | Commits that affect operational components like infrastructure, deployment, backup, recovery procedures, ...          |
 | chore:           | no version bump      | _not reflected in GH release in CHANGELOG.md_ | Miscellaneous commits e.g. modifying `.gitignore`                                                                     |
