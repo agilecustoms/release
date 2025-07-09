@@ -337,6 +337,15 @@ runs:
         # push changes along with tags (latest and patch_tag) atomically. use --force to overwrite old tags
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
+    - name: Git push dev-release
+      if: inputs.dev-release == 'true'
+      shell: bash
+      run: |
+        sudo chown -R "$(id -un):$(id -gn)" .
+        git add -u
+        git diff --cached --quiet || git commit -m "Dev Release [skip ci]"
+        git push origin ${{ github.ref_name }}
+
 ## Phase 7 - GitHub Release
 
     # standard --generate-notes just add one line "**Full Changelog**: https://github.com/agilecustoms/{repo}/compare/v0.1.3...v0.1.4"
