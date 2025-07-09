@@ -13,19 +13,45 @@ Then action publishes artifacts and pushes git tags, so your artifacts and git t
 
 This table shows supported artifact types and features:
 
-| Name                   | floating tags | dev-release | idempotency |
-|------------------------|---------------|-------------|-------------|
-| git                    | ✅             | ✅           | ✅           |
-| AWS S3                 | ✅             | ✅           | ✅           |
-| AWS ECR                | ✅             | ✅           | ✅           |
-| AWS CodeArtifact maven | N/A           | ⚠️          | ⚠️          |
-| npmjs public repo      | TBD           | ❌️          | ⚠️          |
+| Name                   | floating tags<br>release, prerelease | idempotency | prerelease | dev-release,<br>auto cleanup |
+|------------------------|--------------------------------------|-------------|------------|------------------------------|
+| git                    | ✅ ?                                  | ✅           |            | ✅ N/A                        |
+| AWS S3                 | ✅ ?                                  | ✅           |            | ✅ ✅                          |
+| AWS ECR                | ✅ ?                                  | ✅           |            | ✅ ✅                          |
+| AWS CodeArtifact maven | N/A N/A                              | ⚠️          |            | ✅ ❌️                         |
+| GitHub releases        | ? ?                                  | ?           | planned    | ?                            |
+| npmjs public repo      | planned ?                            | ⚠️          |            | ❌️ N/A                       |
 
 Features:
 - **floating tags** — given current version is `1.2.3` and you release `1.2.4` then also release `1`, `1.2` and `latest` tags
-- **dev-release** — ability to publish artifacts for testing purposes, without creating git tags or GitHub release.
-Not the same as GitHub "prerelease". "prerelease" has chances to become normal release, while "dev-release" is temporary and will be deleted later
 - **idempotency** — ability to re-run the action w/o side effects, see below for more details
+- **prerelease** — version of software that is made available before the official, stable release
+- **dev-release** — ability to publish artifacts for dev testing when testing on local machine impossible/complicated
+
+Difference between **prerelease** and **dev-release**:
+
+_prerelease_ is an industry standard, though some tools use different terms
+like "prerelease" (GitHub), distribution tags (npm), suffix "-SNAPSHOT" (maven), suffixes "-beta", "rc" (Gradle, NuGet, PyPI, pip).
+Idea: release version widely available for testing and potential to become a final release
+
+_dev-release_ is just a way to overcome inability to spin up entire env locally.
+So you have your feature branch and want to deploy it in sandbox or dev environment for dev testing or POC
+
+Imagine a team of developers working on a prerelease 2.0.0-alfa based off the branch 'next'.
+Each developer (rarely two) creates a feature branch. And then, if this feature requires testing in cloud,
+the developer may decide to create a dev-release based off the branch name (`dev-feature1`), then test it and merge to 'next' branch
+
+The table below shows comparison of different release types:
+
+| Name                 | release                                | prerelease                             | dev-release                                                |
+|----------------------|----------------------------------------|----------------------------------------|------------------------------------------------------------|
+| intention            | use in production                      | beta testing                           | dev testing                                                |
+| best use for         | software packages and end applications | software packages and end applications | end applications                                           |
+| adoption             | widely                                 | widely                                 | popular in enterprise                                      |
+| versioning           | SemVer, increment on each push         | SemVer-beta, increment on each push    | version = branch name, override on each push, no increment |
+| auto deletion        | N/A                                    | ❌️                                     | ✅                                                          |
+| number of developers | many                                   | many                                   | typically one                                              |
+| floating tags        | ✅                                      | ✅                                      | N/A                                                        |
 
 ## Action steps
 
@@ -53,18 +79,20 @@ The action has 7 main phases, each phase has several steps:
 7. GitHub release
    1. create a GitHub release tied to the most recent tag
 
-**Consistency**. This GH action does three modify operations: "Publish artifacts", "Git push" and "GitHub release".
-Order is important to recover from failures.
+### Consistency
 
-"Publish artifacts" goes first as it is most complex (highest chances to fail).
+This GH action does three modify operations: "Publish artifacts", "Git push" and "GitHub release".
+Order is important to recover from failures:
+
+- **Publish artifacts** goes first as it is most complex (highest chances to fail).
 It is idempotent, so if a later step fails, it is safe to re-run "Publish artifacts".<br>
 _Note: some publish commands are not idempotent (like npm publish), so as workaround just swallow 'same version already exists' type of errors
 if it is already not first workflow run (use `${{ github.run_attempt }}`)_
 
-"Git push" goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
+- **Git push** goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
 attempt to run it again will cause new tags creation!
 
-"GitHub release" goes last, as it is optional. It is also very simple — just one command
+- **GitHub release** goes last, as it is optional. It is also very simple — just one command
 (provided all release notes/files are generated on previous steps).
 If it fails, you can create release manually through GitHub UI
 
@@ -99,7 +127,7 @@ Example 2
 **semantic-release** usage details
 
 It is used in `dryRun` mode, so it doesn't commit changes, push tags, or create a GitHub release.
-Semantic-release has rich family of plugins and shared configuration. `agilecustoms/publish` action uses only two main plugins:
+Semantic-release has a rich family of plugins and shared configuration. `agilecustoms/publish` action uses only two main plugins:
 [commit-analyzer](https://github.com/semantic-release/commit-analyzer) and [release-notes-generator](https://github.com/semantic-release/release-notes-generator)
 so they take configuration as per `semantic-release` documentation in extent that `dryRun` mode supports.
 Plugin [changelog](https://github.com/semantic-release/changelog) is not used, instead `agilecustoms/publish` implements its own logic to update `CHANGELOG.md` file,
@@ -154,8 +182,8 @@ but you can use same options as for `changelog` plugin: `changelog-file` and `ch
 
 ### No artifacts (git tags + GH release)
 
-For example, for repository with terraform code only - no binaries, just add git tag<br>
-Version will be automatically generated based on latest version tag + commit messages<br>
+For example, for repository with terraform code only - no binaries, just add git tag.
+Version will be automatically generated based on the latest version tag + commit messages. 
 Ex: if the latest tag is `1.2.3` and there is a single commit `fix: JIRA-123`, then the new tag will be `1.2.4`.
 Also tags `1`, `1.2` and `latest` will be overwritten to point to the same commit as `1.2.4`
 
@@ -344,9 +372,9 @@ steps:
 
 Use the `version` input parameter to specify an exact version instead of auto-generating one.
 When provided, only this single version/tag will be created (no `latest`, `major`, or `minor` tags).
-Typically, you use normal release flow (for trunk-based development)
-or `tag-context: branch` to release a new version from non-default branch (such as old version support).
-You would use `dev-release: true` to test some feature before merging it. Use explicit **version** as last resort:
+Typically, you use normal release flow (for trunk-based development) or `dev-release: true` to test some feature before merging it.
+
+Use explicit **version** as last resort:
 1. to fix an existing version in-place
 2. instead of dev-release when it is not supported
 
@@ -354,6 +382,6 @@ You would use `dev-release: true` to test some feature before merging it. Use ex
 
 ### Credits and Links
 
-- https://github.com/semantic-release/semantic-release - NPM library to generate next version and release notes. Used as essential part of `agilecustoms/publish` action
-- https://github.com/cycjimmy/semantic-release-action - GH action wrapper for `semantic-release` library
+- https://github.com/semantic-release/semantic-release — NPM library to generate next version and release notes. Used as essential part of `agilecustoms/publish` action
+- https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release

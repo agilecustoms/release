@@ -8,11 +8,11 @@ Below is the list of potential future features, but it is not ordered. Idea is t
   - Gradle repository
 - publish in non-AWS repositories
   - private npmjs repository
-  - Maven central
+  - **Maven central**
 - GitHub release
   - ability to specify a list of files to include release. Should be pretty easy — just add parameter in `gh release create` command
   - integration between release and issues/PRs, ex: close issues fixed in a release, see [semantic-release/github](https://github.com/semantic-release/github)
-  - prereleases
+  - **prereleases**
   - notify maintainers and users of new releases
 - support proxy on different levels (just never faced with it yet)
 - git commit
