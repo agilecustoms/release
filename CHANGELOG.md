@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.1.0](https://github.com/agilecustoms/publish/compare/v1.0.0...v1.1.0) (2025-07-09)
+
+### Features
+
+* support git commit and push for dev-release ([96a8c72](https://github.com/agilecustoms/publish/commit/96a8c720cf7f02a7cd057b999c232f2222216f8a))
+
+
 # [1.0.0](https://github.com/agilecustoms/publish/compare/v0.15.2...v1.0.0) (2025-07-08)
 
 ### Features
