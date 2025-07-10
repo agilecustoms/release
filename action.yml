@@ -138,7 +138,7 @@ runs:
       run: |
         echo "debug"
         pwd
-        ls
+        ls -la
 
     # CWD is /home/runner/work/publish/publish
     # generate next_version (available as output), release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
