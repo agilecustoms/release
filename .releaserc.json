@@ -10,7 +10,7 @@
     [
       "@semantic-release/commit-analyzer",
       {
-        "preset": "angular",
+        "preset": "conventionalcommits",
         "releaseRules": [
           { "type": "docs", "release": "patch" }
         ]
