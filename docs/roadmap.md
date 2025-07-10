@@ -5,7 +5,7 @@ Below is the list of potential future features, but it is not ordered. Idea is t
 - publish in AWS CodeArtifact
   - npm (and Yarn) repository
   - pip (and Twine) repository
-  - Gradle repository
+  - **Gradle repository**
 - publish in non-AWS repositories
   - private npmjs repository
   - **Maven central**
