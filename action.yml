@@ -133,6 +133,12 @@ runs:
 
 ## Phase 2 - Release generation
 
+    - name: Debug
+      shell: bash
+      run: |
+        echo "debug"
+        pwd
+
     # generate next_version (available as output), release notes (output notes) and also update file CHANGELOG.md
     # note: if explicit version is provided, then next_version is still generated, but not used (see next step)
     - name: Release generation
