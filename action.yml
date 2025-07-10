@@ -139,8 +139,9 @@ runs:
         echo "debug"
         pwd
 
-    # generate next_version (available as output), release notes (output notes) and also update file CHANGELOG.md
-    # note: if explicit version is provided, then next_version is still generated, but not used (see next step)
+    # CWD is /home/runner/work/publish/publish
+    # generate next_version (available as output), release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
+    # note: run this step even if an explicit version is provided, (next_version is ignored, but release notes are used)
     - name: Release generation
       id: release_gen
       if: inputs.dev-release == 'false'
