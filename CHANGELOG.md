@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/agilecustoms/publish/compare/v1.1.1...v1.1.2) (2025-07-11)
+
+### Bug Fixes
+
+* remove debug step ([b7429f3](https://github.com/agilecustoms/publish/commit/b7429f3b3bf7e1c4582417493183d38090f7aa3e))
+
+
 ## [1.1.1](https://github.com/agilecustoms/publish/compare/v1.1.0...v1.1.1) (2025-07-10)
 
 
