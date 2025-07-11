@@ -133,13 +133,6 @@ runs:
 
 ## Phase 2 - Release generation
 
-    - name: Debug
-      shell: bash
-      run: |
-        echo "debug"
-        pwd
-        ls -la
-
     # CWD is /home/runner/work/publish/publish
     # generate next_version (available as output), release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
     # note: run this step even if an explicit version is provided, (next_version is ignored, but release notes are used)

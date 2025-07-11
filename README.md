@@ -43,16 +43,17 @@ the developer may decide to create a dev-release based off the branch name (`dev
 
 The table below shows comparison of different release types:
 
-| Name                        | release                                         | prerelease                                      | dev-release                                                |
-|-----------------------------|-------------------------------------------------|-------------------------------------------------|------------------------------------------------------------|
-| intention                   | use in production                               | beta testing                                    | dev testing                                                |
-| best use for                | software packages and end applications          | software packages and end applications          | end applications                                           |
-| adoption                    | widely                                          | widely                                          | popular in enterprise                                      |
-| versioning                  | semantic-release used to determine next version | semantic-release used to determine next version | version = branch name, override on each push, no increment |
-| auto deletion               | N/A                                             | ❌️                                              | ✅                                                          |
-| number of developers        | many                                            | many                                            | typically one                                              |
-| release notes and changelog | ✅                                               | ✅                                               | ❌️                                                         |
-| floating tags               | major, major.minor, latest                      | ?                                               | ❌️                                                         |
+| Name                                             | release                                                 | prerelease                                      | dev-release                                                |
+|--------------------------------------------------|---------------------------------------------------------|-------------------------------------------------|------------------------------------------------------------|
+| intention                                        | use in production                                       | beta testing                                    | dev testing                                                |
+| best use for                                     | software packages and end applications                  | software packages and end applications          | end applications                                           |
+| adoption                                         | widely                                                  | widely                                          | popular in enterprise                                      |
+| versioning                                       | semantic-release used to determine next version         | semantic-release used to determine next version | version = branch name, override on each push, no increment |
+| auto deletion                                    | N/A                                                     | ❌️                                              | ✅                                                          |
+| number of developers                             | many                                                    | many                                            | typically one                                              |
+| release notes and changelog                      | ✅                                                       | ✅                                               | ❌️                                                         |
+| floating tags                                    | major, major.minor, latest                              | ?                                               | ❌️                                                         |
+| semantic tags `fix:`, `feat:` in commit messages | at least one commit w/ such tag is required for release | at least one commit w/ such tag is required     | not required                                               |
 
 ## Action steps
 
