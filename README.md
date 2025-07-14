@@ -98,41 +98,12 @@ attempt to run it again will cause new tags creation!
 (provided all release notes/files are generated on previous steps).
 If it fails, you can create release manually through GitHub UI
 
-## Semantic Release usage
+## semantic-release usage
 
 NPM library [semantic-release](https://github.com/semantic-release) is used to generate next version and release notes.
-Default preset is [conventional-changelog-angular](https://www.npmjs.com/package/conventional-changelog-angular) (10M weekly downloads).
-
-Alternatives: [conventional-changelog-conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (5M weekly downloads)
-and [conventional-changelog-eslint](https://www.npmjs.com/package/conventional-changelog-eslint) (~1.5M weekly downloads).
-
-You can change preset and effect for each prefix your own `.releaserc.json` in the root of repository.
-Short summary of the [angular](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset:
-
-| prefix                                         | default version bump | release and changelog section                | description                                                                                                                               |
-|------------------------------------------------|----------------------|----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| `feat:` with `BREAKING CHANGE:`                | major                | Features  and  BREAKING CHANGES              | Breaking change OR just first major release. (Tag `BREAKING CHANGE:` must be in message footer)                                           |
-| `feat:`                                        | minor                | Features                                     | New feature                                                                                                                               |
-| `fix:`                                         | patch                | Bug Fixes                                    | Bug fix                                                                                                                                   |
-| `perf:`                                        | patch                | Performance Improvements                     | Performance improvement/fix                                                                                                               |
-| `build:`, `ci:`, `docs:`, `refactor:`, `test:` | no version bump      | _not reflected in GH release / CHANGELOG.md_ | See Angular [commit-message-guidelines](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md#type) |
-| _no prefix_                                    | no version bump      | _not reflected in GH release / CHANGELOG.md_ | Discouraged, but allowed                                                                                                                  |
-
-Example 1
-```text
-```
-
-Example 2
-```text
-```
-
-**semantic-release** is used in `dryRun` mode, so it doesn't commit changes, push tags, or create a GitHub release.
-Semantic-release has a rich family of plugins and shared configuration. `agilecustoms/publish` action uses only two main plugins:
-[commit-analyzer](https://github.com/semantic-release/commit-analyzer) and [release-notes-generator](https://github.com/semantic-release/release-notes-generator)
-so they take configuration as per `semantic-release` documentation in an extent that `dryRun` mode supports.
-Plugin [changelog](https://github.com/semantic-release/changelog) is not used,
-instead `agilecustoms/publish` implements its own logic to update `CHANGELOG.md` file,
-but you can use same options as for `changelog` plugin: `changelog-file` and `changelog-title`
+It takes latest SemVer tag and analyzes commit messages to determine the next version:
+commits with `fix:` prefix will increment patch version, commits with `feat:` prefix will increment minor version, and commits with `BREAKING CHANGE:` will increment major version.
+For more details see [semantic-release usage](./docs/semantic-release.md).
 
 ## Inputs
 
@@ -155,7 +126,7 @@ but you can use same options as for `changelog` plugin: `changelog-file` and `ch
 | npm-extra-deps              | Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset, ex. 'conventional-changelog-conventionalcommits@9.1.0'                        |                   |
 | node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                                              | 22                |
 | release-branches            | semantic-release "branches" configuration, see default at [gitbook](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) | (see description) |
-| release-gh                  | If true, then create a GitHub release with the same name as the tag                                                                                                           | true              |
+| release-gh                  | If true, then create a GitHub release                                                                                                                                         | true              |
 | tag-format                  | By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix                                                                                           | v${version}       |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                          |                   |
 | version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                                                 |                   |
@@ -385,6 +356,6 @@ Use explicit **version** as last resort:
 
 ### Credits and Links
 
-- https://github.com/semantic-release/semantic-release — NPM library to generate next version and release notes. Used as essential part of `agilecustoms/publish` action
-- https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library
+- https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/publish` action
+- https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
