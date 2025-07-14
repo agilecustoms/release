@@ -101,7 +101,7 @@ If it fails, you can create release manually through GitHub UI
 ## Semantic Release usage
 
 NPM library [semantic-release](https://github.com/semantic-release) is used to generate next version and release notes.
-Default preset is [conventional-changelog-angular](https://www.npmjs.com/package/conventional-changelog-angular) (8M weekly downloads).
+Default preset is [conventional-changelog-angular](https://www.npmjs.com/package/conventional-changelog-angular) (10M weekly downloads).
 
 Alternatives: [conventional-changelog-conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (5M weekly downloads)
 and [conventional-changelog-eslint](https://www.npmjs.com/package/conventional-changelog-eslint) (~1.5M weekly downloads).
@@ -136,27 +136,29 @@ but you can use same options as for `changelog` plugin: `changelog-file` and `ch
 
 ## Inputs
 
-| Name                        | Description                                                                                                                                          | Default      |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
-| aws-account                 | AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag                                                              |              |
-| aws-region                  | AWS region                                                                                                                                           |              |
-| aws-role                    | IAM role to assume to publish, ex. `/ci/publisher`                                                                                                   |              |
-| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                            |              |
-| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                            |              |
-| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                            |              |
-| aws-ecr                     | If true, then push docker image to ECR                                                                                                               |              |
-| aws-s3-bucket               | S3 bucket to upload artifacts to                                                                                                                     |              |
-| aws-s3-dir                  | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                              |              |
-| changelog-file              | CHANGELOG.md file path. Pass empty string to disable changelog generation                                                                            | CHANGELOG.md |
-| changelog-title             | Title of the changelog file (first line of the file)                                                                                                 | # Changelog  |
-| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                       | false        |
-| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                          | dev/         |
-| floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                             | true         |
-| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                     | 22           |
-| release-gh                  | If true, then create a GitHub release with the same name as the tag                                                                                  | true         |
-| tag-format                  | By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix                                                                  | v${version}  |
-| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags) |              |
-| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                        |              |
+| Name                        | Description                                                                                                                                                                   | Default           |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
+| aws-account                 | AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag                                                                                       |                   |
+| aws-region                  | AWS region                                                                                                                                                                    |                   |
+| aws-role                    | IAM role to assume to publish, ex. `/ci/publisher`                                                                                                                            |                   |
+| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                                                     |                   |
+| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                                                     |                   |
+| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                                                     |                   |
+| aws-ecr                     | If true, then push docker image to ECR                                                                                                                                        |                   |
+| aws-s3-bucket               | S3 bucket to upload artifacts to                                                                                                                                              |                   |
+| aws-s3-dir                  | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                                                       |                   |
+| changelog-file              | CHANGELOG.md file path. Pass empty string to disable changelog generation                                                                                                     | CHANGELOG.md      |
+| changelog-title             | Title of the changelog file (first line of the file)                                                                                                                          | # Changelog       |
+| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                | false             |
+| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                   | dev/              |
+| floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                                                      | true              |
+| npm-extra-deps              | Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset, ex. 'conventional-changelog-conventionalcommits@9.1.0'                        |                   |
+| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                                              | 22                |
+| release-branches            | semantic-release "branches" configuration, see default at [gitbook](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) | (see description) |
+| release-gh                  | If true, then create a GitHub release with the same name as the tag                                                                                                           | true              |
+| tag-format                  | By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix                                                                                           | v${version}       |
+| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                          |                   |
+| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                                                 |                   |
 
 ## Environment variables
 

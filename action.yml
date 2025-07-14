@@ -52,6 +52,12 @@ inputs:
     description: 'Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
     required: false
     default: '22'
+  npm-extra-deps:
+    description: 'Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset'
+    required: false
+  release-branches:
+    description: 'semantic-release "branches" configuration'
+    required: false
   release-gh:
     description: 'If true, then create a GitHub release with the same name as the tag'
     required: false
@@ -141,9 +147,11 @@ runs:
       if: inputs.dev-release == 'false'
       uses: agilecustoms/release-gen@main
       with:
-        changelog-file: ${{ inputs.changelog-file }}
-        changelog-title: ${{ inputs.changelog-title }}
-        tag-format: ${{ inputs.tag-format }}
+        changelog_file: ${{ inputs.changelog-file }}
+        changelog_title: ${{ inputs.changelog-title }}
+        npm_extra_deps: ${{ inputs.npm-extra-deps }}
+        release_branches: ${{ inputs.release-branches }}
+        tag_format: ${{ inputs.tag-format }}
 
     - name: Finalize version
       id: version
