@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.3.0](https://github.com/agilecustoms/publish/compare/v1.2.0...v1.3.0) (2025-07-15)
+
+### Features
+
+* add support of release-plugins ([16fb320](https://github.com/agilecustoms/publish/commit/16fb320407f3eaa679e76dd658a20db523f01ffb))
+
+
 # [1.2.0](https://github.com/agilecustoms/publish/compare/v1.1.2...v1.2.0) (2025-07-14)
 
 ### Features
