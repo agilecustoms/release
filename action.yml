@@ -62,6 +62,9 @@ inputs:
     description: 'If true, then create a GitHub release with the same name as the tag'
     required: false
     default: 'true'
+  release-plugins:
+    description: 'semantic-release plugins configuration'
+    required: false
   tag-format:
     description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
@@ -151,6 +154,7 @@ runs:
         changelog_title: ${{ inputs.changelog-title }}
         npm_extra_deps: ${{ inputs.npm-extra-deps }}
         release_branches: ${{ inputs.release-branches }}
+        release_plugins: ${{ inputs.release-plugins }}
         tag_format: ${{ inputs.tag-format }}
 
     - name: Finalize version
