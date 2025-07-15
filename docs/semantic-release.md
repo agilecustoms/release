@@ -9,14 +9,8 @@ semantic-release itself depends on [conventional-changelog](https://github.com/c
 to analyze commit messages and generate release notes. There are ~10 presets available named `conventional-changelog-{preset}`.
 By default, semantic-release uses [angular](https://www.npmjs.com/package/conventional-changelog-angular) (10M weekly downloads).
 Next popular alternative is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads). To use non-default preset, you need
-1) set desired preset in `@semantic-release/commit-analyzer` plugin (more details below);
-2) add npm dependency via `npm_extra_deps` input in `agilecustoms/publish` action:
-```yaml
-- name: Release
-  uses: agilecustoms/publish@main
-  with:
-    npm_extra_deps: conventional-changelog-conventionalcommits@9.1.0
-```
+1) set desired preset in `@semantic-release/commit-analyzer` plugin (more details below)
+2) add npm dependency via `npm_extra_deps` input in `agilecustoms/publish` action (see example below)
 
 Here is the summary of the [angular](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset:
 
@@ -49,10 +43,65 @@ You can change preset and effect for each prefix your own `.releaserc.json` in t
 
 ## Examples
 
-Example 1
-```text
+### use patch for docs
+
+Use `agilecustoms/publish` action with `release-plugins` input to set `patch` effect for `docs:` prefix:
+```yaml
+- name: Release
+  uses: agilecustoms/publish@v1
+  with:
+    release-plugins: |
+      [
+        [
+          "@semantic-release/commit-analyzer",
+          {
+            "releaseRules": [
+              { "type": "docs", "release": "patch" }
+            ]
+          }
+        ],
+        "@semantic-release/release-notes-generator"
+      ]
 ```
 
-Example 2
+Use tags in commit messages as per [angular](https://www.npmjs.com/package/conventional-changelog-angular) specification:
 ```text
+docs: add more examples to README
 ```
+
+==> new patch release, with `Bug Fixes` in release notes
+
+
+### conventionalcommits
+
+Place `.relaserc.json` in repo root (alternatively can use shareable configuration or pass plugins via `release-plugins` input in `agilecustoms/publish` action):
+```json
+{
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    "@semantic-release/release-notes-generator"
+  ]
+}
+```
+
+Use `npm_extra_deps` input in `agilecustoms/publish` action to add _conventionalcommits_ npm dependency:
+```yaml
+- name: Release
+  uses: agilecustoms/publish@v1
+  with:
+    npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
+```
+
+Use tags in commit messages as per [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/):
+```text
+feat!: support new payment provider
+```
+
+==> new major release, with `BREAKING CHANGE` in release notes
+
+_Note, conventionalcommits allow to make major release with ! after tag, BREAKING CHANGE: is not required_
