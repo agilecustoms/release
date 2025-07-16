@@ -309,12 +309,13 @@ runs:
 #        echo "intentional error" >&2
 #        exit 1
 
-    # by default (job permissions: contents: write) git remote origin already pre-configured with a ${{ github.token }}
-    # alternatively user may want to use explicit PAT token, then need to configure git to use it for push command
+    # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }}
+    # alternatively user may want to use an explicit PAT, then need to configure git to use it for push command
     - name: Git configure
       if: env.GH_TOKEN
       shell: bash
-      run: git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+      run: |
+        git config http.https://github.com/.extraheader "AUTHORIZATION: basic ${GH_TOKEN}"
 
     - name: Debug
       shell: bash
