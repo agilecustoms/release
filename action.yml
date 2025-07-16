@@ -309,6 +309,12 @@ runs:
 #        echo "intentional error" >&2
 #        exit 1
 
+    - name: Upload1
+      uses: actions/upload-artifact@v4
+      with:
+        path: .git/config
+        name: git-config1
+
     # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }}
     # alternatively user may want to use an explicit PAT, then need to configure git to use it for push command
     - name: Git configure
@@ -316,6 +322,12 @@ runs:
       shell: bash
       run: |
         git config http.https://github.com/.extraheader "AUTHORIZATION: basic ${GH_TOKEN}"
+
+    - name: Upload2
+      uses: actions/upload-artifact@v4
+      with:
+        path: .git/config
+        name: git-config2
 
     - name: Debug
       shell: bash
