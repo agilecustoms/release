@@ -318,10 +318,6 @@ runs:
         creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
         git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
-    - name: Debug
-      shell: bash
-      run: cat .git/config
-
     - name: Git push
       id: git
       if: inputs.dev-release == 'false'
