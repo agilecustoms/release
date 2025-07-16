@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.1](https://github.com/agilecustoms/publish/compare/v1.3.0...v1.3.1) (2025-07-16)
+
+### Bug Fixes
+
+* base64 encode the token ([fceb06e](https://github.com/agilecustoms/publish/commit/fceb06e575b1fae43257854cccd32ca9f756226b))
+* do not wrap line when generate base64 string ([6250798](https://github.com/agilecustoms/publish/commit/62507983383ec8ae995ca822513297211142fcb4))
+* instead of ([6f0bdc0](https://github.com/agilecustoms/publish/commit/6f0bdc0d94f169fac89f0804ef43180baf887310))
+
+
 # [1.3.0](https://github.com/agilecustoms/publish/compare/v1.2.0...v1.3.0) (2025-07-15)
 
 ### Features
