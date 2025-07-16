@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/agilecustoms/publish/compare/v1.3.2...v1.3.3) (2025-07-16)
+
+### Bug Fixes
+
+* remove extra debug ([c0b500a](https://github.com/agilecustoms/publish/commit/c0b500a3f46a8558c18afa1173d194a0627ee46a))
+
+
 ## [1.3.2](https://github.com/agilecustoms/publish/compare/v1.3.1...v1.3.2) (2025-07-16)
 
 ### Bug Fixes
