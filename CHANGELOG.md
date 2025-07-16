@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/agilecustoms/publish/compare/v1.3.1...v1.3.2) (2025-07-16)
+
+### Bug Fixes
+
+* remove debugging, add reference .git/config file (token is revoked) ([25af0a5](https://github.com/agilecustoms/publish/commit/25af0a56f46cc5c1505962a924a499d7b33fde80))
+
+
 ## [1.3.1](https://github.com/agilecustoms/publish/compare/v1.3.0...v1.3.1) (2025-07-16)
 
 ### Bug Fixes
