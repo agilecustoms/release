@@ -318,12 +318,6 @@ runs:
         creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
         git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
-    - name: Upload2
-      uses: actions/upload-artifact@v4
-      with:
-        path: .git/config
-        name: git-config2
-
     - name: Debug
       shell: bash
       run: cat .git/config

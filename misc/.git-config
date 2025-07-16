@@ -1,0 +1,15 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/agilecustoms/tt-web
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[gc]
+	auto = 0
+[http "https://github.com/"]
+	extraheader = AUTHORIZATION: basic eC1hY2Nlc3MtdG9rZW46Z2l0aHViX3BhdF8xMUFCMjQ0VlEwMHh6YnFJSFoyaHJLX3Zmd2g2OWFtQ0dZWlViYmdaUXJrZnZOaHVzN25ZbjB4eldmdHVpSk9tdExRTEFDWjJVUG9lYmtTR1Rl
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
