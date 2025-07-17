@@ -55,6 +55,9 @@ inputs:
   npm-extra-deps:
     description: 'Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset'
     required: false
+  pre-publish-script:
+    description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
+    required: false
   release-branches:
     description: 'semantic-release "branches" configuration'
     required: false
@@ -71,9 +74,6 @@ inputs:
     default: 'v${version}'
   version:
     description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags)'
-    required: false
-  version-update-script:
-    description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
 
 runs:
@@ -230,10 +230,10 @@ runs:
       shell: bash
       run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
-    - name: Custom version update script
-      if: inputs.version-update-script
+    - name: Pre-publish script
+      if: inputs.pre-publish-script
       shell: bash
-      run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.version-update-script }}
+      run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.pre-publish-script }}
 
 ## Phase 5 - Publish artifacts
 

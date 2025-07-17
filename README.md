@@ -68,7 +68,7 @@ The action has 7 main phases, each phase has several steps:
 4. Prepare: mainly bump versions in language-specific files
    1. update version in `pom.xml` (for maven)
    2. update version in `package.json` (for npm)
-   3. run a custom script (can use to update a cache key!)
+   3. run a custom script to update arbitrary files
 5. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory
    2. AWS ECR - publish Docker image in ECR repository
@@ -152,12 +152,12 @@ jobs:
 | floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                                                      | true              |
 | npm-extra-deps              | Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset, ex. 'conventional-changelog-conventionalcommits@9.1.0'                        |                   |
 | node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                                              | 22                |
+| pre-publish-script          | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                                                 |                   |
 | release-branches            | semantic-release "branches" configuration, see default at [gitbook](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) | (see description) |
 | release-gh                  | If true, then create a GitHub release                                                                                                                                         | true              |
 | release-plugins             | semantic-release "plugins" configuration, see [details](./docs/semantic-release.md#Configuration)                                                                             | (see description) |
 | tag-format                  | By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix                                                                                           | v${version}       |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                          |                   |
-| version-update-script       | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                                                 |                   |
 
 ## Environment variables
 
