@@ -1,5 +1,13 @@
 # Changelog
 
+# [1.4.0](https://github.com/agilecustoms/publish/compare/v1.3.4...v1.4.0) (2025-07-17)
+
+### Features
+
+* GH_TOKEN env variable is not required any more, bcz it can be configured at checkout action ([a4d35b3](https://github.com/agilecustoms/publish/commit/a4d35b39a743aec43f7f1f50ff107eaa23f26b46))
+* rename input ([a72da06](https://github.com/agilecustoms/publish/commit/a72da06ce946e5c786812097537f8ab588cd068e))
+
+
 ## [1.3.4](https://github.com/agilecustoms/publish/compare/v1.3.3...v1.3.4) (2025-07-17)
 
 ### Bug Fixes
