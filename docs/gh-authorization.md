@@ -1,20 +1,54 @@
 # GitHub Authorization
 
+In the main README you could see a usage example for the main usecase. 
+Let's cover in details when and what kind of GitHub authorization is required.
+There will be three sections from highest access to lowest access.
 
-1. (main scenario) you merge a PR in a protected branch, and this release assumes an automated commit (such as update CHANGELOG.md)
-   → you need a PAT (Personal Access Token) with `repo` scope or fine-grained PAT with `Contents "Read and write"`
+## PAT required
 
-Below is a simple breakdown. For more details see [GitHub authorization](./docs/github-auth.md).
-2.
-**Main use case**: you have branch `main` with protection rules
-Merged PR in `main` branch, branch has protection rules that require PR reviews, and you want to release it:
-release commit bypassing rule protection (update package.json, pom.xml or CHANGELOG.md)
-or release-gh: true
--> need a fine-grained PAT with `Contents "Read and write"` or classic PAT with `repo` scope.
-Can checkout with this token or call `agilecustoms/publish` with env variable `GH_TOKEN`
+_When: protected branch + automated changes and git commit/push_
+
+1. You merge a PR in a protected branch such as `main`/`master`, branch for next release or legacy version support
+2. Release includes automated changes that need to be committed and pushed, such as:
+   1. bump a version in language-specific files such as `package.json` (Node.js), `pom.xml` (Java)
+   2. update CHANGELOG.md
+   3. any other files you can update with `pre-publish-script`
+
+→ need a fine-grained PAT with `Contents "Read and write"` or classic PAT with `repo` scope
+
+Next you have a choice **how to pass this PAT**:
+
+Option 1 (recommended): pass PAT in `agilecustoms/publish` env variable `GH_TOKEN`
+```yaml
+- name: Release
+  uses: agilecustoms/publish@v1
+  env:
+     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+```
+This option is recommended — this way you limit write access only to one step (`agilecustoms/publish`),
+while other job steps have readonly access
+
+Option 2: pass PAT in `github/checkout` `token` parameter
+```yaml
+- name: Checkout
+  uses: actions/checkout@v4
+  with:
+    token: ${{ secrets.GH_TOKEN }}
+```
+
+_secret name could be different, I use `GH_TOKEN` for consistency with env variable_
+
+## contents: write
+
+_When: protected branch, but not automated commit required, just push git tags and/or github release_<br>
+_When: non-protected branch + automated changes and git commit/push_
 
 release-gh: false, changelog-file: '' (no changelog), no libraries to publish, just git tag. Example: ECR image, S3 files, Terraform module
 -> PAT is not required, just ensure GH job has `permissions: contents: write` (to push tags)
+
+## contents: read
+
+_When: no git changes, not even tags_
 
 if not even pushing tags, PAT is not required and even job permissions can be `contents: read`
 
