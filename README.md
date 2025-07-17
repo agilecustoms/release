@@ -108,14 +108,28 @@ For more details see [semantic-release usage](./docs/semantic-release.md).
 
 ## GitHub authorization
 
-Most of the time GitHub repos have protected branch such as `main` which requires changes via PRs.
-Release workflow often assumes some automated changes, such as bump versions `package.json` or update `CHANGELOG.md`.
+Most of the time GitHub repos have protected branch such as `main` which requires to be made only via PRs.
+At the same time, release workflow often assumes some automated changes, such as bump versions `package.json` or update `CHANGELOG.md`.
 In this setup you need to **bypass** branch protection rule to make direct commit and push.
-This requires a PAT (Personal Access Token) usage.
-A PAT needs to be issued by person who has permission to bypass these branch protection rules.
+This requires a PAT (Personal Access Token) issued by a person who has permission to bypass these branch protection rules.
 So this is the main use case for `agilecustoms/publish` action. For more details see [GitHub authorization](./docs/gh-authorization.md) 
 ```yaml
+jobs:
+   Release:
+      runs-on: ubuntu-latest
+      permissions:
+         id-token: write # need for AWS login (via GitHub OIDC provider)
+         contents: read # since `id-token` is specified, now need to explicitly set `contents` permission, otherwise can't even checkout
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v4
 
+         # ...
+
+         - name: Release
+           uses: agilecustoms/publish@v1
+           env:
+              GH_TOKEN: ${{ secrets.GH_TOKEN }} # PAT to bypass branch protection - need to create and put in repo/org secrets
 ```
 
 ## Inputs
