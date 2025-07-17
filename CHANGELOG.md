@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/agilecustoms/publish/compare/v1.3.3...v1.3.4) (2025-07-17)
+
+### Bug Fixes
+
+* move Git configure in front of semantic-release ([ec738e4](https://github.com/agilecustoms/publish/commit/ec738e4a046a0e52c8aa4c02b8375db5dddd3f31))
+
+
 ## [1.3.3](https://github.com/agilecustoms/publish/compare/v1.3.2...v1.3.3) (2025-07-16)
 
 ### Bug Fixes
