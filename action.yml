@@ -142,6 +142,15 @@ runs:
 
 ## Phase 2 - Release generation
 
+    # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }}
+    # alternatively user may want to use an explicit PAT, then need to configure git to use it for push command
+    - name: Git configure
+      if: env.GH_TOKEN
+      shell: bash
+      run: |
+        creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
+        git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
+
     # CWD is /home/runner/work/publish/publish
     # generate next_version (available as output), release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
     # note: run this step even if an explicit version is provided, (next_version is ignored, but release notes are used)
@@ -308,15 +317,6 @@ runs:
 #      run: |
 #        echo "intentional error" >&2
 #        exit 1
-
-    # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }}
-    # alternatively user may want to use an explicit PAT, then need to configure git to use it for push command
-    - name: Git configure
-      if: env.GH_TOKEN
-      shell: bash
-      run: |
-        creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
-        git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
     - name: Git push
       id: git
