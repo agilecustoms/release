@@ -161,10 +161,10 @@ jobs:
 
 ## Environment variables
 
-| Name            | Description                                                                                                              |
-|-----------------|--------------------------------------------------------------------------------------------------------------------------|
-| NODE_AUTH_TOKEN | If specified - will publish an npm package in public npmjs repo                                                          |
-| GH_TOKEN        | Required if `release-gh: true` (default). Can be default token `${{ github.token }}` or PAT `${{ secrets.MY_GH_TOKEN }}` |
+| Name            | Description                                                                                                                                                          |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| NODE_AUTH_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                      |
+| GH_TOKEN        | 95% you pass GH PAT with protected branch bypass permission. Required if `release-gh: true` (default). See details in [gh-authorization](./docs/gh-authorization.md) |
 
 ## Outputs
 
