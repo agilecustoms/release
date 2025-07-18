@@ -82,6 +82,12 @@ runs:
 
 ## Phase 1.1 - Validate secrets (tokens) passed via env variables
 
+    - name: Validate release
+      if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
+      shell: bash
+      run: |
+        echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
+
     - name: Validate npmjs token
       if: env.NODE_AUTH_TOKEN && inputs.dev-release == 'true'
       shell: bash

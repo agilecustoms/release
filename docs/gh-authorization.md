@@ -25,8 +25,9 @@ Option 1 (recommended): pass PAT in `agilecustoms/publish` env variable `GH_TOKE
   env:
      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
-This option is recommended — this way you limit write access only to one step (`agilecustoms/publish`),
-while other job steps have readonly access
+You must use this option to make a GH release (input `release-gh` is true by default).
+If you turn off GH releases, Option 1 is not required, but recommended —
+this way you limit write access only to one step (`agilecustoms/publish`), while other job steps have readonly access
 
 Option 2: pass PAT in `github/checkout` `token` parameter
 ```yaml
