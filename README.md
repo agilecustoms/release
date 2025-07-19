@@ -157,6 +157,7 @@ jobs:
 | release-branches            | semantic-release "branches" configuration, see default at [gitbook](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches)            | (see description) |
 | release-gh                  | If true, then create a GitHub release                                                                                                                                                    | true              |
 | release-plugins             | semantic-release "plugins" configuration, see [details](./docs/semantic-release.md#Configuration)                                                                                        | (see description) |
+| summary                     | Text to print in workflow 'Release summary'. Default is `### Released ${version}`. Set empty string to omit summary generation                                                           | (see description) |
 | tag-format                  | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                      | v${version}       |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                                     |                   |
 
@@ -169,10 +170,9 @@ jobs:
 
 ## Outputs
 
-| Name              | Description                                                                                                                                                                                                                                                                                                            |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| changes_detected  | true if some changes were commited. Many artifacts release assumes changes such as pom.xml and package.json. Also you might have custom script that made some changes. OR you could have made change right before calling this `publish` action. If there any changes - `publish` action commit them and return `true` |
-| version           | Version that was generated (or provided via `version` input)                                                                                                                                                                                                                                                           |
+| Name              | Description                                                  |
+|-------------------|--------------------------------------------------------------|
+| version           | Version that was generated (or provided via `version` input) |
 
 ## Setup
 
