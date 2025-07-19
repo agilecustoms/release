@@ -19,7 +19,3 @@ jobs:
         uses: agilecustoms/publish@main
         env:
           GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
-
-      - name: Summary
-        run: echo "### Released ${{ steps.release.outputs.version }} :pushpin:" >> $GITHUB_STEP_SUMMARY
-
