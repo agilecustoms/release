@@ -80,6 +80,7 @@ The action has 7 main phases, each phase has several steps:
    3. atomically push commit and tags to the remote repository
 7. GitHub release
    1. create a GitHub release tied to the most recent tag
+8. Print summary
 
 ### Consistency
 
@@ -134,30 +135,31 @@ jobs:
 
 ## Inputs
 
-| Name                        | Description                                                                                                                                                                   | Default           |
-|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
-| aws-account                 | AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag                                                                                       |                   |
-| aws-region                  | AWS region                                                                                                                                                                    |                   |
-| aws-role                    | IAM role to assume to publish, ex. `/ci/publisher`                                                                                                                            |                   |
-| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                                                     |                   |
-| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                                                     |                   |
-| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                                                     |                   |
-| aws-ecr                     | If true, then push docker image to ECR                                                                                                                                        |                   |
-| aws-s3-bucket               | S3 bucket to upload artifacts to                                                                                                                                              |                   |
-| aws-s3-dir                  | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                                                       |                   |
-| changelog-file              | CHANGELOG.md file path. Pass empty string to disable changelog generation                                                                                                     | CHANGELOG.md      |
-| changelog-title             | Title of the changelog file (first line of the file)                                                                                                                          | # Changelog       |
-| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                | false             |
-| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                   | dev/              |
-| floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                                                      | true              |
-| npm-extra-deps              | Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset, ex. 'conventional-changelog-conventionalcommits@9.1.0'                        |                   |
-| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                                              | 22                |
-| pre-publish-script          | sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)                                                 |                   |
-| release-branches            | semantic-release "branches" configuration, see default at [gitbook](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) | (see description) |
-| release-gh                  | If true, then create a GitHub release                                                                                                                                         | true              |
-| release-plugins             | semantic-release "plugins" configuration, see [details](./docs/semantic-release.md#Configuration)                                                                             | (see description) |
-| tag-format                  | Default tag format is `v1.0.0` (default is in code level, not input value). Use `${version}` to remove `v` prefix                                                             | v${version}       |
-| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                          |                   |
+| Name                        | Description                                                                                                                                                                              | Default           |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
+| aws-account                 | AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag                                                                                                  |                   |
+| aws-region                  | AWS region                                                                                                                                                                               |                   |
+| aws-role                    | IAM role to assume to publish, ex. `/ci/publisher`                                                                                                                                       |                   |
+| aws-codeartifact-domain     | CodeArtifact domain name, ex. `mycompany`                                                                                                                                                |                   |
+| aws-codeartifact-repository | CodeArtifact repository name, ex. `maven`                                                                                                                                                |                   |
+| aws-codeartifact-maven      | If true, then publish maven artifacts to AWS CodeArtifact                                                                                                                                |                   |
+| aws-ecr                     | If true, then push docker image to ECR                                                                                                                                                   |                   |
+| aws-s3-bucket               | S3 bucket to upload artifacts to                                                                                                                                                         |                   |
+| aws-s3-dir                  | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                                                                  |                   |
+| changelog-file              | CHANGELOG.md file path. Pass empty string to disable changelog generation                                                                                                                | CHANGELOG.md      |
+| changelog-title             | Title of the changelog file (first line of the file)                                                                                                                                     | # Changelog       |
+| dev-release                 | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                           | false             |
+| dev-branch-prefix           | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                              | dev/              |
+| floating-tags               | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                                                                 | true              |
+| npm-extra-deps              | Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset, ex. 'conventional-changelog-conventionalcommits@9.1.0'                                   |                   |
+| node-version                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                                                         | 22                |
+| pre-publish-script          | custom sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc). In this script you can use variable `$new_version` |                   |
+| release-branches            | semantic-release "branches" configuration, see default at [gitbook](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches)            | (see description) |
+| release-gh                  | If true, then create a GitHub release                                                                                                                                                    | true              |
+| release-plugins             | semantic-release "plugins" configuration, see [details](./docs/semantic-release.md#Configuration)                                                                                        | (see description) |
+| summary                     | Text to print in workflow 'Release summary'. Default is `### Released ${version}`. Set empty string to omit summary generation                                                           | (see description) |
+| tag-format                  | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                      | v${version}       |
+| version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                                     |                   |
 
 ## Environment variables
 
@@ -168,10 +170,9 @@ jobs:
 
 ## Outputs
 
-| Name              | Description                                                                                                                                                                                                                                                                                                            |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| changes_detected  | true if some changes were commited. Many artifacts release assumes changes such as pom.xml and package.json. Also you might have custom script that made some changes. OR you could have made change right before calling this `publish` action. If there any changes - `publish` action commit them and return `true` |
-| version           | Version that was generated (or provided via `version` input)                                                                                                                                                                                                                                                           |
+| Name              | Description                                                  |
+|-------------------|--------------------------------------------------------------|
+| version           | Version that was generated (or provided via `version` input) |
 
 ## Setup
 

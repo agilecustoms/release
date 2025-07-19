@@ -68,6 +68,10 @@ inputs:
   release-plugins:
     description: 'semantic-release plugins configuration'
     required: false
+  summary:
+    description: 'If true, then print summary to the GitHub Actions summary page'
+    required: false
+    default: '### Released ${version}'
   tag-format:
     description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
@@ -334,7 +338,6 @@ runs:
         [ -f "${{ inputs.changelog-file }}" ] && git add "${{ inputs.changelog-file }}"
         if ! git diff --cached --quiet; then
           git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
-          echo "changes_detected=true" >> $GITHUB_OUTPUT
         else
           echo "No changes to commit."
         fi
@@ -368,11 +371,18 @@ runs:
       shell: bash
       run: gh release create ${{ steps.version.outputs.version }} --notes-file ${{ steps.release_gen.outputs.notes_file }}
 
+## Phase 8 - Print summary
+
+    - name: Summary
+      if: inputs.summary
+      shell: bash
+      run: |
+        version="${{ steps.version.outputs.version }}"
+        summary="${{ inputs.summary }}"
+        summary=$(eval echo "\"$summary\"")
+        echo "$summary" >> $GITHUB_STEP_SUMMARY
 
 outputs:
-  changes_detected:
-    description: "Whether there were any changes detected in the repository"
-    value: ${{ steps.git.outputs.changes_detected }}
   version:
     description: "Newly released version"
     value: ${{ steps.version.outputs.version }}
