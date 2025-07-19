@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.3.0](https://github.com/agilecustoms/publish/compare/v0.2.0...v0.3.0) (2025-07-19)
+
+### Features
+
+* print summary ([3151a26](https://github.com/agilecustoms/publish/commit/3151a265d369923bffb01df5b1fac8ae7163f3a4))
+
+
 # [0.2.0](https://github.com/agilecustoms/publish/compare/v0.1.0...v0.2.0) (2025-07-19)
 
 ### Features
