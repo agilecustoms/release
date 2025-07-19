@@ -368,6 +368,11 @@ runs:
       shell: bash
       run: gh release create ${{ steps.version.outputs.version }} --notes-file ${{ steps.release_gen.outputs.notes_file }}
 
+## Phase 8 - Print summary
+
+    - name: Summary
+      shell: bash
+      run: echo "### Released ${{ steps.version.outputs.version }} :pushpin:" >> $GITHUB_STEP_SUMMARY
 
 outputs:
   changes_detected:
