@@ -36,10 +36,10 @@ For all "modify" operations (publish artifacts, git commit, GitHub release, etc.
 
 There are 3 ways to configure semantic-release (highest to lowest priority):
 1. `agilecustoms/publish` [inputs](../README.md#inputs) in your workflow file
-2. [configuration file](https://semantic-release.gitbook.io/semantic-release/extending/shareable-configurations-list) (such as `.releaserc.json`) in the root of your repository
+2. [configuration file](https://semantic-release.gitbook.io/semantic-release/usage/configuration#configuration-file) (such as `.releaserc.json`) in the root of your repository
 3. [shareable configurations](https://semantic-release.gitbook.io/semantic-release/extending/shareable-configurations-list)
-
-You can change preset and effect for each prefix your own `.releaserc.json` in the root of repository.
+are **NOT SUPPORTED**. I (Alex C) checked 4 most popular configurations. Each of them provide a combination of plugins to release for particular platform.
+Since `agilecustoms/publish` uses only 2 plugins (and only in `dryRun` mode) - there's no much value in support of shareable configurations
 
 ## Examples
 

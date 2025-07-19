@@ -71,7 +71,6 @@ inputs:
   tag-format:
     description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
-    default: 'v${version}'
   version:
     description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags)'
     required: false

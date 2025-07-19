@@ -156,7 +156,7 @@ jobs:
 | release-branches            | semantic-release "branches" configuration, see default at [gitbook](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) | (see description) |
 | release-gh                  | If true, then create a GitHub release                                                                                                                                         | true              |
 | release-plugins             | semantic-release "plugins" configuration, see [details](./docs/semantic-release.md#Configuration)                                                                             | (see description) |
-| tag-format                  | By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix                                                                                           | v${version}       |
+| tag-format                  | Default tag format is `v1.0.0` (default is in code level, not input value). Use `${version}` to remove `v` prefix                                                             | v${version}       |
 | version                     | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                          |                   |
 
 ## Environment variables
