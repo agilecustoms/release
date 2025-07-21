@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.4.0](https://github.com/agilecustoms/publish/compare/v0.3.0...v0.4.0) (2025-07-21)
+
+### Features
+
+* rename $new_version into just $version ([1d1f22d](https://github.com/agilecustoms/publish/commit/1d1f22d3b0173f983a9fc87fd9aec8ef5ae02b38))
+
+
 # [0.3.0](https://github.com/agilecustoms/publish/compare/v0.2.0...v0.3.0) (2025-07-19)
 
 ### Features
