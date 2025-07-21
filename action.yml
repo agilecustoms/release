@@ -242,7 +242,7 @@ runs:
     - name: Pre-publish script
       if: inputs.pre-publish-script
       shell: bash
-      run: new_version=${{ steps.version.outputs.version }} && ${{ inputs.pre-publish-script }}
+      run: version=${{ steps.version.outputs.version }} && ${{ inputs.pre-publish-script }}
 
 ## Phase 5 - Publish artifacts
 
