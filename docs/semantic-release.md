@@ -8,7 +8,7 @@ semantic-release is used in **dryRun** mode, so it doesn't commit changes, push 
 semantic-release itself depends on [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) library
 to analyze commit messages and generate release notes. There are ~10 presets available named `conventional-changelog-{preset}`.
 By default, semantic-release uses [angular](https://www.npmjs.com/package/conventional-changelog-angular) (10M weekly downloads).
-Next popular alternative is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads). To use non-default preset, you need
+The next popular alternative is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads). To use non-default preset, you need
 1) set desired preset in `@semantic-release/commit-analyzer` plugin (more details below)
 2) add npm dependency via `npm_extra_deps` input in `agilecustoms/publish` action (see example below)
 
