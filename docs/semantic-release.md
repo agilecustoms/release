@@ -1,14 +1,15 @@
 # Semantic-release usage
 
 NPM library [semantic-release](https://github.com/semantic-release/semantic-release) is used to generate next version and release notes.
-semantic-release is used in **dryRun** mode, so it doesn't commit changes, push tags, or create a GitHub release
+semantic-release is used in **dryRun** mode, so it doesn't commit changes, push tags nor create a GitHub release
 
 ## Presets
 
 semantic-release itself depends on [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) library
 to analyze commit messages and generate release notes. There are ~10 presets available named `conventional-changelog-{preset}`.
 By default, semantic-release uses [angular](https://www.npmjs.com/package/conventional-changelog-angular) (10M weekly downloads).
-The next popular alternative is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads). To use non-default preset, you need
+The next popular alternative is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads).
+To use non-default preset, you need:
 1) set desired preset in `@semantic-release/commit-analyzer` plugin (more details below)
 2) add npm dependency via `npm_extra_deps` input in `agilecustoms/publish` action (see example below)
 
@@ -29,7 +30,7 @@ Here is the summary of the [angular](https://github.com/angular/angular/blob/mai
 **Only two semantic-release plugins** are used:
 [commit-analyzer](https://github.com/semantic-release/commit-analyzer) and [release-notes-generator](https://github.com/semantic-release/release-notes-generator)
 so they take configuration as per `semantic-release` documentation in an extent that `dryRun` mode supports.
-If you attempt to specify other plugins - they will be ignored, and you'll see a warning in logs.
+If you attempt to specify other plugins — they will be ignored, and you'll see a warning in logs.
 For all "modify" operations (publish artifacts, git commit, GitHub release, etc.) `agilecustoms/publish` uses its own implementation
 
 ## Configuration
@@ -38,8 +39,13 @@ There are 3 ways to configure semantic-release (highest to lowest priority):
 1. `agilecustoms/publish` [inputs](../README.md#inputs) in your workflow file
 2. [configuration file](https://semantic-release.gitbook.io/semantic-release/usage/configuration#configuration-file) (such as `.releaserc.json`) in the root of your repository
 3. [shareable configurations](https://semantic-release.gitbook.io/semantic-release/extending/shareable-configurations-list)
-are **NOT SUPPORTED**. I (Alex C) checked 4 most popular configurations. Each of them provide a combination of plugins to release for particular platform.
+are **NOT SUPPORTED**. I (Alex C) checked 4 most popular configurations. Each of them provides a combination of plugins to release for a particular platform.
 Since `agilecustoms/publish` uses only 2 plugins (and only in `dryRun` mode) - there's no much value in support of shareable configurations
+
+Bottom line, these are only supported configuration options for semantic-release:
+- branches
+- plugins
+- tag-format
 
 ## Examples
 
