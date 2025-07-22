@@ -1,14 +1,12 @@
-# Motivation
+# History
 
-## History
-
-In 2023, I (Alexey Chekulaev) started to work on a project that consists of multiple microservices.
+In 2023, I (Alexey Chekulaev) started to work on a project that consists of multiple microservices hosting in AWS.
 First, I did not find a good GH action to upload files in S3, so I did one myself.
-Then I felt a lack of GH action to publish Maven packages in AWS CodeArtifact, so I had to develop 2 more actions:
+Then I felt a lack of GH action to publish Maven packages in AWS CodeArtifact, so I had to develop two more actions:
 one to publish and one to resolve existing packages.
 In spring 2025 I started my second project, and the number of services grew as a volume of similar code in release pipelines.
 Then I combined all of them into a single action `agilecustoms/gha-release`.
-But then (summer 2025) I decided to make it public and extracted non-AgileCustoms-specific parts into a separate action `agilecustoms/publish`.
+But then (summer 2025) I decided to make it public and extracted stuff not specific to AgileCustoms into a separate action `agilecustoms/publish`
 
 ## why not just use `semantic-release`?
 

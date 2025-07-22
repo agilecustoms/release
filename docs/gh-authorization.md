@@ -14,7 +14,8 @@ _When: protected branch + automated changes and git commit/push_
    2. update CHANGELOG.md
    3. any other files you can update with `pre-publish-script`
 
-→ need a fine-grained PAT with `Contents "Read and write"` or classic PAT with `repo` scope
+→ need a fine-grained PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens))
+with `Contents "Read and write"` or classic PAT with `repo` scope
 
 Next you have a choice **how to pass this PAT**:
 

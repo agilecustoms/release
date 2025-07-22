@@ -10,11 +10,14 @@ Below is the list of potential future features, but it is not ordered. Idea is t
   - private npmjs repository
   - Maven central
 - GitHub release
-  - ability to specify a list of files to include release. Should be pretty easy — just add parameter in `gh release create` command
+  - ability to specify a list of files to include release
   - integration between release and issues/PRs, ex: close issues fixed in a release, see [semantic-release/github](https://github.com/semantic-release/github)
   - **prereleases**
-  - notify maintainers and users of new releases
+  - notify maintainers and users about new releases
 - support proxy on different levels (just never faced with it yet)
 - git commit
   - ability to customize the commit message, see [semantic-release/git](https://github.com/semantic-release/git)
   - GPG signing
+- features from semantic release
+  - `working_directory`, `repository_url` and `dry-run` mode like in [semantic-release-action](https://github.com/cycjimmy/semantic-release-action?tab=readme-ov-file#inputs)
+  - more outputs like in [semantic-release-action](https://github.com/cycjimmy/semantic-release-action?tab=readme-ov-file#outputs)

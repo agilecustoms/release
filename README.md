@@ -117,7 +117,7 @@ For more details see [semantic-release usage](./docs/semantic-release.md).
 Most of the time GitHub repos have protected branch such as `main` which requires to be made only via PRs.
 At the same time, release workflow often assumes some automated changes, such as bump versions `package.json` or update `CHANGELOG.md`.
 In this setup you need to **bypass** branch protection rule to make direct commit and push.
-This requires a PAT (Personal Access Token) issued by a person who has permission to bypass these branch protection rules.
+This requires a PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) issued by a person who has permission to bypass these branch protection rules.
 So this is the main use case for `agilecustoms/publish` action. For more details see [GitHub authorization](./docs/gh-authorization.md) 
 
 ```yaml
@@ -182,12 +182,10 @@ jobs:
 
 ## Misc
 
-### Credits and Links
+- [More about this project](./docs/history.md): history, motivation, why not just use "semantic-release"
+- [Contribution guideline](./docs/contribution.md)
 
+**Credits:**
 - https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/publish` action
 - https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
-
-### Commercial
-
-
