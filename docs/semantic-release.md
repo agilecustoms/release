@@ -5,12 +5,14 @@ semantic-release is used in **dryRun** mode, so it doesn't commit changes, push 
 
 ## Presets
 
-semantic-release itself depends on [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) library
+Semantic-release itself depends on a [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) library
 to analyze commit messages and generate release notes. There are ~10 presets available named `conventional-changelog-{preset}`.
 By default, semantic-release uses [angular](https://www.npmjs.com/package/conventional-changelog-angular) (10M weekly downloads).
-The next popular alternative is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads).
+Alternative gaining popularity is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads).
+With conventionalcommits you have more flexibility on commit types and release sections (see examples below)
+
 To use non-default preset, you need:
-1) set desired preset in `@semantic-release/commit-analyzer` plugin (more details below)
+1) set desired preset in `@semantic-release/commit-analyzer` plugin (see example below)
 2) add npm dependency via `npm_extra_deps` input in `agilecustoms/publish` action (see example below)
 
 Here is the summary of the [angular](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset:
@@ -75,7 +77,8 @@ Use tags in commit messages as per [angular](https://www.npmjs.com/package/conve
 docs: add more examples to README
 ```
 
-==> new patch release w/ no description, specifically no section `Documentation` nor `Bug Fixes` just title with version number
+==> new patch version. Commit message is not reflected in release notes,
+specifically no section `Documentation` nor `Bug Fixes` just title with version number
 
 
 ### conventionalcommits (default)
@@ -108,8 +111,8 @@ Use tags in commit messages as per [conventionalcommits](https://www.conventiona
 feat!: support new payment provider
 ```
 
-==> new major release, with `BREAKING CHANGES` in release notes.
-Note: conventionalcommits allow to make major release with `!` after tag, `BREAKING CHANGE:` is not required
+==> new major version. Release notes have section `BREAKING CHANGES` with your commit message.
+Note: conventionalcommits allow to make major release with `!` after tag, `BREAKING CHANGE:` tag is not required
 
 
 ### conventionalcommits (custom types)
@@ -173,8 +176,8 @@ fix: buf fix
 docs: test documentation
 ```
 
-==> new patch release. Release notes (and/or changelog) will have sections "Bug Fixes", "Documentation" and "Miscellaneous"
+==> new patch version. Release notes (and/or changelog) will have sections "Bug Fixes", "Documentation" and "Miscellaneous"
 
-**Conclusion**. This option may look cumbersome, but it is recommended if you have many repositories that need to follow the same release pattern.
-With `.relaserc.json` you'd need to copy and paste this file in all repos. What I recommend is to create your own composite GH action —
-a wrapper for `agilecustoms/publish` where you'll have all your semantic commit rules and then use your GH Action in all projects
+**Conclusion**. This option may look bulky, but it is recommended if you have many repositories that need to follow the same release pattern.
+With `.relaserc.json` you'd need to copy and paste this file in all repos. Recommendation is to create your own composite GH action —
+a wrapper for `agilecustoms/publish` where you'll have all your semantic commit rules and then use *your GH Action* in all projects
