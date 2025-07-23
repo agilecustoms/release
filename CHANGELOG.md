@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/agilecustoms/publish/compare/v0.4.2...v0.4.3) (2025-07-23)
+
+### Bug Fixes
+
+* improve semantic-release documentation 2 ([0986c70](https://github.com/agilecustoms/publish/commit/0986c70fc12bb57f0f253707ba4dc8b6afb17539))
+
+
 ## [0.4.2](https://github.com/agilecustoms/publish/compare/v0.4.1...v0.4.2) (2025-07-23)
 
 ### Bug Fixes
