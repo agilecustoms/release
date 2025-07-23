@@ -75,12 +75,12 @@ Use tags in commit messages as per [angular](https://www.npmjs.com/package/conve
 docs: add more examples to README
 ```
 
-==> new patch release, with `Bug Fixes` in release notes
+==> new patch release w/ no description, specifically no section `Documentation` nor `Bug Fixes` just title with version number
 
 
-### conventionalcommits
+### conventionalcommits (default)
 
-Place `.relaserc.json` in repo root (alternatively can use shareable configuration or pass plugins via `release-plugins` input in `agilecustoms/publish` action):
+Place `.relaserc.json` in repo root
 ```json
 {
   "plugins": [
@@ -108,6 +108,73 @@ Use tags in commit messages as per [conventionalcommits](https://www.conventiona
 feat!: support new payment provider
 ```
 
-==> new major release, with `BREAKING CHANGE` in release notes
+==> new major release, with `BREAKING CHANGES` in release notes.
+Note: conventionalcommits allow to make major release with `!` after tag, `BREAKING CHANGE:` is not required
 
-_Note, conventionalcommits allow to make major release with ! after tag, BREAKING CHANGE: is not required_
+
+### conventionalcommits (custom types)
+
+Instead of `.relaserc.json` you can pass semantic-release plugins configuration via `release-plugins` input:
+```yaml
+- name: release
+  uses: agilecustoms/publish@main
+  with:
+    npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
+    release-plugins: |
+      [
+        [
+          "@semantic-release/commit-analyzer",
+          {
+            "preset": "conventionalcommits",
+            "releaseRules": [
+              { "type": "perf", "release": false },
+              { "type": "docs", "release": "patch" },
+              { "type": "misc", "release": "patch" }
+            ]
+          }
+        ],
+        [
+          "@semantic-release/release-notes-generator",
+          {
+            "preset": "conventionalcommits",
+            "presetConfig": {
+              "types": [
+                {
+                  "type": "feat",
+                  "section": "Features"
+                },
+                {
+                  "type": "fix",
+                  "section": "Bug Fixes"
+                },
+                {
+                  "type": "docs",
+                  "section": "Documentation"
+                },
+                {
+                  "type": "misc",
+                  "section": "Miscellaneous"
+                }
+              ]
+            }
+          }
+        ]
+      ]
+```
+In this example:
+- `perf:` type is disabled, if I ever need it — will just include in `feat:` or `fix:`
+- `docs:` will cause patch updates and show up in "Documentation" section as documentation for this project is essential
+- `misc:` introduced as a way to make patch release for minor changes (such as update dependencies) and do _not_ use `fix:` for that
+
+Use tags in commit messages as per [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/):
+```text
+misc: minor improvements
+fix: buf fix
+docs: test documentation
+```
+
+==> new patch release. Release notes (and/or changelog) will have sections "Bug Fixes", "Documentation" and "Miscellaneous"
+
+**Conclusion**. This option may look cumbersome, but it is recommended if you have many repositories that need to follow the same release pattern.
+With `.relaserc.json` you'd need to copy and paste this file in all repos. What I recommend is to create your own composite GH action —
+a wrapper for `agilecustoms/publish` where you'll have all your semantic commit rules and then use your GH Action in all projects
