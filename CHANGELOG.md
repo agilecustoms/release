@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/agilecustoms/publish/compare/v0.4.3...v0.4.4) (2025-07-24)
+
+### Miscellaneous
+
+* add custom .releaserc.json for more granular release notes ([ca9325e](https://github.com/agilecustoms/publish/commit/ca9325e21b3672f51283aded8bc8a3f475976f01))
+
+
 ## [0.4.3](https://github.com/agilecustoms/publish/compare/v0.4.2...v0.4.3) (2025-07-23)
 
 ### Bug Fixes
