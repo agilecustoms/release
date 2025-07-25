@@ -232,7 +232,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-#        registry-url: 'https://registry.npmjs.org'
+        registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in npm
       if: hashFiles('package.json')
@@ -296,7 +296,7 @@ runs:
     # get namespace from package.json: "name": "@company/envctl", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: env.NODE_AUTH_TOKEN
+      if: env.NPM_PUBLIC_TOKEN
       shell: bash
       run: |
         set +e
@@ -311,7 +311,7 @@ runs:
         fi
         exit $error_code
       env:
-        NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ env.NPM_PUBLIC_TOKEN }}
 
 ## Phase 6 - Git push
 
