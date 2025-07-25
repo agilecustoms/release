@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/agilecustoms/publish/compare/v0.5.0...v0.6.0) (2025-07-25)
+
+### Features
+
+* update version in pom.xml even if project doesn't need to be published ([834ee35](https://github.com/agilecustoms/publish/commit/834ee35e59cce6971563c78ab6ae01dc8ecb8aec))
+
+
 ## [0.5.0](https://github.com/agilecustoms/publish/compare/v0.4.5...v0.5.0) (2025-07-25)
 
 ### Features
