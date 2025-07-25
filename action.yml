@@ -239,6 +239,17 @@ runs:
       shell: bash
       run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
+    - name: Setup Python
+      if: hashFiles('pyproject.toml')
+      uses: actions/setup-python@v5
+
+    - name: Update version in pyproject.toml
+      if: hashFiles('pyproject.toml')
+      shell: bash
+      run: |
+        pipx install poetry
+        poetry version ${{ steps.version.outputs.version }}
+
     - name: Pre-publish script
       if: inputs.pre-publish-script
       shell: bash
