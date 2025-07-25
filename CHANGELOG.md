@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.5](https://github.com/agilecustoms/publish/compare/v0.4.4...v0.4.5) (2025-07-25)
+
+### Documentation
+
+* update inputs table ([5272d1a](https://github.com/agilecustoms/publish/commit/5272d1a7ce4fbce6d785e0698d0757f647a70e79))
+
+
 ## [0.4.4](https://github.com/agilecustoms/publish/compare/v0.4.3...v0.4.4) (2025-07-24)
 
 ### Miscellaneous
