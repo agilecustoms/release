@@ -19,16 +19,16 @@ with `Contents "Read and write"` or classic PAT with `repo` scope
 
 Next you have a choice **how to pass this PAT**:
 
-Option 1 (recommended): pass PAT in `agilecustoms/publish` env variable `GH_TOKEN`
+Option 1 (recommended): pass PAT in `agilecustoms/release` env variable `GH_TOKEN`
 ```yaml
 - name: Release
-  uses: agilecustoms/publish@v1
+  uses: agilecustoms/release@v1
   env:
      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
 You must use this option to make a GH release (input `release-gh` is true by default).
 If not use GH releases, you can choose Option 1 or 2, but Option 1 is still recommended —
-this way you limit write access only to one step (`agilecustoms/publish`), while other job steps have readonly access
+this way you limit write access only to one step (`agilecustoms/release`), while other job steps have readonly access
 
 Option 2: pass PAT in `github/checkout` `token` parameter
 ```yaml

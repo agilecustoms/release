@@ -154,7 +154,7 @@ runs:
         creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
         git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
-    # CWD is /home/runner/work/publish/publish
+    # CWD is /home/runner/work/release/release
     # generate next_version (available as output), release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
     # note: run this step even if an explicit version is provided, (next_version is ignored, but release notes are used)
     - name: Release generation

@@ -28,7 +28,7 @@ Also files will be uploaded in dirs `/1`, `/1.2` and `/latest` - previous conten
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/publish@v1
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
@@ -53,7 +53,7 @@ steps:
     run: docker build
 
   - name: Release
-    uses: agilecustoms/publish@v1
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
@@ -74,7 +74,7 @@ See .. for details how to set up settings.xml, pom.xml and how to use artifacts 
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/publish@v1
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
@@ -95,7 +95,7 @@ This will generate new version, update version in `package.json`, commit, push c
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/publish@v1
+    uses: agilecustoms/release@v1
     with:
       npmjs-token: ${{ secrets.NPMJS_TOKEN }}
 ```
@@ -124,7 +124,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Release
-        uses: agilecustoms/publish@v1
+        uses: agilecustoms/release@v1
         env:
            GH_TOKEN: ${{ github.token }} # == ${{ secrets.GITHUB_TOKEN }}, required for GitHub release
 ```
@@ -141,7 +141,7 @@ jobs:
           persist-credentials: false
 
       - name: Release
-        uses: agilecustoms/publish@v1
+        uses: agilecustoms/release@v1
         with:
           GH_TOKEN: ${{ secrets.MY_GH_TOKEN }} # your PAT 
 ```
@@ -152,7 +152,7 @@ Terraform modules 1) use v prefix and 2) do not accept floating tags (`latest`, 
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/publish@v1
+    uses: agilecustoms/release@v1
     with:
       floating-tags: false
 ```
@@ -184,7 +184,7 @@ jobs:
       # build TS code -> dist/index.js
       
       - name: Release
-        uses: agilecustoms/publish@v1
+        uses: agilecustoms/release@v1
         env:
           GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
 ```
@@ -213,7 +213,7 @@ jobs:
               fetch-depth: 0
 
          - name: Release
-           uses: agilecustoms/publish@v1
+           uses: agilecustoms/release@v1
 ```
 Note: tag `latest` is only added to default (typically `main`) branch,
 so if you release new "patch" version in "support" branch w/ and most recent tag is "1.2.3",

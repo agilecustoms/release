@@ -6,7 +6,7 @@ Then I felt a lack of GH action to publish Maven packages in AWS CodeArtifact, s
 one to publish and one to resolve existing packages.
 In spring 2025 I started my second project, and the number of services grew as a volume of similar code in release pipelines.
 Then I combined all of them into a single action `agilecustoms/gha-release`.
-But then (summer 2025) I decided to make it public and extracted stuff not specific to AgileCustoms into a separate action `agilecustoms/publish`
+But then (summer 2025) I decided to make it public and extracted stuff not specific to AgileCustoms into a separate action `agilecustoms/release`
 
 ## why not just use `semantic-release`?
 

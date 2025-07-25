@@ -13,7 +13,7 @@ With conventionalcommits you have more flexibility on commit types and release s
 
 To use non-default preset, you need:
 1) set desired preset in `@semantic-release/commit-analyzer` plugin (see example below)
-2) add npm dependency via `npm_extra_deps` input in `agilecustoms/publish` action (see example below)
+2) add npm dependency via `npm_extra_deps` input in `agilecustoms/release` action (see example below)
 
 Here is the summary of the [angular](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset:
 
@@ -27,30 +27,30 @@ Here is the summary of the [angular](https://github.com/angular/angular/blob/mai
 | _no prefix_                                    | no version bump      | _not reflected in GH release / CHANGELOG.md_ | Discouraged, but allowed                                                                                                                  |
 
 In normal release workflow (not [dev-release](./release-types.md)) if a PR has no any commit bumping a version,
-then `agilecustoms/publish` action exit with error
+then `agilecustoms/release` action exit with error
 
 ## Plugins and dryRun mode
 
-`agilecustoms/publish` uses semantic-release in `dryRun` mode - just to generate next version and release notes.
+`agilecustoms/release` uses semantic-release in `dryRun` mode - just to generate next version and release notes.
 **Only two semantic-release plugins** are used:
 [commit-analyzer](https://github.com/semantic-release/commit-analyzer) and [release-notes-generator](https://github.com/semantic-release/release-notes-generator)
 so they take configuration as per `semantic-release` documentation in an extent that `dryRun` mode supports.
 If you attempt to specify other plugins — they will be ignored, and you'll see a warning in logs.
-For all "modify" operations (publish artifacts, git commit, GitHub release, etc.) `agilecustoms/publish` uses its own implementation
+For all "modify" operations (publish artifacts, git commit, GitHub release, etc.) `agilecustoms/release` uses its own implementation
 
 ## Configuration
 
 There are 3 ways to configure semantic-release (the highest to lowest priority):
-1. `agilecustoms/publish` [inputs](../README.md#inputs) in your workflow file
+1. `agilecustoms/release` [inputs](../README.md#inputs) in your workflow file
 2. [configuration file](https://semantic-release.gitbook.io/semantic-release/usage/configuration#configuration-file) (such as `.releaserc.json`) in the root of your repository
 3. [shareable configurations](https://semantic-release.gitbook.io/semantic-release/extending/shareable-configurations-list)
 are **NOT SUPPORTED**. I (Alex C) checked 4 most popular configurations. Each of them provides a combination of plugins to release for a particular platform.
-Since `agilecustoms/publish` uses only 2 plugins (and only in `dryRun` mode) - there's no much value in support of shareable configurations
+Since `agilecustoms/release` uses only 2 plugins (and only in `dryRun` mode) - there's no much value in support of shareable configurations
 
 Bottom line, these are only supported configuration options for semantic-release:
 - `branches`
 - `plugins`
-- `tag-format` (`@agilecustoms/publish` input) or `tagFormat` in `.releaserc.json`
+- `tag-format` (`@agilecustoms/release` input) or `tagFormat` in `.releaserc.json`
 - ⚠️ setting `repositoryUrl` in `.releaserc.json` is possible but not recommended.
 I (Alex C) do not see a use case for this setting yet, so there is no corresponding input for GH action.
 In the future, I might stop using `semantic-release` and switch to use `conventional-changelog` directly,
@@ -60,10 +60,10 @@ then this setting might be removed completely.
 
 ### use patch for docs
 
-Use `agilecustoms/publish` action with `release-plugins` input to set `patch` effect for `docs:` prefix:
+Use `agilecustoms/release` action with `release-plugins` input to set `patch` effect for `docs:` prefix:
 ```yaml
 - name: Release
-  uses: agilecustoms/publish@v1
+  uses: agilecustoms/release@v1
   with:
     release-plugins: |
       [
@@ -105,10 +105,10 @@ Place `.relaserc.json` in repo root
 }
 ```
 
-Use `npm_extra_deps` input in `agilecustoms/publish` action to add _conventionalcommits_ npm dependency:
+Use `npm_extra_deps` input in `agilecustoms/release` action to add _conventionalcommits_ npm dependency:
 ```yaml
 - name: Release
-  uses: agilecustoms/publish@v1
+  uses: agilecustoms/release@v1
   with:
     npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
 ```
@@ -127,7 +127,7 @@ Note: conventionalcommits allow to make major release with `!` after tag, `BREAK
 Instead of `.relaserc.json` you can pass semantic-release plugins configuration via `release-plugins` input:
 ```yaml
 - name: release
-  uses: agilecustoms/publish@main
+  uses: agilecustoms/release@main
   with:
     npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
     release-plugins: |
@@ -187,4 +187,4 @@ docs: test documentation
 
 **Conclusion**. This option may look bulky, but it is recommended if you have many repositories that need to follow the same release pattern.
 With `.relaserc.json` you'd need to copy and paste this file in all repos. Recommendation is to create your own composite GH action —
-a wrapper for `agilecustoms/publish` where you'll have all your semantic commit rules and then use *your GH Action* in all projects
+a wrapper for `agilecustoms/release` where you'll have all your semantic commit rules and then use *your GH Action* in all projects

@@ -41,7 +41,7 @@ Example of 'dev-release' usage with AWS S3:
 ```yaml
 steps:
   - name: Release
-    uses: agilecustoms/publish@v1
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1

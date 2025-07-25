@@ -1,13 +1,10 @@
 # About
 
-Your Swiss Army knife to publish/release software in AWS (and more) with GitHub action.
+Your Swiss Army knife to release software in AWS (and more) with GitHub action.
 This action:
 1) publish software artifacts in AWS S3, ECR, CodeArtifact; also in npmjs and [more](./docs/use-cases.md)
 2) git commit and push tags
 3) generate GH release
-
-_Called it 'publish' bcz it takes most effort, whereas GitHub 'release' is optional and relatively simple.
-Terms 'publish' and 'release' are used interchangeably_
 
 ![Cover](docs/images/cover.png)
 
@@ -23,7 +20,7 @@ steps:
   # (example) package AWS Lambda code in a .zip archive in ./s3 directory
   
   - name: Release
-    uses: agilecustoms/publish@v1
+    uses: agilecustoms/release@v1
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
@@ -119,7 +116,7 @@ Most of the time GitHub repos have protected branch such as `main` which require
 At the same time, release workflow often assumes some automated changes, such as bump versions `package.json` or update `CHANGELOG.md`.
 In this setup you need to **bypass** branch protection rule to make direct commit and push.
 This requires a PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) issued by a person who has permission to bypass these branch protection rules.
-So this is the main use case for `agilecustoms/publish` action. For more details see [GitHub authorization](./docs/gh-authorization.md) 
+So this is the main use case for `agilecustoms/release` action. For more details see [GitHub authorization](./docs/gh-authorization.md) 
 
 ```yaml
 jobs:
@@ -135,7 +132,7 @@ jobs:
          # ...
 
          - name: Release
-           uses: agilecustoms/publish@v1
+           uses: agilecustoms/release@v1
            env:
               GH_TOKEN: ${{ secrets.GH_TOKEN }} # PAT to bypass branch protection. Create PAT and put it in repo/org secrets
 ```
@@ -187,6 +184,6 @@ jobs:
 - [Contribution guideline](./docs/contribution.md)
 
 **Credits:**
-- https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/publish` action
+- https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
 - https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
