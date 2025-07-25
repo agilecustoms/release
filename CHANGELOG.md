@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/agilecustoms/publish/compare/v0.4.5...v0.5.0) (2025-07-25)
+
+### Features
+
+* update package.json version version even if package is NOT published in npm ([9f86465](https://github.com/agilecustoms/publish/commit/9f864653528b26616ccd0bab724e94c5929eb1e4))
+
+
 ## [0.4.5](https://github.com/agilecustoms/publish/compare/v0.4.4...v0.4.5) (2025-07-25)
 
 ### Documentation
