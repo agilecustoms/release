@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/agilecustoms/release/compare/v0.7.1...v0.8.0) (2025-07-25)
+
+### Features
+
+* rename agilecustoms/publish in agilecustoms/release ([64e77c0](https://github.com/agilecustoms/release/commit/64e77c022591fb7b537caf24f9c90ed379cc0147))
+
+
 ## [0.7.1](https://github.com/agilecustoms/release/compare/v0.7.0...v0.7.1) (2025-07-25)
 
 ### Documentation
