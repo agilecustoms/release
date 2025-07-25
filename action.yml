@@ -228,14 +228,14 @@ runs:
       run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
     - name: Setup Node
-      if: env.NODE_AUTH_TOKEN
+      if: hashFiles('package.json')
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in npm
-      if: env.NODE_AUTH_TOKEN
+      if: hashFiles('package.json')
       shell: bash
       run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
