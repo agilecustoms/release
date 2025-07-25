@@ -212,7 +212,7 @@ runs:
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
     - name: Setup Java
-      if: hasFiles('pom.xml')
+      if: hashFiles('pom.xml')
       uses: agilecustoms/setup-maven-codeartifact@v1
       with:
         aws-account: ${{ inputs.aws-account }}
@@ -223,7 +223,7 @@ runs:
         aws-login: false # we already logged in AWS in a previous step
 
     - name: Update version in maven
-      if: hasFiles('pom.xml')
+      if: hashFiles('pom.xml')
       shell: bash
       run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
