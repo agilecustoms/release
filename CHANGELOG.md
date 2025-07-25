@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/agilecustoms/publish/compare/v0.7.0...v0.7.1) (2025-07-25)
+
+### Documentation
+
+* update documentation about pyproject.toml ([6cdc4f3](https://github.com/agilecustoms/publish/commit/6cdc4f3d8602fc796f04f7050f77f6a2a0e9696e))
+
+
 ## [0.7.0](https://github.com/agilecustoms/publish/compare/v0.6.0...v0.7.0) (2025-07-25)
 
 ### Features
