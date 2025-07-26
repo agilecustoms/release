@@ -1,5 +1,9 @@
 name: 'Release'
+author: 'Alexey Chekulaev'
 description: 'generate new version, upload to s3, push tags and send to gitops'
+branding:
+  icon: package
+  color: green
 inputs:
   aws-account:
     description: 'AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag'

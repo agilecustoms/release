@@ -1,4 +1,4 @@
-# Known Issues
+# Troubleshooting
 
 **Missing semantic commit that bumps the version**
 

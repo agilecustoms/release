@@ -177,15 +177,15 @@ jobs:
 
 ## Environment variables
 
-| Name             | Description                                                                                                                                                                                 |
-|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GH_TOKEN         | 95% cases you need to pass GH PAT with permission to bypass branch protection rule. Required if `release-gh: true` (default). See details in [gh-authorization](./docs/gh-authorization.md) |
-| NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                                             |
+| Name             | Description                                                                                                                                                            |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GH_TOKEN         | Takes GH PAT with permission to bypass branch protection rule. Required if `release-gh: true` (default). See details in [gh-authorization](./docs/gh-authorization.md) |
+| NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                        |
 
 ## Misc
 
 - [More about this project](./docs/history.md): history, motivation, why not just use "semantic-release"
-- [Known Issues](./docs/known-issues.md)
+- [Troubleshooting](./docs/troubleshooting.md)
 - [Contribution guideline](./docs/contribution.md)
 
 ## License
