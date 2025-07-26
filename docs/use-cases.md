@@ -96,8 +96,8 @@ This will generate new version, update version in `package.json`, commit, push c
 steps:
   - name: Release
     uses: agilecustoms/release@v1
-    with:
-      npmjs-token: ${{ secrets.NPMJS_TOKEN }}
+    env:
+      NPM_PUBLIC_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 ```
 **dev-release** assumes you publish a version named after branch name, but npm only supports semantic versioning.
 Best alternative is to publish a specific version say latest is `1.2.3` and you publish `1.2.3-test`
