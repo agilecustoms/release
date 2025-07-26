@@ -102,7 +102,7 @@ an attempt to run it again will cause new tags creation!
 (provided all release notes/files are generated on previous steps).
 If it fails, you can create release manually through GitHub UI
 
-## semantic-release usage
+## Semantic-release usage
 
 NPM library [semantic-release](https://github.com/semantic-release) is used to generate the next version and release notes.
 It takes latest SemVer tag and analyzes commit messages to determine the next version:
@@ -173,17 +173,23 @@ jobs:
 
 ## Environment variables
 
-| Name             | Description                                                                                                                                                          |
-|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GH_TOKEN         | 95% you pass GH PAT with protected branch bypass permission. Required if `release-gh: true` (default). See details in [gh-authorization](./docs/gh-authorization.md) |
-| NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                      |
+| Name             | Description                                                                                                                                                                                 |
+|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GH_TOKEN         | 95% cases you need to pass GH PAT with permission to bypass branch protection rule. Required if `release-gh: true` (default). See details in [gh-authorization](./docs/gh-authorization.md) |
+| NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                                             |
 
 ## Misc
 
 - [More about this project](./docs/history.md): history, motivation, why not just use "semantic-release"
+- [Known Issues](./docs/known-issues.md)
 - [Contribution guideline](./docs/contribution.md)
 
-**Credits:**
+## License
+
+This project is released under the [MIT License](./LICENSE)
+
+## Acknowledgements
+
 - https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
 - https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
