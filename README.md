@@ -74,7 +74,7 @@ More details about [release types](./docs/release-types.md)
 4. Prepare: mainly bump versions in language-specific files
    1. update version in `pom.xml` (for maven)
    2. update version in `package.json` (for npm)
-   3. update version in `pyproject.toml` (for Python) (even though it is not published in remote repo yet)
+   3. update version in `pyproject.toml` (for Python) (even though it is not published in any remote repo yet)
    4. run a custom script to update arbitrary files
 5. Publish artifacts
    1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory
@@ -184,7 +184,7 @@ jobs:
 
 ## Misc
 
-- [More about this project](./docs/history.md): history, motivation, why not just use "semantic-release"
+- [More about this project](docs/about.md): history, motivation, why not just use "semantic-release"
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Contribution guideline](./docs/contribution.md)
 
