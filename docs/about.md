@@ -1,4 +1,6 @@
-# History
+# About the project
+
+## History
 
 In 2023, I (Alexey Chekulaev) started to work on a project that consists of multiple microservices hosting in AWS.
 First, I did not find a good GH action to upload files in S3, so I did one myself.
@@ -7,6 +9,19 @@ one to publish and one to resolve existing packages.
 In spring 2025 I started my second project, and the number of services grew as a volume of similar code in release pipelines.
 Then I combined all of them into a single action `agilecustoms/gha-release`.
 But then (summer 2025) I decided to make it public and extracted stuff not specific to AgileCustoms into a separate action `agilecustoms/release`
+
+## Current state
+
+Currently (July 2025) this action is being used in two private AgileCustoms project with over 20+ repositories,
+which allows me (author) to have good coverage on different release scenarios
+
+## Philosophy
+
+1. Everything works out of the box, minimal setup is needed, inputs should have meaningful defaults
+2. Implement features only when they are needed and thus can be tested!
+3. Very thoughtful and detailed documentation, including examples for each use case
+4. Verify inputs to detect errors as early as possible
+5. Clear errors with suggestions how to fix them
 
 ## why not just use `semantic-release`?
 
