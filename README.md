@@ -1,5 +1,9 @@
 # About
 
+<div style="font-size:2em; color:#d6336c; border:2px solid #d6336c; padding:0.5em; border-radius:8px; background:#fff3f6;">
+  <strong>This GH action is beta-testing now, planned to be released Aug 2025</strong>
+</div>
+
 Your Swiss Army knife to release software in AWS (and more) with GitHub action.
 This action:
 1) publish software artifacts in AWS S3, ECR, CodeArtifact; also in npmjs and [more](./docs/use-cases.md)
@@ -36,7 +40,7 @@ Assume:
 
 The action will:
 - generate a new version `v1.3.0`
-- upload files from `./s3` directory to S3 bucket `mycompany-dist` at path `mycompany-dist/myapp/v1.3.0/`
+- upload files from `./s3` directory to S3 bucket `mycompany-dist` at path `/myapp/v1.3.0/`
 - push tag `v1.3.0` to the remote repository
 - create GH Release and update CHANGELOG.md
 
@@ -55,7 +59,7 @@ Features:
 - **floating tags** — given current version is `1.2.3` and you release `1.2.4` then also create `1`, `1.2` and `latest` tags
 - **idempotency** — ability to re-run the action w/o side effects, see below for more details
 - **prerelease** — version of software that is made available before the official, stable release
-- **dev-release** — ability to publish artifacts for dev testing when testing on local machine impossible/complicated
+- **dev-release** — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
 
 More details about [release types](./docs/release-types.md)
 
@@ -90,7 +94,7 @@ More details about [release types](./docs/release-types.md)
 This GH action does three modify operations: "Publish artifacts", "Git push" and "GitHub release".
 Order is important to recover from failures:
 
-- **Publish artifacts** goes first as it is most complex (highest chances to fail).
+- **Publish artifacts** goes first as it is the most complex (highest chances to fail).
 It is idempotent, so if a later step fails, it is safe to re-run "Publish artifacts".<br>
 _Note: some publish commands are not idempotent (like npm publish), so as workaround just swallow 'same version already exists' type of errors
 if it is already not first workflow run (use `${{ github.run_attempt }}`)_
