@@ -3,7 +3,7 @@
 Your Swiss Army knife to release software in AWS (and more) with GitHub action.
 This action:
 1) publish software artifacts in AWS S3, ECR, CodeArtifact; also in npmjs and [more](./docs/use-cases.md)
-2) git commit and push tags
+2) commit and push tags
 3) generate GH release
 
 ![Cover](docs/images/cover.png)

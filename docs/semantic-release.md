@@ -6,7 +6,8 @@ semantic-release is used in **dryRun** mode, so it doesn't commit changes, push 
 ## Presets
 
 Semantic-release itself depends on a [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) library
-to analyze commit messages and generate release notes. There are ~10 presets available named `conventional-changelog-{preset}`.
+to analyze commit messages and generate release notes.
+There are [~10 presets available](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages) named `conventional-changelog-{preset}`.
 By default, semantic-release uses [angular](https://www.npmjs.com/package/conventional-changelog-angular) (10M weekly downloads).
 Alternative gaining popularity is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads).
 With conventionalcommits you have more flexibility on commit types and release sections (see examples below)
