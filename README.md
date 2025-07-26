@@ -165,18 +165,18 @@ jobs:
 | tag-format                  | v${version}       | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                                                          |
 | version                     |                   | Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no `latest`, `major`, `minor` tags)                                                                         |
 
+## Outputs
+
+| Name              | Description                                                  |
+|-------------------|--------------------------------------------------------------|
+| version           | Version that was generated (or provided via `version` input) |
+
 ## Environment variables
 
 | Name             | Description                                                                                                                                                          |
 |------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | GH_TOKEN         | 95% you pass GH PAT with protected branch bypass permission. Required if `release-gh: true` (default). See details in [gh-authorization](./docs/gh-authorization.md) |
 | NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                      |
-
-## Outputs
-
-| Name              | Description                                                  |
-|-------------------|--------------------------------------------------------------|
-| version           | Version that was generated (or provided via `version` input) |
 
 ## Misc
 
