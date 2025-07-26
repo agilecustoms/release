@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.8.1](https://github.com/agilecustoms/release/compare/v0.8.0...v0.8.1) (2025-07-26)
+
+### Documentation
+
+* add known issues ([716db57](https://github.com/agilecustoms/release/commit/716db57ff660b61b9c37cf899803f98c27db1291))
+* add note that action is under development ([a5059d5](https://github.com/agilecustoms/release/commit/a5059d5c5c71c4721fb036fdb881c555f1652fac))
+* minor updates ([caabd65](https://github.com/agilecustoms/release/commit/caabd65eb6f343993afc5cf5bf59e73ad0ad3add))
+* swap Outputs and Env variables ([6becac2](https://github.com/agilecustoms/release/commit/6becac2ca2f14e75188289bcd1d5ae81185513c8))
+
+
 ## [0.8.0](https://github.com/agilecustoms/release/compare/v0.7.1...v0.8.0) (2025-07-25)
 
 ### Features
