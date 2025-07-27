@@ -92,8 +92,9 @@ runs:
     - name: Validate trigger event
       shell: bash
       run: |
-        [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]] && \
-          { echo "Error: agilecustoms/release doesn't support on: pull_request/pull_request_target as a trigger" >&2; exit 1; }
+        if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]]; then
+          echo "Error: agilecustoms/release doesn't support on: pull_request/pull_request_target as a trigger" >&2; exit 1
+        fi
 
     - name: Validate release
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
