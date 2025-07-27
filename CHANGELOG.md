@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.9.0](https://github.com/agilecustoms/release/compare/v0.8.1...v0.9.0) (2025-07-27)
+
+### Features
+
+* validate event trigger ([537bd68](https://github.com/agilecustoms/release/commit/537bd6861dd0b28225fe4c6e28078d712502f097))
+
+### Bug Fixes
+
+* shell script syntax ([2dd34ed](https://github.com/agilecustoms/release/commit/2dd34edd6e5119c178edf182fee92e72b6334d52))
+* validate a combination of NPM_PUBLIC_TOKEN and dev-release ([f0e81cd](https://github.com/agilecustoms/release/commit/f0e81cd2d3880a1c4b3d7bfcc8fabf49d72d3763))
+
+### Documentation
+
+* philosophy, roadmap ([05d0ba8](https://github.com/agilecustoms/release/commit/05d0ba883f5c779d72e508c3d32d8ced2eaf4c88))
+* update doc to reflect that this action does not support pull_request as trigger ([b958a80](https://github.com/agilecustoms/release/commit/b958a8022e87bcc7ee29fd7d71fb915d4d211ac1))
+
+### Miscellaneous
+
+* add branding ([66efee0](https://github.com/agilecustoms/release/commit/66efee0e999563f82cae4052cb1ca317c0f013fb))
+
+
 ## [0.8.1](https://github.com/agilecustoms/release/compare/v0.8.0...v0.8.1) (2025-07-26)
 
 ### Documentation
