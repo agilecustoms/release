@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/agilecustoms/release/compare/v0.9.0...v0.10.0) (2025-07-27)
+
+### Features
+
+* document maintenance releases ([d208b8c](https://github.com/agilecustoms/release/commit/d208b8c1c50336f08a0b035f6b2231f9ad640602))
+
+
 ## [0.9.0](https://github.com/agilecustoms/release/compare/v0.8.1...v0.9.0) (2025-07-27)
 
 ### Features
