@@ -1,8 +1,6 @@
 # About
 
-<div style="font-size:2em; color:#d6336c; border:2px solid #d6336c; padding:0.5em; border-radius:8px; background:#fff3f6;">
-  <strong>This GH action is beta-testing now, planned to be released Aug 2025</strong>
-</div>
+**This GH action is beta-testing now, planned to be released Aug 2025**
 
 Your Swiss Army knife to release software in AWS (and more) with GitHub action.
 This action:
@@ -20,20 +18,31 @@ Then publish artifacts and push git tags, so your artifacts and git tags are in 
 
 Example of publish in S3:
 ```yaml
-steps:
-  # (example) package AWS Lambda code in a .zip archive in ./s3 directory
-  
-  - name: Release
-    uses: agilecustoms/release@v1
-    with:
-      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
-      aws-region: us-east-1
-      aws-role: 'ci/publisher' # default
-      aws-s3-bucket: 'mycompany-dist'
+on:
+  push: # note that 'pull_request' and 'pull_request_target' are not supported
+    branches:
+      - main
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      # (example) package AWS Lambda code in a .zip archive in ./s3 directory
+        
+      - name: Release
+        uses: agilecustoms/release@v1
+        with:
+          aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-region: us-east-1
+          aws-role: 'ci/publisher' # default
+          aws-s3-bucket: 'mycompany-dist'
 ```
 Assume:
 - repo name is `mycompany/myapp`
-- workflow is run on PR merge in branch 'main' which has latest SemVer tag `v1.2.3`
+- workflow is run `on: push` (direct push or PR merge) on a branch 'main' with latest SemVer tag `v1.2.3`
 - merged branch has commit `feat: new-feature`
 - you have an S3 bucket `mycompany-dist` in `us-east-1` region
 - there is a role `ci/publisher` in AWS account `AWS_ACCOUNT_DIST` with permissions to upload files in this S3 bucket
