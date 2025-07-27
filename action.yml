@@ -89,6 +89,12 @@ runs:
 
 ## Phase 1.1 - Validate secrets (tokens) passed via env variables
 
+    - name: Validate trigger event
+      shell: bash
+      run: |
+        [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]] && \
+          { echo "Error: agilecustoms/release doesn't support on: pull_request/pull_request_target as a trigger" >&2; exit 1; }
+
     - name: Validate release
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
       shell: bash
