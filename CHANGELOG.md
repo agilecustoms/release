@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/agilecustoms/release/compare/v0.10.0...v0.10.1) (2025-07-28)
+
+### Bug Fixes
+
+* release-gen return new version as git_tag ([b631c23](https://github.com/agilecustoms/release/commit/b631c231f453aad612f8f9033e96b24fb7284b07))
+
+
 ## [0.10.0](https://github.com/agilecustoms/release/compare/v0.9.0...v0.10.0) (2025-07-27)
 
 ### Features
