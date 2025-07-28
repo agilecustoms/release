@@ -68,6 +68,11 @@ For **non-standard** maintenance branch name, like `support`, you need following
   ]
 }
 ```
+Read about maintenance branches in [semantic-release documentation](https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#maintenance-branches)
+
+## Prerelease
+
+Read about prerelease branches in [semantic-release documentation](https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#pre-release-branches)
 
 ## Dev release
 
