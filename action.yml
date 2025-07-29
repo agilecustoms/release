@@ -80,7 +80,7 @@ inputs:
     description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
   version:
-    description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created (no latest, major, minor tags)'
+    description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created, no floating tags'
     required: false
 
 runs:
@@ -187,7 +187,7 @@ runs:
         if [ "${{ inputs.dev-release }}" = "true" ]; then
           version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
           tags="$version"
-        elif [ -n "${{ inputs.version }}" ]; then
+        elif [ -n "${{ inputs.version }}" ] || [ "${{ steps.release_gen.outputs.prerelease }}" = "true" ]; then
           version="${{ inputs.version }}"
           tags="$version"
         else
@@ -197,7 +197,7 @@ runs:
             patch="$version"
             major="$(echo "$version" | awk -F. '{print $1}')"
             minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
-            tags="$patch $minor $major latest"
+            tags="$patch $minor $major"
           fi
         fi
         
@@ -209,7 +209,7 @@ runs:
     - name: Login AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
       id: login-aws
-      uses: aws-actions/configure-aws-credentials@v4.2.1 # v4 doesn't point to latest version
+      uses: aws-actions/configure-aws-credentials@v4.2.1 # v4 doesn't point to the most recent 4.x.x :(
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
@@ -371,9 +371,9 @@ runs:
           git tag "$tag"
         done
         
-        # turn "1 1.0 1.0.0 latest" into "refs/tags/1 refs/tags/1.0 refs/tags/1.0.0 refs/tags/latest"
+        # turn "1 1.0 1.0.0 channel" into "refs/tags/1 refs/tags/1.0 refs/tags/1.0.0 refs/tags/channel"
         refs=$(echo "${{ steps.version.outputs.tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
-        # push changes along with tags (latest and patch_tag) atomically. use --force to overwrite old tags
+        # push changes along with tags atomically. use --force to overwrite old tags
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
     - name: Git push dev-release
