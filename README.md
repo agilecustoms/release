@@ -90,10 +90,11 @@ More details about [release types](./docs/release-types.md)
    2. AWS ECR - publish Docker image in ECR repository
    3. AWS CodeArtifact maven - publish maven package in CodeArtifact repository
    4. npmjs - publish npm package in public npmjs.com repository
-6. Git push
+6. Git
    1. commit changes from step 4
    2. besides SemVer 'major.minor.patch', also add floating tags 'major', 'major.minor' and 'latest'
-   3. atomically push commit and tags to the remote repository
+   3. add git notes (for prerelease)
+   4. atomically push commit and refs (tags and notes) to the remote repository
 7. GitHub release
    1. create a GitHub release tied to the most recent tag
 8. Print summary
@@ -108,7 +109,7 @@ It is idempotent, so if a later step fails, it is safe to re-run "Publish artifa
 _Note: some publish commands are not idempotent (like npm publish), so as workaround just swallow 'same version already exists' type of errors
 if it is already not first workflow run (use `${{ github.run_attempt }}`)_
 
-- **Git push** goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
+- **Git** goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
 an attempt to run it again will cause new tags creation!
 
 - **GitHub release** goes last, as it is optional. It is also very simple — just one command
