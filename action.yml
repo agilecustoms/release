@@ -187,13 +187,13 @@ runs:
         if [ "${{ inputs.dev-release }}" = "true" ]; then
           version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
           tags="$version"
-        elif [ -n "${{ inputs.version }}" ] || [ "${{ steps.release_gen.outputs.prerelease }}" = "true" ]; then
+        elif [ -n "${{ inputs.version }}" ]; then
           version="${{ inputs.version }}"
           tags="$version"
         else
           version="${{ steps.release_gen.outputs.git_tag }}"
           tags="$version"
-          if [ "${{ inputs.floating-tags }}" = "true" ]; then
+          if [ "${{ inputs.floating-tags }}" = "true" ] && [ "${{ steps.release_gen.outputs.prerelease }}" = "false" ]; then
             patch="$version"
             major="$(echo "$version" | awk -F. '{print $1}')"
             minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
