@@ -12,7 +12,6 @@ Below is the list of potential future features, but it is not ordered. Idea is t
 - GitHub release
   - ability to specify a list of files to include release
   - integration between release and issues/PRs, ex: close issues fixed in a release, see [semantic-release/github](https://github.com/semantic-release/github)
-  - **prereleases**
   - notify maintainers and users about new releases
 - support proxy on different levels (just never faced with it yet)
 - git commit
