@@ -335,7 +335,7 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ env.NPM_PUBLIC_TOKEN }}
 
-## Phase 6 - Git push
+## Phase 6 - Git
 
 #    - name: Error to test publish idempotency
 #      shell: bash
@@ -373,6 +373,12 @@ runs:
         
         # turn "1 1.0 1.0.0 channel" into "refs/tags/1 refs/tags/1.0 refs/tags/1.0.0 refs/tags/channel"
         refs=$(echo "${{ steps.version.outputs.tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
+        
+        if [ "${{ steps.release_gen.outputs.prerelease }}" = "true" ]; then
+          git notes --ref semantic-release add -f -m '{"channels":["${{ steps.release_gen.outputs.channel }}"]}'
+          refs="$refs refs/notes/semantic-release"
+        fi
+        
         # push changes along with tags atomically. use --force to overwrite old tags
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
