@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/agilecustoms/release/compare/v0.10.1...v0.11.0) (2025-07-29)
+
+### Features
+
+* gracefully handle prerelease ([#12](https://github.com/agilecustoms/release/issues/12)) ([c31f7f7](https://github.com/agilecustoms/release/commit/c31f7f76deb82634e91a98333d1d17986f90aa1f))
+
+
 ## [0.10.1](https://github.com/agilecustoms/release/compare/v0.10.0...v0.10.1) (2025-07-28)
 
 ### Bug Fixes
