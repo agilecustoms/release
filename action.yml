@@ -92,11 +92,12 @@ runs:
     - name: Validate trigger event
       shell: bash
       run: |
+        # Validate trigger event
         if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]]; then
           echo "Error: agilecustoms/release doesn't support on: pull_request/pull_request_target as a trigger" >&2; exit 1
         fi
 
-    - name: Validate release
+    - name: Validate GH token
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
       shell: bash
       run: |
@@ -114,6 +115,7 @@ runs:
       id: init
       shell: bash
       run: |
+        # Init
         # Validate version: explicit version cannot be used with dev-release=true
         if [ -n "${{ inputs.version }}" ] && [ "${{ inputs.dev-release }}" = "true" ]; then
           echo "Error: explicit version cannot be used with dev-release=true" >&2
@@ -158,10 +160,11 @@ runs:
 
     # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }}
     # alternatively user may want to use an explicit PAT, then need to configure git to use it for push command
-    - name: Git configure
+    - name: Git authorization
       if: env.GH_TOKEN
       shell: bash
       run: |
+        # Git authorization
         creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
         git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
@@ -180,10 +183,11 @@ runs:
         release_plugins: ${{ inputs.release-plugins }}
         tag_format: ${{ inputs.tag-format }}
 
-    - name: Finalize version
+    - name: Finalize version and tags
       id: version
       shell: bash
       run: |
+        # Finalize version and tags
         if [ "${{ inputs.dev-release }}" = "true" ]; then
           version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
           tags="$version"
@@ -201,9 +205,9 @@ runs:
         echo "version=$version" >> $GITHUB_OUTPUT
         echo "tags=$tags" >> $GITHUB_OUTPUT
 
-## Phase 3 - Login in AWS
+## Phase 3 - Log in AWS
 
-    - name: Login AWS
+    - name: Log in AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
       id: login-aws
       uses: aws-actions/configure-aws-credentials@v4.2.1 # v4 doesn't point to the most recent 4.x.x :(
@@ -212,7 +216,7 @@ runs:
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
         output-credentials: true
 
-    - name: Login to Amazon ECR
+    - name: Log in Amazon ECR
       if: inputs.aws-ecr
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
@@ -233,7 +237,9 @@ runs:
     - name: Update version in maven
       if: hashFiles('pom.xml')
       shell: bash
-      run: mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
+      run: |
+        # Update version in maven
+        mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
     - name: Setup Node
       if: hashFiles('package.json')
@@ -245,7 +251,9 @@ runs:
     - name: Update version in npm
       if: hashFiles('package.json')
       shell: bash
-      run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+      run: |
+        # Update version in npm
+        npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
     - name: Setup Python
       if: hashFiles('pyproject.toml')
@@ -255,17 +263,20 @@ runs:
       if: hashFiles('pyproject.toml')
       shell: bash
       run: |
+        # Update version in pyproject.toml
         pipx install poetry
         poetry version ${{ steps.version.outputs.version }}
 
     - name: Pre-publish script
       if: inputs.pre-publish-script
       shell: bash
-      run: version=${{ steps.version.outputs.version }} && ${{ inputs.pre-publish-script }}
+      run: |
+        # Pre-publish script
+        version=${{ steps.version.outputs.version }} && ${{ inputs.pre-publish-script }}
 
 ## Phase 5 - Publish artifacts
 
-    - name: Upload in S3
+    - name: Publish to S3
       if: steps.init.outputs.aws_s3
       uses: agilecustoms/publish-s3@main
       with:
@@ -296,10 +307,11 @@ runs:
     # it does repackage though! (this is for good, bcz pom versions changed)
     # TODO: verify phase still run in build and release jobs
     # TODO: checkstyle and enforcer still run in both jobs
-    - name: Upload to CodeArtifact
+    - name: Publish maven to CodeArtifact
       if: inputs.aws-codeartifact-maven
       shell: bash
       run: |
+        # Publish maven to CodeArtifact
         set +e
         output=$(mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
         error_code=$?
@@ -318,6 +330,7 @@ runs:
       if: env.NPM_PUBLIC_TOKEN
       shell: bash
       run: |
+        # Publish in npmjs
         set +e
         output=$(npm publish --access public 2>&1)
         error_code=$?
@@ -332,7 +345,7 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ env.NPM_PUBLIC_TOKEN }}
 
-## Phase 6 - Git
+## Phase 6 - Git push
 
 #    - name: Error to test publish idempotency
 #      shell: bash
@@ -345,6 +358,7 @@ runs:
       if: inputs.dev-release == 'false'
       shell: bash
       run: |
+        # Git push
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         
@@ -383,6 +397,7 @@ runs:
       if: inputs.dev-release == 'true'
       shell: bash
       run: |
+        # Git push dev-release
         sudo chown -R "$(id -un):$(id -gn)" .
         git add -u
         git diff --cached --quiet || git commit -m "Dev Release [skip ci]"
@@ -394,7 +409,9 @@ runs:
     - name: GitHub Release
       if: inputs.release-gh == 'true' && inputs.dev-release == 'false'
       shell: bash
-      run: gh release create ${{ steps.version.outputs.version }} --notes-file ${{ steps.release_gen.outputs.notes_file }}
+      run: |
+        # GitHub Release
+        gh release create ${{ steps.version.outputs.version }} --notes-file ${{ steps.release_gen.outputs.notes_file }}
 
 ## Phase 8 - Print summary
 
@@ -402,6 +419,7 @@ runs:
       if: inputs.summary
       shell: bash
       run: |
+        # Summary
         version="${{ steps.version.outputs.version }}"
         summary="${{ inputs.summary }}"
         summary=$(eval echo "\"$summary\"")

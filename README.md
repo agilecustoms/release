@@ -90,7 +90,7 @@ More details about [release types](./docs/release-types.md)
    2. AWS ECR - publish Docker image in ECR repository
    3. AWS CodeArtifact maven - publish maven package in CodeArtifact repository
    4. npmjs - publish npm package in public npmjs.com repository
-6. Git
+6. Git push
    1. commit changes from step 4
    2. besides SemVer 'major.minor.patch', also add floating tags 'major', 'major.minor' and 'latest'
    3. add git notes (for prerelease)
