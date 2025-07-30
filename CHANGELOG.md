@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/agilecustoms/release/compare/v0.12.0...v0.12.1) (2025-07-30)
+
+### Miscellaneous
+
+* add diagnostic headers to all bash steps ([#14](https://github.com/agilecustoms/release/issues/14)) ([51265b2](https://github.com/agilecustoms/release/commit/51265b2ed2995a634624b2a5ba95ca7be6efdb24))
+
+
 ## [0.12.0](https://github.com/agilecustoms/release/compare/v0.11.0...v0.12.0) (2025-07-30)
 
 ### Features
