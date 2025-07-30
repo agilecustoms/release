@@ -193,11 +193,8 @@ runs:
         else
           version="${{ steps.release_gen.outputs.git_tag }}"
           tags="$version"
-          if [ "${{ inputs.floating-tags }}" = "true" ] && [ "${{ steps.release_gen.outputs.prerelease }}" = "false" ]; then
-            patch="$version"
-            major="$(echo "$version" | awk -F. '{print $1}')"
-            minor="$(echo "$version" | awk -F. '{print $1"."$2}')"
-            tags="$patch $minor $major"
+          if [ "${{ inputs.floating-tags }}" = "true" ]; then
+            tags="${{ steps.release_gen.outputs.git_tags }}"
           fi
         fi
         
