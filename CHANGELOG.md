@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.12.0](https://github.com/agilecustoms/release/compare/v0.11.0...v0.12.0) (2025-07-30)
+
+### Features
+
+* use release_gen git_tags ([211bb64](https://github.com/agilecustoms/release/commit/211bb6498e3a7dd546e446dac277e7c55362ed26))
+
+### Documentation
+
+* update roadmap and contribution ([7de38b1](https://github.com/agilecustoms/release/commit/7de38b14cfdeac0b7c2e87f8caffecbfe6c837c4))
+
+
 ## [0.11.0](https://github.com/agilecustoms/release/compare/v0.10.1...v0.11.0) (2025-07-29)
 
 ### Features
