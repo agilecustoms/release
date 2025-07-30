@@ -18,6 +18,6 @@ Instead, feel free to fork with a prefix say 'gc-' for Google Cloud
 
 Checklist for a new artifact type:
 - make sure it is idempotent (can be re-run w/o side effects)
-- if the artifact is tag-based, make sure you publish several tags: 'latest', 'major', 'major.minor', 'major.minor.patch'
+- floating tags support: 'major', 'major.minor', 'major.minor.patch'
+- release channel support: 'latest' (default for main)
 - add dev-release mode support. if dev-release mode is not possible (like with npmjs) — just document it
-- document if there are any nuances in 'prerelease' mode
