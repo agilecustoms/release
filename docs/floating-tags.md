@@ -2,7 +2,7 @@
 
 **Floating tags** are tags that move! When you release `1.2.4` then tags `1` and `1.2` move to point to `1.2.4`.
 This feature primarily supported by Git. Docker images also use tags.
-AWS S3 mimics file system structure so given objects (files) in a path (dir) `1.2` - you can remove and override them.
+AWS S3 mimics file system structure: path/object ~ dir/file. Given version stored in dir `1.2`, you override its content.
 So S3 also supports floating tags.
 
 **Release channel** is a term specific to NPM, where you can publish a package to a specific channel, like `latest`, `beta`, or `next`.
@@ -30,8 +30,8 @@ Given input `floating-tags` is `true` (default):
 | `main`  -> _2.3.0_        | ' '           |                |  `2.3.0`, `2.3`, `2`            | _same_                       |
 | `main`  -> _2.3.0_        | main          | main           |  `2.3.0`, `2.3`, `2`            | `2.3.0`, `2.3`, `2`, `main`  |
 | `main`  -> _2.3.0_        | release       | release        |  `2.3.0`, `2.3`, `2`, `release` | _same_                       |
-| `beta`  -> _3.0.0-beta.4_ |               | beta           |  `3.0.0-beta.4`                 | `3.0.0-beta.4`, `beta`       |
-| `beta`  -> _3.0.0-beta.4_ | ' '           | beta           |  `3.0.0-beta.4`                 | `3.0.0-beta.4`, `beta`       |
+| `beta`  -> _3.0.0-beta.4_ |               | beta           |  `3.0.0-beta.4`                 | _same_                       |
+| `beta`  -> _3.0.0-beta.4_ | ' '           | beta           |  `3.0.0-beta.4`                 | _same_                       |
 | `beta`  -> _3.0.0-beta.4_ | beta          | beta           |  `3.0.0-beta.4`                 | `3.0.0-beta.4`, `beta`       |
 | `beta`  -> _3.0.0-beta.4_ | next          | next           |  `3.0.0-beta.4`, `next`         | _same_                       |
 
@@ -43,5 +43,5 @@ Rules:
 - maintenance and prerelease by default do not have a release channel tag
 - maintenance release from branch like `1.1.x` only gives floating tag of `1.1`, no `1`
 - normal release by default has a release channel tag `latest`, you can explicitly set input `release-channel` to disable it
-- if a release channel equals to branch name, then the corresponding git tag is not created, but docker tag and S3 dir are created
-- `release-channel` input has precidence over `channel` property in `branches` configuration in `.releaserc.json`
+- if a release channel equals to the branch name, then the corresponding git tag is not created, but docker tag and S3 dir are created
+- `release-channel` input has precedence over `channel` property in `branches` configuration in `.releaserc.json`

@@ -169,8 +169,8 @@ runs:
         git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
     # CWD is /home/runner/work/release/release
-    # generate new version (available as output 'git_tag'), release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
-    # note: run this step even if an explicit version is provided, (git_tag is ignored, but release notes are used)
+    # generate a new version, release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
+    # note: run this step even if an explicit version is provided, (a version is ignored, but release notes are used)
     - name: Release generation
       id: release_gen
       if: inputs.dev-release == 'false'
@@ -195,7 +195,7 @@ runs:
           version="${{ inputs.version }}"
           tags="$version"
         else
-          version="${{ steps.release_gen.outputs.git_tag }}"
+          version="${{ steps.release_gen.outputs.version }}"
           tags="$version"
           if [ "${{ inputs.floating-tags }}" = "true" ]; then
             tags="${{ steps.release_gen.outputs.git_tags }}"
