@@ -219,7 +219,7 @@ runs:
     - name: Log in Amazon ECR
       if: inputs.aws-ecr
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.us-east-1.amazonaws.com
+      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.{region}.amazonaws.com
 
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
@@ -293,14 +293,14 @@ runs:
       shell: bash
       run: |
         service="${{ steps.init.outputs.service }}"
-        ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/$service
+        ecr_image=${{ steps.login-ecr.outputs.registry }}/$service
         tags=$(echo "${{ steps.version.outputs.tags }}" | sed 's/[^ ]\+/imageTag=&/g')
         AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
         tags="${{ steps.version.outputs.tags }}"
         for tag in $tags; do
-          docker tag $service $ECR_IMAGE:$tag
+          docker tag $service $ecr_image:$tag
         done
-        docker push --all-tags $ECR_IMAGE
+        docker push --all-tags $ecr_image
 
     # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
     # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
@@ -382,7 +382,7 @@ runs:
           git tag "$tag"
         done
         
-        # turn "1 1.0 1.0.0 channel" into "refs/tags/1 refs/tags/1.0 refs/tags/1.0.0 refs/tags/channel"
+        # turn "v1.2.3 v1.2 v1 channel" into "refs/tags/v1.2.3 refs/tags/v1.2 refs/tags/v1 refs/tags/channel"
         refs=$(echo "${{ steps.version.outputs.tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
         
         if [ "${{ steps.release_gen.outputs.prerelease }}" = "true" ]; then
