@@ -159,7 +159,8 @@ runs:
 ## Phase 2 - Release generation
 
     # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }}
-    # alternatively user may want to use an explicit PAT, then need to configure git to use it for push command
+    # alternatively user may want to use an explicit PAT, then need to configure git to use it.
+    # Besides 'git push', release_gen _probes_ git push, that's why it is in front of release_gen
     - name: Git authorization
       if: env.GH_TOKEN
       shell: bash
@@ -190,19 +191,24 @@ runs:
         # Finalize version and tags
         if [ "${{ inputs.dev-release }}" = "true" ]; then
           version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
+          git_tags="$version"
           tags="$version"
         elif [ -n "${{ inputs.version }}" ]; then
           version="${{ inputs.version }}"
+          git_tags="$version"
           tags="$version"
         else
           version="${{ steps.release_gen.outputs.version }}"
+          git_tags="$version"
           tags="$version"
           if [ "${{ inputs.floating-tags }}" = "true" ]; then
-            tags="${{ steps.release_gen.outputs.git_tags }}"
+            git_tags="${{ steps.release_gen.outputs.git_tags }}"
+            tags="${{ steps.release_gen.outputs.tags }}"
           fi
         fi
         
         echo "version=$version" >> $GITHUB_OUTPUT
+        echo "git_tags=$git_tags" >> $GITHUB_OUTPUT
         echo "tags=$tags" >> $GITHUB_OUTPUT
 
 ## Phase 3 - Log in AWS
@@ -324,7 +330,7 @@ runs:
         fi
         exit $error_code
 
-    # get namespace from package.json: "name": "@company/envctl", then find mapping namespace => npm repo in .npmrc file
+    # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
       if: env.NPM_PUBLIC_TOKEN
@@ -354,7 +360,6 @@ runs:
 #        exit 1
 
     - name: Git push
-      id: git
       if: inputs.dev-release == 'false'
       shell: bash
       run: |
@@ -375,22 +380,22 @@ runs:
           echo "No changes to commit."
         fi
         
-        git tag -d ${{ steps.version.outputs.tags }} 2>/dev/null || true
+        git tag -d ${{ steps.version.outputs.git_tags }} 2>/dev/null || true
         
-        tags="${{ steps.version.outputs.tags }}"
+        tags="${{ steps.version.outputs.git_tags }}"
         for tag in $tags; do
           git tag "$tag"
         done
         
         # turn "v1.2.3 v1.2 v1 channel" into "refs/tags/v1.2.3 refs/tags/v1.2 refs/tags/v1 refs/tags/channel"
-        refs=$(echo "${{ steps.version.outputs.tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
+        refs=$(echo "${{ steps.version.outputs.git_tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
         
-        if [ "${{ steps.release_gen.outputs.prerelease }}" = "true" ]; then
+        if [ -z "${{ inputs.version }}" ] && [ "${{ steps.release_gen.outputs.prerelease }}" = "true" ]; then
           git notes --ref semantic-release add -f -m '{"channels":["${{ steps.release_gen.outputs.channel }}"]}'
           refs="$refs refs/notes/semantic-release"
         fi
         
-        # push changes along with tags atomically. use --force to overwrite old tags
+        # push changes along with tags atomically (use --force to overwrite old tags)
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
     - name: Git push dev-release
@@ -407,7 +412,7 @@ runs:
 
     # standard --generate-notes just add one line "**Full Changelog**: https://github.com/agilecustoms/{repo}/compare/v0.1.3...v0.1.4"
     - name: GitHub Release
-      if: inputs.release-gh == 'true' && inputs.dev-release == 'false'
+      if: inputs.dev-release == 'false' && inputs.release-gh == 'true'
       shell: bash
       run: |
         # GitHub Release
