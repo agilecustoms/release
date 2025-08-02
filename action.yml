@@ -338,7 +338,7 @@ runs:
       run: |
         # Publish in npmjs
         set +e
-        output=$(npm publish --access public 2>&1)
+        output=$(npm publish --access public --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
         error_code=$?
         echo "$output"
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
