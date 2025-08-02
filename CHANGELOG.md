@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/agilecustoms/release/compare/v0.13.0...v0.14.0) (2025-08-02)
+
+### Features
+
+* npm release channel ([#16](https://github.com/agilecustoms/release/issues/16)) ([8dd45ea](https://github.com/agilecustoms/release/commit/8dd45ea9153f293871eb6aeb7cb54c1043353ccf))
+
+
 ## [0.13.0](https://github.com/agilecustoms/release/compare/v0.12.1...v0.13.0) (2025-08-02)
 
 ### Features
