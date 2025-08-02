@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/agilecustoms/release/compare/v0.12.1...v0.13.0) (2025-08-02)
+
+### Features
+
+* floating-tags and prereleases ([#15](https://github.com/agilecustoms/release/issues/15)) ([8e1361a](https://github.com/agilecustoms/release/commit/8e1361a7c7159fa7b7f5320e5c51432cef37dc8d))
+
+
 ## [0.12.1](https://github.com/agilecustoms/release/compare/v0.12.0...v0.12.1) (2025-07-30)
 
 ### Miscellaneous
