@@ -55,22 +55,18 @@ The action will:
 
 ## Artifact types and features:
 
-| Name                   | floating tags<br>release, prerelease | idempotency | prerelease | dev-release,<br>auto cleanup |
-|------------------------|--------------------------------------|-------------|------------|------------------------------|
-| git                    | ✅ ?                                  | ✅           |            | ✅ N/A                        |
-| AWS S3                 | ✅ ?                                  | ✅           |            | ✅ ✅                          |
-| AWS ECR                | ✅ ?                                  | ✅           |            | ✅ ✅                          |
-| AWS CodeArtifact maven | N/A N/A                              | ⚠️          |            | ✅ ❌️                         |
-| GitHub releases        | ? ?                                  | ?           | planned    | ?                            |
-| npmjs public repo      | planned ?                            | ⚠️          |            | ❌️ N/A                       |
+| Name                   | floating tags | idempotency | dev-release - auto cleanup |
+|------------------------|---------------|-------------|----------------------------|
+| git                    | ✅             | ✅           | ✅ - N/A                    |
+| AWS S3                 | ✅             | ✅           | ✅ - ✅                      |
+| AWS ECR                | ✅             | ✅           | ✅ - ✅                      |
+| AWS CodeArtifact maven | N/A           | ⚠️          | ✅ - ❌️                     |
+| npmjs public repo      | planned       | ⚠️          | ❌️ N/A                     |
 
 Features:
 - **floating tags** — given current version is `1.2.3` and you release `1.2.4` then also create `1`, `1.2` and `latest` tags
 - **idempotency** — ability to re-run the action w/o side effects, see below for more details
-- **prerelease** — version of software that is made available before the official, stable release
-- **dev-release** — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
-
-More details about [release types](./docs/release-types.md)
+- **dev-release** — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated. More details about [release types](./docs/release-types.md)
 
 ## Action steps
 
@@ -109,7 +105,7 @@ It is idempotent, so if a later step fails, it is safe to re-run "Publish artifa
 _Note: some publish commands are not idempotent (like npm publish), so as workaround just swallow 'same version already exists' type of errors
 if it is already not first workflow run (use `${{ github.run_attempt }}`)_
 
-- **Git** goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
+- **Git push** goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
 an attempt to run it again will cause new tags creation!
 
 - **GitHub release** goes last, as it is optional. It is also very simple — just one command
