@@ -16,21 +16,20 @@ Consider 4 branches:
 - `main` - main release branch, currently at v _2.2.2_
 - `beta` - prerelease branch for next version, currently at v _3.0.0-beta.3_
 
-| branch -> new version     | release channel | git tags                       | Docker tags and S3 dirs      |
-|---------------------------|-----------------|--------------------------------|------------------------------|
-| `1.1.x` -> _1.1.11_       |                 | `1.1.11`, `1.1`                | _same_                       |
-| `1.1.x` -> _1.1.11_       | 1.1.x           | `1.1.11`, `1.1`                | `1.1.11`, `1.1`, `1.1.x`     |
-| `1.1.x` -> _1.1.11_       | legacy          | `1.1.11`, `1.1`, `legacy`      | _same_                       |
-| `1.x.x` -> _1.6.0_        |                 | `1.6.0`, `1.6`, `1`            | _same_                       |
-| `1.x.x` -> _1.6.0_        | 1.x.x           | `1.6.0`, `1.6`, `1`            | `1.6.0`, `1.6`, `1`, `1.x.x` |
-| `1.x.x` -> _1.6.0_        | support         | `1.6.0`, `1.6`, `1`, `support` | _same_                       |
-| `main`  -> _2.3.0_        |                 | `2.3.0`, `2.3`, `2`, `latest`  | _same_                       |
-| `main`  -> _2.3.0_        | false           | `2.3.0`, `2.3`, `2`            | _same_                       |
-| `main`  -> _2.3.0_        | main            | `2.3.0`, `2.3`, `2`            | `2.3.0`, `2.3`, `2`, `main`  |
-| `main`  -> _2.3.0_        | release         | `2.3.0`, `2.3`, `2`, `release` | _same_                       |
-| `beta`  -> _3.0.0-beta.4_ |                 | `3.0.0-beta.4`                 | _same_                       |
-| `beta`  -> _3.0.0-beta.4_ | beta            | `3.0.0-beta.4`                 | `3.0.0-beta.4`, `beta`       |
-| `beta`  -> _3.0.0-beta.4_ | next            | `3.0.0-beta.4`, `next`         | _same_                       |
+| branch -> new version     | .releaserc.json<br>channel | git tags                       | Docker tags and S3 dirs      |
+|---------------------------|----------------------------|--------------------------------|------------------------------|
+| `1.1.x` -> _1.1.11_       |                            | `1.1.11`, `1.1`                | _same_                       |
+| `1.1.x` -> _1.1.11_       | '1.1.x'                    | `1.1.11`, `1.1`                | `1.1.11`, `1.1`, `1.1.x`     |
+| `1.1.x` -> _1.1.11_       | 'legacy'                   | `1.1.11`, `1.1`, `legacy`      | _same_                       |
+| `1.x.x` -> _1.6.0_        |                            | `1.6.0`, `1.6`, `1`            | _same_                       |
+| `1.x.x` -> _1.6.0_        | '1.x.x'                    | `1.6.0`, `1.6`, `1`            | `1.6.0`, `1.6`, `1`, `1.x.x` |
+| `1.x.x` -> _1.6.0_        | 'support'                  | `1.6.0`, `1.6`, `1`, `support` | _same_                       |
+| `main`  -> _2.3.0_        |                            | `2.3.0`, `2.3`, `2`, `latest`  | _same_                       |
+| `main`  -> _2.3.0_        | false                      | `2.3.0`, `2.3`, `2`            | _same_                       |
+| `main`  -> _2.3.0_        | 'main'                     | `2.3.0`, `2.3`, `2`            | `2.3.0`, `2.3`, `2`, `main`  |
+| `main`  -> _2.3.0_        | 'release'                  | `2.3.0`, `2.3`, `2`, `release` | _same_                       |
+| `beta`  -> _3.0.0-beta.4_ |                            | `3.0.0-beta.4`                 | _same_                       |
+| `beta`  -> _3.0.0-beta.4_ | 'beta'                     | `3.0.0-beta.4`                 | `3.0.0-beta.4`, `beta`       |
 
 Rules:
 - `dev-release` and explicit `version` never have floating tags
@@ -40,3 +39,52 @@ Rules:
 - maintenance release from branch like `1.1.x` only gives floating tag of `1.1`, no `1`
 - normal release by default has tag `latest`, you can set input `channel: false` in `.releaserc.json` to disable it
 - if a release channel equals to the branch name, then the corresponding git tag is not created, but docker tag and S3 dir are created
+
+## Prerelease
+
+Prerelease rules are more complex.
+Here properties `prerelease` and `channel` not only contribute to floating tags, but also drive a version.
+Idea is that you can do `-alfa.1..N` then `-beta.1..N` and finally `-rc.1..N` releases while staying in one branch!
+
+| branch | version        | prerelease | channel |    | version         | git notes<br>channel | git tags                | Docker tags and S3 dirs |
+|--------|----------------|------------|---------|----|-----------------|----------------------|-------------------------|-------------------------|
+| `next` | 1.2.3          | true       |         | -> | `2.0.0-next.1`  | `next`               | `2.0.0-next.1`          | _same_                  |
+| `next` | 1.2.3          | true       | false   | -> | `2.0.0-next.1`  | `next`               | `2.0.0-next.1`          | _same_                  |
+| `next` | 1.2.3          | true       | 'next'  | -> | `2.0.0-next.1`  | `next`               | `2.0.0-next.1`          | `2.0.0-next.2`, `next`  |
+| `next` | 1.2.3          | true       | 'beta'  | -> | `2.0.0-next.1`  | `beta`               | `2.0.0-next.1`, `beta`  | _same_                  |
+| `next` | 1.2.3          | 'alpha'    |         | -> | `2.0.0-alpha.1` | `next`               | `2.0.0-alpha.2`         | _same_                  |
+| `next` | 1.2.3          | 'alpha'    | false   | -> | `2.0.0-alpha.1` | `next`               | `2.0.0-alpha.2`         | _same_                  |
+| `next` | 1.2.3          | 'alpha'    | 'next'  | -> | `2.0.0-alpha.1` | `next`               | `2.0.0-alpha.2`         | `2.0.0-alpha.2`, `next` |
+| `next` | 1.2.3          | 'alpha'    | 'beta'  | -> | `2.0.0-alpha.1` | `beta`               | `2.0.0-alpha.2`, `beta` | _same_                  |
+
+Big example. Given branch `main` with current version 2.4.0. Create branch `next` with following `.releaserc.json`:
+
+```json
+{
+  "branches": [
+    "main",
+    {
+      "name": "next",
+      "prerelease": "alpha",
+      "channel": "demo"
+    }
+  ]
+}
+```
+
+| branch | version       | prerelease | channel | commit | version         | git notes<br>channel | git tags                | Docker tags and S3 dirs |
+|--------|---------------|------------|---------|--------|-----------------|----------------------|-------------------------|-------------------------|
+| `next` | 2.4.0         | 'alpha'    | 'demo'  | BR CH: | `3.0.0-alpha.1` | `demo`               | `3.0.0-alpha.1`, `demo` | _same_                  |
+| `next` | 3.0.0-alpha.1 | 'alpha'    | 'demo'  | fix:   | `3.0.0-alpha.2` | `demo`               | `3.0.0-alpha.2`, `demo` | _same_                  |
+| `next` | 3.0.0-alpha.2 | 'beta'     | 'demo'  | feat:  | `3.0.0-beta.1`  | `demo`               | `3.0.0-beta.1`, `demo`  | _same_                  |
+| `next` | 3.0.0-beta.1  | 'beta'     | 'demo'  | fix:   | `3.0.0-beta.2`  | `demo`               | `3.0.0-beta.2`, `demo`  | _same_                  |
+| `next` | 3.0.0-beta.2  | 'rc'       |         | feat:  | `3.0.0-rc.1`    | `next`               | `3.0.0-rc.1`            | _same_                  |
+| `next` | 3.0.0-rc.1    | 'rc'       |         | fix:   | `3.0.0-rc.2`    | `next`               | `3.0.0-rc.2`            | _same_                  |
+
+Rules:
+- change of `prerelease` drops number back to 1, so `3.0.0-alpha.2` becomes `3.0.0-beta.1`
+- `channel` should **not** be changed in the middle of prerelease
+- explicit `channel` gives a floating tag
+
+Here first column "channel" is what you configure in `.releaserc.json`,
+"git notes channel" is a special value used by "semantic-release" to "stitch" multiple prerelease versions together
