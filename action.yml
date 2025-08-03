@@ -40,6 +40,10 @@ inputs:
     description: 'Title of the changelog file (first line of the file)'
     required: false
     default: '# Changelog'
+  default-minor:
+    description: 'Bump minor version if no semantic commits found since last release tag'
+    required: false
+    default: 'false'
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
@@ -179,6 +183,7 @@ runs:
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
+        default_minor: ${{ inputs.default-minor }}
         npm_extra_deps: ${{ inputs.npm-extra-deps }}
         release_branches: ${{ inputs.release-branches }}
         release_plugins: ${{ inputs.release-plugins }}
@@ -412,11 +417,11 @@ runs:
 
     # standard --generate-notes just add one line "**Full Changelog**: https://github.com/agilecustoms/{repo}/compare/v0.1.3...v0.1.4"
     - name: GitHub Release
-      if: inputs.dev-release == 'false' && inputs.release-gh == 'true'
+      if: inputs.dev-release == 'false' && inputs.release-gh == 'true' && steps.release_gen.outputs.notes_tmp_file
       shell: bash
       run: |
         # GitHub Release
-        gh release create ${{ steps.version.outputs.version }} --notes-file ${{ steps.release_gen.outputs.notes_file }}
+        gh release create ${{ steps.version.outputs.version }} --notes-file ${{ steps.release_gen.outputs.notes_tmp_file }}
 
 ## Phase 8 - Print summary
 
