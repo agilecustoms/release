@@ -55,13 +55,13 @@ The action will:
 
 ## Artifact types and features:
 
-| Name                   | floating tags | idempotency | dev-release - auto cleanup |
+| Name                   | floating tags | idempotency | dev-release — auto cleanup |
 |------------------------|---------------|-------------|----------------------------|
-| git                    | ✅             | ✅           | ✅ - N/A                    |
-| AWS S3                 | ✅             | ✅           | ✅ - ✅                      |
-| AWS ECR                | ✅             | ✅           | ✅ - ✅                      |
-| AWS CodeArtifact maven | N/A           | ⚠️          | ✅ - ❌️                     |
-| npmjs public repo      | planned       | ⚠️          | ❌️ N/A                     |
+| git                    | ✅             | ✅           | ✅ — N/A                    |
+| AWS S3                 | ✅             | ✅           | ✅ — ✅                      |
+| AWS ECR                | ✅             | ✅           | ✅ — ✅                      |
+| AWS CodeArtifact maven | N/A           | ⚠️          | ✅ — ❌️                     |
+| npmjs public repo      | ✅             | ⚠️          | ❌️ — N/A                   |
 
 Features:
 - **floating tags** — given current version is `1.2.3` and you release `1.2.4` then also create `1`, `1.2` and `latest` tags
@@ -162,6 +162,7 @@ jobs:
 | aws-s3-dir                  |                   | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                                                                                                                                         |
 | changelog-file              | CHANGELOG.md      | CHANGELOG.md file path. Pass empty string to disable changelog generation                                                                                                                                                                                       |
 | changelog-title             | # Changelog       | Title of the changelog file (first line of the file)                                                                                                                                                                                                            |
+| default-minor               | false             | Bump minor version if no semantic commits found since last release tag                                                                                                                                                                                          |
 | dev-release                 | false             | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                                                                                                  |
 | dev-branch-prefix           | dev/              | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                                                                                                     |
 | floating-tags               | true              | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                                                                                                                                        |
