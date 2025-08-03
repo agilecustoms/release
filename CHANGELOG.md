@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/agilecustoms/release/compare/v0.14.0...v0.15.0) (2025-08-03)
+
+### Features
+
+* default-minor ([#17](https://github.com/agilecustoms/release/issues/17)) ([60382cf](https://github.com/agilecustoms/release/commit/60382cf3bac291793b002da877b10841694b6929))
+
+
 ## [0.14.0](https://github.com/agilecustoms/release/compare/v0.13.0...v0.14.0) (2025-08-02)
 
 ### Features
