@@ -1,5 +1,30 @@
 # GitHub Authorization
 
+Most of the time GitHub repos have protected branch such as `main` which requires to be made only via PRs.
+At the same time, release workflow often assumes some automated changes, such as bump versions `package.json` or update `CHANGELOG.md`.
+In this setup you need to **bypass** branch protection rule to make direct commit and push.
+This requires a PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) issued by a person who has permission to bypass these branch protection rules.
+So this is the main use case for `agilecustoms/release` action. For more details see [GitHub authorization](./docs/gh-authorization.md)
+
+```yaml
+jobs:
+   Release:
+      runs-on: ubuntu-latest
+      permissions:
+         id-token: write # need for AWS login (via GitHub OIDC provider)
+         contents: read # since `id-token` is specified, now need to explicitly set `contents` permission, otherwise can't even checkout
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v4
+
+         # ...
+
+         - name: Release
+           uses: agilecustoms/release@v1
+           env:
+              GH_TOKEN: ${{ secrets.GH_TOKEN }} # PAT to bypass branch protection. Create PAT and put it in repo/org secrets
+```
+
 In the main README you could see a usage example for the main usecase. 
 Let's cover in details when and what kind of GitHub authorization is required.
 There will be three sections from highest access to lowest access.

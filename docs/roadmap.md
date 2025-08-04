@@ -1,6 +1,6 @@
 # Roadmap
 
-Below is the list of potential future features, but it is not ordered. Idea is to implement them as needed
+Below is the list of potential future features:
 
 - publish in AWS CodeArtifact. Every artifact type will require a corresponding GH action like [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
   - npm (and Yarn) repository

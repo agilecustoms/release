@@ -57,7 +57,7 @@ inputs:
     required: false
     default: 'true'
   node-version:
-    description: 'Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)'
+    description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24'
     required: false
     default: '22'
   npm-extra-deps:

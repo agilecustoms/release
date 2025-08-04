@@ -2,22 +2,50 @@
 
 **This GH action is beta-testing now, planned to be released Aug 2025**
 
-Your Swiss Army knife to release software in AWS (and more) with GitHub action.
-This action:
-1) publish software artifacts in AWS S3, ECR, CodeArtifact; also in npmjs and [more](./docs/use-cases.md)
-2) commit and push tags
-3) generate GH release
+Release software artifacts in AWS (S3, ECR, CodeArtifact) with consistent versioning!
+You can run a release on a repository with **any combination** of software packages, binary files, docker images and just raw repo files.
+This is especially useful in microservices where the release is a _binary_ + _IaC_ versioned via git tag
 
 ![Cover](docs/images/cover.png)
 
-Main use case — microservices that hold application code and infrastructure code (like Terraform). Not designed/tested for monorepos.
-The action generates a new version based on latest [SemVer](https://semver.org) tag and [semantic commits](./docs/semantic-release.md) `fix:`, `feat:` and `BREAKING CHANGE:`.
-Then publish artifacts and push git tags, so your artifacts and git tags are in sync!
+The action comes with an **ecosystem**:
+- Terraform modules to provide AWS roles and policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
+- complimentary GitHub actions to use in build workflows ex. [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
+- documentation / examples for all supported [artifact types](./docs/artifact-types/index.md)
 
-## --> [🔗 All use cases](./docs/use-cases.md)
+## Features:
 
-Example of publish in S3:
+- automatic and manual [version generation](./docs/features/version-generation.md)
+- release notes generation and changelog update
+- [floating tags](./docs/features/floating-tags.md) — given current version is `1.2.3` and you release `1.2.4` then also create/move `1.2`, `1` and `latest` tags
+- [maintenance releases](./docs/features/maintenance-release.md) — same as normal release, but made from a maintenance branch
+(such as `1.x.x` given `2.x.x` development is in `main`)
+- [prereleases](./docs/features/prerelease.md) — develop a next (often major, sometimes minor) version, typically made from a branch `next`
+- [dev-release](./docs/features/dev-release.md) — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
+- [idempotency](./docs/features/idempotency.md) — ability to re-run the action w/o side effects
+- GitHub release
+- [GitHub authorization](./docs/features/gh-authorization.md)
+- [AWS authorization](./docs/features/aws-authorization.md)
+
+## Artifact types <-> features:
+
+| Artifact type          | floating tags | idempotency | dev-release — auto cleanup |
+|------------------------|---------------|-------------|----------------------------|
+| git                    | ✅             | ✅           | ✅ — ❌️                     |
+| AWS S3                 | ✅             | ✅           | ✅ — ✅                      |
+| AWS ECR                | ✅             | ✅           | ✅ — ✅                      |
+| AWS CodeArtifact maven | ❌️            | ⚠️          | ✅ — ❌️                     |
+| npmjs public repo      | ✅             | ⚠️          | ❌️                         |
+
+## Usage
+
+All examples are structured by [artifact types](./docs/artifact-types/index.md) and [features](./README.md#features)
+
+The example below shows how to publish binaries in S3
+
 ```yaml
+name: Release
+
 on:
   push: # note that 'pull_request' and 'pull_request_target' are not supported
     branches:
@@ -30,122 +58,37 @@ jobs:
       contents: read
       id-token: write
     steps:
-      # (example) package AWS Lambda code in a .zip archive in ./s3 directory
+      # (example) package AWS Lambda code as a zip archive in ./s3 directory
         
       - name: Release
         uses: agilecustoms/release@v1
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
-          aws-role: 'ci/publisher' # default
+          aws-role: 'ci/publisher'
           aws-s3-bucket: 'mycompany-dist'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
+
 Assume:
-- repo name is `mycompany/myapp`
-- workflow is run `on: push` (direct push or PR merge) on a branch 'main' with latest SemVer tag `v1.2.3`
-- merged branch has commit `feat: new-feature`
+- you store artifacts in AWS account "Dist" and its number stored in org variable `AWS_ACCOUNT_DIST`
 - you have an S3 bucket `mycompany-dist` in `us-east-1` region
-- there is a role `ci/publisher` in AWS account `AWS_ACCOUNT_DIST` with permissions to upload files in this S3 bucket
+- there is a role `ci/publisher` with permissions to upload files in this S3 bucket
+- you have repo `mycompany/myapp`
+- current release branch `main` has protection rule so all changes must be done via PR.
+And also there is a PAT (Personal Access Token) with permission to bypass branch protection rule stored in repo secret `GH_TOKEN`
+- latest tag is `v1.2.3`
+- developer made a feature branch and a commit with message `feat: new-feature`
+- the developer created and merged a PR which triggered a `Release` workflow
+- build steps (omitted) outcome: all files to be uploaded to S3 are placed in `./s3` directory
 
 The action will:
 - generate a new version `v1.3.0`
 - upload files from `./s3` directory to S3 bucket `mycompany-dist` at path `/myapp/v1.3.0/`
-- push tag `v1.3.0` to the remote repository
-- create GH Release and update CHANGELOG.md
-
-## Artifact types and features:
-
-| Name                   | floating tags | idempotency | dev-release — auto cleanup |
-|------------------------|---------------|-------------|----------------------------|
-| git                    | ✅             | ✅           | ✅ — N/A                    |
-| AWS S3                 | ✅             | ✅           | ✅ — ✅                      |
-| AWS ECR                | ✅             | ✅           | ✅ — ✅                      |
-| AWS CodeArtifact maven | N/A           | ⚠️          | ✅ — ❌️                     |
-| npmjs public repo      | ✅             | ⚠️          | ❌️ — N/A                   |
-
-Features:
-- **floating tags** — given current version is `1.2.3` and you release `1.2.4` then also create `1`, `1.2` and `latest` tags
-- **idempotency** — ability to re-run the action w/o side effects, see below for more details
-- **dev-release** — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated. More details about [release types](./docs/release-types.md)
-
-## Action steps
-
-1. Validate
-2. Release generation
-   1. generate a new version based on the latest SemVer tag + git commit messages
-   2. generate release notes (write in /tmp file)
-   3. update CHANGELOG.md
-3. Login in AWS
-4. Prepare: mainly bump versions in language-specific files
-   1. update version in `pom.xml` (for maven)
-   2. update version in `package.json` (for npm)
-   3. update version in `pyproject.toml` (for Python) (even though it is not published in any remote repo yet)
-   4. run a custom script to update arbitrary files
-5. Publish artifacts
-   1. AWS S3 - upload files in S3 bucket, files need to be in `./s3` directory
-   2. AWS ECR - publish Docker image in ECR repository
-   3. AWS CodeArtifact maven - publish maven package in CodeArtifact repository
-   4. npmjs - publish npm package in public npmjs.com repository
-6. Git push
-   1. commit changes from step 4
-   2. besides SemVer 'major.minor.patch', also add floating tags 'major', 'major.minor' and 'latest'
-   3. add git notes (for prerelease)
-   4. atomically push commit and refs (tags and notes) to the remote repository
-7. GitHub release
-   1. create a GitHub release tied to the most recent tag
-8. Print summary
-
-### Idempotency
-
-This GH action does three modify operations: "Publish artifacts", "Git push" and "GitHub release".
-Order is important to recover from failures:
-
-- **Publish artifacts** goes first as it is the most complex (highest chances to fail).
-It is idempotent, so if a later step fails, it is safe to re-run "Publish artifacts".<br>
-_Note: some publish commands are not idempotent (like npm publish), so as workaround just swallow 'same version already exists' type of errors
-if it is already not first workflow run (use `${{ github.run_attempt }}`)_
-
-- **Git push** goes next as it is much simpler and less likely to fail. And it is _not_ idempotent, given "Git push" succeed,
-an attempt to run it again will cause new tags creation!
-
-- **GitHub release** goes last, as it is optional. It is also very simple — just one command
-(provided all release notes/files are generated on previous steps).
-If it fails, you can create release manually through GitHub UI
-
-## Semantic-release usage
-
-NPM library [semantic-release](https://github.com/semantic-release) is used to generate the next version and release notes.
-It takes latest SemVer tag and analyzes commit messages to determine the next version:
-commits with `fix:` prefix will increment a patch version, commits with `feat:` prefix will increment a minor version,
-and commits with `BREAKING CHANGE:` will increment a major version.
-For more details see [semantic-release usage](./docs/semantic-release.md).
-
-## GitHub authorization
-
-Most of the time GitHub repos have protected branch such as `main` which requires to be made only via PRs.
-At the same time, release workflow often assumes some automated changes, such as bump versions `package.json` or update `CHANGELOG.md`.
-In this setup you need to **bypass** branch protection rule to make direct commit and push.
-This requires a PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) issued by a person who has permission to bypass these branch protection rules.
-So this is the main use case for `agilecustoms/release` action. For more details see [GitHub authorization](./docs/gh-authorization.md) 
-
-```yaml
-jobs:
-   Release:
-      runs-on: ubuntu-latest
-      permissions:
-         id-token: write # need for AWS login (via GitHub OIDC provider)
-         contents: read # since `id-token` is specified, now need to explicitly set `contents` permission, otherwise can't even checkout
-      steps:
-         - name: Checkout
-           uses: actions/checkout@v4
-
-         # ...
-
-         - name: Release
-           uses: agilecustoms/release@v1
-           env:
-              GH_TOKEN: ${{ secrets.GH_TOKEN }} # PAT to bypass branch protection. Create PAT and put it in repo/org secrets
-```
+- update `CHANGELOG.md` with release notes
+- push tags `v1.3.0`, `v1.3`, `v1` and `latest` to the remote repository
+- create GH Release tied to tag `v1.3.0`
 
 ## Inputs
 
@@ -167,7 +110,7 @@ jobs:
 | dev-branch-prefix           | dev/              | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                                                                                                     |
 | floating-tags               | true              | When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules                                                                                                                                        |
 | npm-extra-deps              |                   | Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset, ex. `conventional-changelog-conventionalcommits@9.1.0` use white space or new line to specify multiple deps (extremely rare)                                    |
-| node-version                | 22                | Node.js version to publish npm packages, default is 22 (pre-cached in Ubuntu 24)                                                                                                                                                                                |
+| node-version                | 22                | Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24                                                                                                                                                            |
 | pre-publish-script          |                   | custom sh script that allows to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc). In this script you can use variable `$version`                                                                         |
 | release-branches            | (see description) | semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) (see default), mainly used to support [maintenance releases and prereleases](./docs/release-types.md#maintenance-release) |
 | release-gh                  | true              | If true, then create a GitHub release                                                                                                                                                                                                                           |
@@ -184,14 +127,14 @@ jobs:
 
 ## Environment variables
 
-| Name             | Description                                                                                                                                                            |
-|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GH_TOKEN         | Takes GH PAT with permission to bypass branch protection rule. Required if `release-gh: true` (default). See details in [gh-authorization](./docs/gh-authorization.md) |
-| NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                        |
+| Name             | Description                                                                                                                                                                   |
+|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GH_TOKEN         | Takes GH PAT with permission to bypass branch protection rule. Required if `release-gh: true` (default). See details in [gh-authorization](docs/features/gh-authorization.md) |
+| NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                               |
 
 ## Misc
 
-- [More about this project](docs/about.md): history, motivation, why not just use "semantic-release"
+- [More about this project](./docs/about.md): history, motivation, why not just use "semantic-release"
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Contribution guideline](./docs/contribution.md)
 
@@ -202,5 +145,5 @@ This project is released under the [MIT License](./LICENSE)
 ## Acknowledgements
 
 - https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
-- https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as reference on how to write my own GH action-adapter for semantic-release
+- https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as a reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
