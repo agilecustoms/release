@@ -21,3 +21,4 @@ Checklist for a new artifact type:
 - floating tags support: 'major', 'major.minor', 'major.minor.patch'
 - release channel support: 'latest' (default for main)
 - add dev-release mode support. if dev-release mode is not possible (like with npmjs) — just document it
+- verify inputs to detect configuration issues; error messages provide suggestions on how to fix these issues

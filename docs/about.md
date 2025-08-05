@@ -27,7 +27,6 @@ So far idea is to add new types of artifacts as new steps in `action.yml` file, 
 1. Everything works out of the box, minimal setup is needed; inputs have meaningful defaults
 2. Implement features only when they are needed and thus can be tested!
 3. Very thoughtful and detailed documentation, including examples for each use case
-4. Verify inputs to detect configuration issues; error messages provide suggestions on how to fix these issues
 
 ## why not just use `semantic-release`?
 

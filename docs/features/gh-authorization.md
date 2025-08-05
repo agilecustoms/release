@@ -4,7 +4,7 @@ Most of the time GitHub repos have protected branch such as `main` which require
 At the same time, release workflow often assumes some automated changes, such as bump versions `package.json` or update `CHANGELOG.md`.
 In this setup you need to **bypass** branch protection rule to make direct commit and push.
 This requires a PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) issued by a person who has permission to bypass these branch protection rules.
-So this is the main use case for `agilecustoms/release` action. For more details see [GitHub authorization](./docs/gh-authorization.md)
+So this is the main use case for `agilecustoms/release` action. For more details see [GitHub authorization](./gh-authorization.md)
 
 ```yaml
 jobs:
