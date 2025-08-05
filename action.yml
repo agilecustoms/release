@@ -33,7 +33,7 @@ inputs:
     description: 'Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
     required: false
   changelog-file:
-    description: 'CHANGELOG.md file path. Pass empty string to disable changelog generation'
+    description: 'Changelog file path. Pass empty string to disable changelog generation'
     required: false
     default: 'CHANGELOG.md'
   changelog-title:
@@ -84,7 +84,7 @@ inputs:
     description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
   version:
-    description: 'Explicit version to use instead of auto-generating. When provided, only this single version/tag will be created, no floating tags'
+    description: 'Explicit version to use instead of auto-generation'
     required: false
 
 runs:
