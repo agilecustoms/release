@@ -60,7 +60,7 @@ Since `agilecustoms/release` uses only 2 plugins (and only in `dryRun` mode) - t
 
 Bottom line, these are only supported configuration options for semantic-release:
 - [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) —
-you only need it to support maintenance releases and/or prereleases, see [release types](./release-types.md)
+you only need it to support [maintenance releases](./maintenance-release.md) and [prereleases](./prerelease.md)
 - `plugins`
 - `tag-format` (`@agilecustoms/release` input) or `tagFormat` in `.releaserc.json`
 - ⚠️ setting `repositoryUrl` in `.releaserc.json` is possible but not recommended.
