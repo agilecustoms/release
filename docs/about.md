@@ -24,17 +24,18 @@ So far idea is to add new types of artifacts as new steps in `action.yml` file, 
 
 ## Philosophy
 
-1. Everything works out of the box, minimal setup is needed; inputs should have meaningful defaults
+1. Everything works out of the box, minimal setup is needed; inputs have meaningful defaults
 2. Implement features only when they are needed and thus can be tested!
 3. Very thoughtful and detailed documentation, including examples for each use case
-4. Verify inputs to detect errors as early as possible
-5. Clear errors with suggestions on how to fix them
+4. Verify inputs to detect configuration issues; error messages provide suggestions on how to fix these issues
 
 ## why not just use `semantic-release`?
 
 1. `semantic-release` as of June 2025 has no plugins to 1) upload files in S3, 2) publish Docker images to ECR, 3) publish maven in CodeArtifact
 2. `semantic-release` is a library. To use it as a GH action, you need a wrapper, like [semantic-release-action](https://github.com/cycjimmy/semantic-release-action)
-3. conceptually I found `semantic-release` somewhat hard to learn and configure,
+3. `semantic-release` is good for open source projects where people diligently follow commit message conventions.
+Enterprise projects tend to use a simplified approach: no release notes, no changelog, just bump a minor version and publish
+4. conceptually I found `semantic-release` somewhat hard to learn and configure,
 I wanted to have a GH action that works fine by default and clear usecase-based documentation with examples
 how to configure the action per specific use case
 

@@ -1,6 +1,6 @@
 ### publish in AWS CodeArtifact Maven repository
 
-This action publishes maven artifacts in AWS CodeArtifact repository.
+This action publishes maven artifacts in the AWS CodeArtifact repository.
 Note: it doesn't compile source code, nor run tests, it just updates a version in `pom.xml` and publishes it.
 So put your maven "heavy lifting" (compile, test, package) prior to this action.
 See .. for details how to set up settings.xml, pom.xml and how to use artifacts published by this action.
