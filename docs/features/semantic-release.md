@@ -1,6 +1,6 @@
 # Semantic-release usage
 
-The action generates a new version based on latest [SemVer](https://semver.org) tag and [semantic commits](./docs/semantic-release.md) `fix:`, `feat:` and `BREAKING CHANGE:`.
+The action generates a new version based on latest [SemVer](https://semver.org) tag and semantic commits `fix:`, `feat:` and `BREAKING CHANGE:`.
 Then publish artifacts and push git tags, so your artifacts and git tags are in sync!
 
 NPM library [semantic-release](https://github.com/semantic-release) is used to generate the next version and release notes.

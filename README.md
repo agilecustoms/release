@@ -30,13 +30,15 @@ The action comes with an **ecosystem**:
 
 ## Artifact types <-> features:
 
-| Artifact type          | floating tags | idempotency | dev-release — auto cleanup |
-|------------------------|---------------|-------------|----------------------------|
-| git                    | ✅             | ✅           | ✅ — ❌️                     |
-| AWS S3                 | ✅             | ✅           | ✅ — ✅                      |
-| AWS ECR                | ✅             | ✅           | ✅ — ✅                      |
-| AWS CodeArtifact maven | ❌️            | ⚠️          | ✅ — ❌️                     |
-| npmjs public repo      | ✅             | ⚠️          | ❌️                         |
+| Artifact type                                                             | floating tags | idempotency | dev-release — auto cleanup |
+|---------------------------------------------------------------------------|---------------|-------------|----------------------------|
+| [git](./docs/artifact-types/git.md)                                       | ✅             | ✅           | ✅ — ❌️                     |
+| [AWS S3](./docs/artifact-types/aws-s3.md)                                 | ✅             | ✅           | ✅ — ✅                      |
+| [AWS ECR](./docs/artifact-types/aws-ecr.md)                               | ✅             | ✅           | ✅ — ✅                      |
+| [AWS CodeArtifact maven](./docs/artifact-types/aws-codeartifact-maven.md) | ❌️            | ⚠️          | ✅ — ❌️                     |
+| [npmjs](./docs/artifact-types/npmjs.md)                                   | ✅             | ⚠️          | ❌️                         |
+
+_See the respective artifact type to learn about idempotency limitations ⚠️_
 
 ## Usage
 
