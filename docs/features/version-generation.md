@@ -2,43 +2,52 @@
 
 There are three ways to generate a new version:
 
-1. (recommended) use [semantic commits](./semantic-release.md) — next version determined based on commit message prefixes
+1. (recommended) [Semantic commits](./semantic-commits.md) — next version determined based on commit message prefixes
    such as `fix:`, `feat:`, `docs:`, `perf:`
-2. [minor version bump](#minor-version-bump) — allows to bump a minor version w/o semantic commits
+2. [Version bump](#version-bump) — allows to bump a version w/o semantic commits
 3. [Explicit version](#explicit-version) allows providing a new version as explicit input 
 
-[semantic commits](./semantic-release.md) is recommended way, it allows you to use all features of this action (see table below).
+[Semantic commits](./semantic-commits.md) is recommended way, it allows you to use all features of this action (see table below).
 Big enterprise often does not need the full power of semantic commits but rather chooses simplicity.
 Finally, some projects seeking more flexibility may want to use explicit versioning.
 
-| name                 | semantic commits | minor version bump | explicit version |
-|----------------------|------------------|--------------------|------------------|
-| release notes        | ✅                | ❌️                 | ❌️               |
-| changelog            | ✅                | ❌️                 | ❌️               |
-| floating tags        | ✅                | ✅                  | ✅                |
-| release channel      | ✅                | ⚠️                 | ⚠️               |
-| prerelease           | ✅                | ❌️                 | ✅                |
-| maintenance releases | ✅                | ⚠️                 | ✅                |
+| name                 | semantic commits | version bump | explicit version |
+|----------------------|------------------|--------------|------------------|
+| release notes        | ✅                | ❌️           | ❌️               |
+| changelog            | ✅                | ❌️           | ❌️               |
+| floating tags        | ✅                | ✅            | ✅                |
+| release channel      | ✅                | ⚠️           | ⚠️               |
+| prerelease           | ✅                | ❌️           | ✅                |
+| maintenance releases | ✅                | ✅            | ✅                |
 
 ⚠️ Notes:
 - "semantic commits" takes 'release channel' from `.releaserc.json` file.
-"default minor" and "explicit version" must use `release-channel` input parameter instead
-- Maintenance releases can be `N.x.x` (can bump minor and patch versions) and `N.N.x` (can bump only a patch version).
-  `minor-version-bump` can only be used with `N.x.x`
+"version bump" and "explicit version" must use `release-channel` input parameter instead
 
-## Minor version bump
+## Version bump
 
-`minor-version-bump` has 3 modes:
-1. (no-value) — default, meaning use semantic commits
-2. `default` — use semantic commits, but if no commits found since last release, then a minor version will be bumped
-3. `always` — always bump a minor version, ignoring semantic commits
+Semantic versioning makes most of sense when you do not know your customers,
+so you can say "this release is not risky, it is just a bugfix" or "this release comes with a new feature but doesn't break anything".
+In enterprise the software is being developed, deployed and tested by the same team, so teams often do not use semantic commits.
+All that matters — the version is bumped, artifacts are published. For such teams there is an option `version-bump`,
+it allows to bump a minor/patch version even if there are no semantic commits
+
+`version-bump` can take the following values:
+- (no-value) — default, meaning use semantic commits
+- `default-minor` — if no semantic commits, default to minor bump
+- `default-patch` — if no semantic commits, default to patch bump
+- (planned) `minor` — bump a minor version, ignore semantic commits
+- (planned) `patch` — bump a patch version, ignore semantic commits
+
+When `version-bump` is set to `default-patch` or `default-minor`, the action will still generate release notes and changelog,
+
 
 ## Explicit version
 
-Use the `version` input parameter to specify an exact version instead of auto-generating one.
-When provided, only this single version/tag will be created (no `latest`, `major`, or `minor` tags).
-Typically, you use normal release flow (for trunk-based development) or `dev-release: true` to test some feature before merging it.
+Alternatively to semantic commits and default version bump, you can provide an explicit version to be used for the release.
 
-Use explicit **version** as last resort:
-1. to fix an existing version in-place
-2. instead of dev-release when it is not supported
+This can be helpful in the following cases:
+- you have your own versioning scheme like `yyyy-mm-dd-HH:mm:ss`
+- you do not want to release every time a PR is merged in the main branch, but rather want to release on demand
+- quick alternative instead of fully fledged [prereleases](./prerelease.md) or [maintenance release](./maintenance-release.md)
+- (rare, typically not recommended) you want to re-release an existing version
