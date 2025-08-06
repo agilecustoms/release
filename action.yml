@@ -244,11 +244,11 @@ runs:
         aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
         aws-login: false # we already logged in AWS in a previous step
 
-    - name: Update version in maven
+    - name: Update version in pom.xml
       if: hashFiles('pom.xml')
       shell: bash
       run: |
-        # Update version in maven
+        # Update version in pom.xml
         mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
     - name: Setup Node
@@ -258,11 +258,11 @@ runs:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
 
-    - name: Update version in npm
+    - name: Update version in package.json
       if: hashFiles('package.json')
       shell: bash
       run: |
-        # Update version in npm
+        # Update version in package.json
         npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
     - name: Setup Python
@@ -302,6 +302,7 @@ runs:
       if: inputs.aws-ecr
       shell: bash
       run: |
+        # Push Docker image in ECR
         service="${{ steps.init.outputs.service }}"
         ecr_image=${{ steps.login-ecr.outputs.registry }}/$service
         tags=$(echo "${{ steps.version.outputs.tags }}" | sed 's/[^ ]\+/imageTag=&/g')
