@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.16.0](https://github.com/agilecustoms/release/compare/v0.15.0...v0.16.0) (2025-08-06)
+
+### Features
+
+* parameter version-bump ([7c821ff](https://github.com/agilecustoms/release/commit/7c821ff20c6e9792e44ff8e0e3aa55150d461509))
+
+### Documentation
+
+* cover different version generation options ([5679408](https://github.com/agilecustoms/release/commit/56794080c1078b1af2e3c8dc25e581cb96bc2c90))
+* fix all links ([606782a](https://github.com/agilecustoms/release/commit/606782a84b99f3cf9696a88340be833534cab625))
+* great refactoring - distribute all documentation by feature and by artifact type ([0642754](https://github.com/agilecustoms/release/commit/0642754dfc6fd08677de659c87f235964d657742))
+* review README.md, rename semantic-release doc ([b71e190](https://github.com/agilecustoms/release/commit/b71e1908e09bb3a1e873f27575aa16140a3436d4))
+
+
 ## [0.15.0](https://github.com/agilecustoms/release/compare/v0.14.0...v0.15.0) (2025-08-03)
 
 ### Features
