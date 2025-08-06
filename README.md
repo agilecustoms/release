@@ -1,6 +1,6 @@
 # About
 
-**This GH action is beta-testing now, planned to be released Aug 2025**
+**This GH action is beta-testing now, planned to be released late Aug 2025**
 
 Release software artifacts in AWS (S3, ECR, CodeArtifact) with consistent versioning!
 
@@ -82,7 +82,10 @@ Assume:
 - current release branch `main` has protection rule so all changes must be done via PR.
 And also there is a PAT (Personal Access Token) with permission to bypass branch protection rule stored in repo secret `GH_TOKEN`
 - latest tag is `v1.2.3`
+
+Act:
 - developer made a feature branch and a commit with message `feat: new-feature`
+(alternatively use input [version-bump](./docs/features/version-generation.md#version-bump) for default minor/patch bump)
 - the developer created and merged a PR which triggered a `Release` workflow
 - build steps (omitted) outcome: all files to be uploaded to S3 are placed in `./s3` directory
 
@@ -95,7 +98,7 @@ The action will:
 
 ## Inputs
 
-_There are no required inputs, but if you pass invalid combination, the system will let you know_
+_There are no required inputs. The action only controls that combination of inputs is valid_
 
 | Name                        | Default           | Description                                                                                                                                                                                                                                                                                 |
 |-----------------------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -110,19 +113,19 @@ _There are no required inputs, but if you pass invalid combination, the system w
 | aws-s3-dir                  |                   | Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`                                                                                                                                                                     |
 | changelog-file              | CHANGELOG.md      | Changelog file path. Pass empty string to disable changelog generation                                                                                                                                                                                                                      |
 | changelog-title             | # Changelog       | Title of the changelog file (first line of the file)                                                                                                                                                                                                                                        |
-| default-minor               | false             | Bump minor version if no semantic commits found since last release tag                                                                                                                                                                                                                      |
 | dev-release                 | false             | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                                                                                                                              |
 | dev-branch-prefix           | dev/              | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                                                                                                                                 |
 | floating-tags               | true              | When next version to be released is `1.2.4`, then also release `1.2`, `1` and `latest`. Not desired for public terraform modules                                                                                                                                                            |
-| npm-extra-deps              |                   | Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset, ex. `conventional-changelog-conventionalcommits@9.1.0` use white space or new line to specify multiple deps (extremely rare)                                                                |
+| npm-extra-deps              |                   | Additional npm dependencies, needed to use non-default commit analyzer preset, ex. `conventional-changelog-conventionalcommits@9.1.0` use white space or new line to specify multiple deps (extremely rare)                                                                                 |
 | node-version                | 22                | Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24                                                                                                                                                                                        |
-| pre-publish-script          |                   | custom sh script that allows to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc). In this script you can use variable `$version`                                                                                                     |
-| release-branches            | (see description) | semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) (see default), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md) |
+| pre-publish-script          |                   | Custom sh script that allows to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc). In this script you can use variable `$version`                                                                                                     |
+| release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) (see default), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md) |
 | release-gh                  | true              | If true, then create a GitHub release                                                                                                                                                                                                                                                       |
-| release-plugins             | (see description) | semantic-release "plugins" configuration, see [details](./docs/features/semantic-release.md#configuration)                                                                                                                                                                                  |
+| release-plugins             | (see description) | Semantic-release "plugins" configuration, see [details](./docs/features/semantic-commits.md#configuration)                                                                                                                                                                                  |
 | summary                     | (see description) | Text to print in workflow 'Release summary'. Default is `### Released ${version}`. Set empty string to omit summary generation                                                                                                                                                              |
 | tag-format                  | v${version}       | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                                                                                                                         |
-| version                     |                   | Explicit version to use instead of auto-generation                                                                                                                                                                                                                                          |
+| version                     |                   | [Explicit version](./docs/features/version-generation.md#explicit-version) to use instead of auto-generation                                                                                                                                                                                |
+| version-bump                |                   | Allows to [bump a version](./docs/features/version-generation.md#version-bump) w/o semantic commits                                                                                                                                                                                         |
 
 ## Outputs
 
@@ -151,4 +154,4 @@ This project is released under the [MIT License](./LICENSE)
 
 - https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
 - https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as a reference on how to write my own GH action-adapter for semantic-release
-- https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as tag. Used it for almost 2 years until switched to semantic-release
+- https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as a tag. Used it for almost 2 years until switched to semantic-release

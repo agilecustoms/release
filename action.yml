@@ -40,10 +40,6 @@ inputs:
     description: 'Title of the changelog file (first line of the file)'
     required: false
     default: '# Changelog'
-  default-minor:
-    description: 'Bump minor version if no semantic commits found since last release tag'
-    required: false
-    default: 'false'
   dev-release:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
@@ -85,6 +81,9 @@ inputs:
     required: false
   version:
     description: 'Explicit version to use instead of auto-generation'
+    required: false
+  version-bump:
+    description: 'Allows to bump a version w/o semantic commits'
     required: false
 
 runs:
@@ -183,11 +182,11 @@ runs:
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
-        default_minor: ${{ inputs.default-minor }}
         npm_extra_deps: ${{ inputs.npm-extra-deps }}
         release_branches: ${{ inputs.release-branches }}
         release_plugins: ${{ inputs.release-plugins }}
         tag_format: ${{ inputs.tag-format }}
+        version_bump: ${{ inputs.version-bump }}
 
     - name: Finalize version and tags
       id: version
