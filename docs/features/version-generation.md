@@ -2,10 +2,10 @@
 
 There are three ways to generate a new version:
 
-1. (recommended) [Semantic commits](./semantic-commits.md) — next version determined based on commit message prefixes
+1. (recommended) [semantic commits](./semantic-commits.md) — next version determined based on commit message prefixes
    such as `fix:`, `feat:`, `docs:`, `perf:`
-2. [Version bump](#version-bump) — allows to bump a version w/o semantic commits
-3. [Explicit version](#explicit-version) allows providing a new version as explicit input 
+2. [version bump](#version-bump) — allows to bump a version w/o semantic commits
+3. [explicit version](#explicit-version) allows providing a new version as explicit input 
 
 [Semantic commits](./semantic-commits.md) is recommended way, it allows you to use all features of this action (see table below).
 Big enterprise often does not need the full power of semantic commits but rather chooses simplicity.
@@ -40,7 +40,6 @@ it allows to bump a minor/patch version even if there are no semantic commits
 - (planned) `patch` — bump a patch version, ignore semantic commits
 
 When `version-bump` is set to `default-patch` or `default-minor`, the action will still generate release notes and changelog,
-
 
 ## Explicit version
 
