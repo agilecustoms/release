@@ -47,7 +47,7 @@ inputs:
   dev-branch-prefix:
     description: 'Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement'
     required: false
-    default: 'dev/'
+    default: 'feature/'
   floating-tags:
     description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
     required: false
