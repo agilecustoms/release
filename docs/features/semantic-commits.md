@@ -1,16 +1,18 @@
 # Semantic commits
 
-The action generates a new version based on latest [SemVer](https://semver.org) tag and semantic commits `fix:`, `feat:` and `BREAKING CHANGE:`.
-Then publish artifacts and push git tags, so your artifacts and git tags are in sync!
+`agilecustoms/release` action supports [3 modes of version generation](./version-generation.md).
+This chapter describes the default mode — "semantic commits"
 
-NPM library [semantic-release](https://github.com/semantic-release) is used to generate the next version and release notes.
-It takes latest SemVer tag and analyzes commit messages to determine the next version:
-commits with `fix:` prefix will increment a patch version, commits with `feat:` prefix will increment a minor version,
-and commits with `BREAKING CHANGE:` will increment a major version.
+"semantic commits" mode is powered by NPM library [semantic-release](https://github.com/semantic-release).
+It takes latest [SemVer](https://semver.org) tag and analyzes commit messages to determine the next version:
+commits with `fix:` prefix ⇒ increment a patch version, commits with `feat:` prefix ⇒ increment a minor version,
+and commits with `BREAKING CHANGE:` ⇒ increment a major version.
+In this mode if a PR has no commit bumping a version, the `agilecustoms/release` action exit with error
 
-
-NPM library [semantic-release](https://github.com/semantic-release/semantic-release) is used to generate next version and release notes.
-semantic-release is used in **dryRun** mode, so it doesn't commit changes, push tags nor create a GitHub release
+Tech note. [semantic-release](https://github.com/semantic-release/semantic-release) has rich capabilities.
+In scope of `agilecustoms/release` action, the semantic-release is used in **dryRun** mode:
+it generates next version and release notes.
+It doesn't commit changes, push tags nor create a GitHub release
 
 ## Presets
 
@@ -27,19 +29,14 @@ To use non-default preset, you need:
 
 Here is the summary of the [angular](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset:
 
-| prefix                                         | default version bump | release and changelog section                | description                                                                                                                               |
-|------------------------------------------------|----------------------|----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| `feat:` with `BREAKING CHANGE:`                | major                | Features  and  BREAKING CHANGES              | Breaking change OR just first major release. (Tag `BREAKING CHANGE:` must be in message footer)                                           |
-| `feat:`                                        | minor                | Features                                     | New feature                                                                                                                               |
-| `fix:`                                         | patch                | Bug Fixes                                    | Bug fix                                                                                                                                   |
-| `perf:`                                        | patch                | Performance Improvements                     | Performance improvement / fix                                                                                                             |
-| `build:`, `ci:`, `docs:`, `refactor:`, `test:` | no version bump      | _not reflected in GH release / CHANGELOG.md_ | See Angular [commit-message-guidelines](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md#type) |
-| _no prefix_                                    | no version bump      | _not reflected in GH release / CHANGELOG.md_ | Discouraged, but allowed                                                                                                                  |
-
-In normal release workflow (not [dev-release](./release-types.md)) if a PR has no any commit bumping a version,
-then `agilecustoms/release` action exit with error
-
-
+| prefix                                         | version bump    | release and changelog sections               | description                                                                                                                               |
+|------------------------------------------------|-----------------|----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `feat:` with `BREAKING CHANGE:`                | major           | Features  and  BREAKING CHANGES              | Breaking change OR just first major release. (Tag `BREAKING CHANGE:` must be in message footer)                                           |
+| `feat:`                                        | minor           | Features                                     | New feature                                                                                                                               |
+| `fix:`                                         | patch           | Bug Fixes                                    | Bug fix                                                                                                                                   |
+| `perf:`                                        | patch           | Performance Improvements                     | Performance improvement / fix                                                                                                             |
+| `build:`, `ci:`, `docs:`, `refactor:`, `test:` | no version bump | _not reflected in GH release / CHANGELOG.md_ | See Angular [commit-message-guidelines](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md#type) |
+| _no prefix_                                    | no version bump | _not reflected in GH release / CHANGELOG.md_ | Discouraged, but allowed                                                                                                                  |
 
 ## Examples
 
@@ -73,7 +70,7 @@ docs: add more examples to README
 specifically no section `Documentation` nor `Bug Fixes` just title with version number
 
 
-### conventionalcommits (default)
+### conventionalcommits
 
 Place `.relaserc.json` in repo root
 ```json
