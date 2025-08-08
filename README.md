@@ -6,7 +6,7 @@ Release software artifacts in AWS (S3, ECR, CodeArtifact) with consistent versio
 
 ![Cover](docs/images/cover.png)
 
-You can run a release on a repository with **any combination** of software packages, binary files, docker images and just raw repo files.
+You can release **any combination** of software packages, binary files, docker images and raw repo files
 
 This is especially useful in microservices where the release is a _binary_ + _IaC_ versioned via git tag
 
@@ -83,11 +83,11 @@ Assume:
 And also there is a PAT (Personal Access Token) with permission to bypass branch protection rule stored in repo secret `GH_TOKEN`
 - latest tag is `v1.2.3`
 
-Act:
+Scenario:
 - developer made a feature branch and a commit with message `feat: new-feature`
 (alternatively use input [version-bump](./docs/features/version-generation.md#version-bump) for default minor/patch bump)
 - the developer created and merged a PR which triggered a `Release` workflow
-- build steps (omitted) outcome: all files to be uploaded to S3 are placed in `./s3` directory
+- build steps (omitted) produced a directory `./s3` with files that need to be released to S3
 
 The action will:
 - generate a new version `v1.3.0`
@@ -114,7 +114,7 @@ _There are no required inputs. The action only controls that combination of inpu
 | changelog-file              | CHANGELOG.md      | Changelog file path. Pass empty string to disable changelog generation                                                                                                                                                                                                                      |
 | changelog-title             | # Changelog       | Title of the changelog file (first line of the file)                                                                                                                                                                                                                                        |
 | dev-release                 | false             | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                                                                                                                              |
-| dev-branch-prefix           | dev/              | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                                                                                                                                 |
+| dev-branch-prefix           | feature/          | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                                                                                                                                 |
 | floating-tags               | true              | When next version to be released is `1.2.4`, then also release `1.2`, `1` and `latest`. Not desired for public terraform modules                                                                                                                                                            |
 | npm-extra-deps              |                   | Additional npm dependencies, needed to use non-default commit analyzer preset, ex. `conventional-changelog-conventionalcommits@9.1.0` use white space or new line to specify multiple deps (extremely rare)                                                                                 |
 | node-version                | 22                | Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24                                                                                                                                                                                        |

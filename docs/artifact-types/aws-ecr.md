@@ -18,5 +18,5 @@ steps:
 ```
 
 **dev-release** works smoothly with ECR: Docker image gets published with tag equal to branch name.
-ECR allows you to configure lifecycle rules by tag prefix, so if you adopt `dev/` prefix for your dev-release branches,
-then you can set up ECR lifecycle rule to delete images with prefix `dev-` after 30 days automatically!
+ECR allows you to configure lifecycle rules by tag prefix, so if you adopt `feature/` prefix for your dev-release branches,
+then you can set up ECR lifecycle rule to delete images with prefix `feature-` after 30 days automatically!

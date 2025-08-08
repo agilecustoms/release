@@ -9,16 +9,15 @@ If you need some specific `semantic-release` plugin supported, please start a di
 ## Other cloud providers
 
 Please do not add other cloud providers directly in this action.
-As of June 2025 `agilecustoms/release` uses 6 other GH actions — all of them resolved runtime even though some of them might not be used,
+As of June 2025 `agilecustoms/release` uses 6 other GH actions — all of them resolved at runtime even though some of them might not be used,
 such as you do not use CodeArtifact, but still load related actions.
-Adding of another cloud provider support will make the number of unused actions loaded even bigger!
+Adding of another cloud provider support will increase the number of unused actions even more!
 Instead, feel free to fork with a prefix say 'gc-' for Google Cloud
 
-## New artifact type:
+## New artifact type checklist:
 
-Checklist for a new artifact type:
 - make sure it is idempotent (can be re-run w/o side effects)
 - floating tags support: 'major', 'major.minor', 'major.minor.patch'
 - release channel support: 'latest' (default for main)
-- add dev-release mode support. if dev-release mode is not possible (like with npmjs) — just document it
-- verify inputs to detect configuration issues; error messages provide suggestions on how to fix these issues
+- add dev-release mode support. if dev-release mode is not possible (like with npmjs) — document it
+- verify inputs to detect configuration issues; error messages should provide suggestions on how to fix these issues

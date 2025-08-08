@@ -1,9 +1,9 @@
 # Troubleshooting
 
-**Missing semantic commit that bumps the version**
+**New version is not generating**
 
 possible reasons:
-- you forgot to add any semantic commit tag (e.g. `feat`, `fix`, etc.)
+- you forgot to add any semantic commit tag (e.g. `feat:`, `fix:`, etc.)
 - perhaps you added semantic commit(s), but none of them bump a version, like `docs: update README.md`.
 You either need to change it OR change configuration to make patch bump on 'docs:',
 see [conventionalcommits (custom types)](./features/semantic-commits.md#conventionalcommits-custom-types)

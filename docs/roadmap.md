@@ -13,7 +13,7 @@ Below is the list of potential future features:
   - ability to specify a list of files to include release
   - integration between release and issues/PRs, ex: close issues fixed in a release, see [semantic-release/github](https://github.com/semantic-release/github)
   - notify maintainers and users about new releases
-- input `default-version-bump`
+- input `version-bump` to take two more options: `major` and `minor`
 - support proxy on different levels (just never faced with it yet)
 - git commit
   - ability to customize the commit message, see [semantic-release/git](https://github.com/semantic-release/git)

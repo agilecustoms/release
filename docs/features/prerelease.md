@@ -1,19 +1,19 @@
-## Prerelease
+# Prerelease
 
 Prerelease rules are more complex.
 Here properties `prerelease` and `channel` not only contribute to floating tags, but also drive a version.
 Idea is that you can do `-alfa.1..N` then `-beta.1..N` and finally `-rc.1..N` releases while staying in one branch!
 
-| branch | version        | prerelease | channel |    | version         | git tags                | Docker tags and S3 dirs | npm tag |
-|--------|----------------|------------|---------|----|-----------------|-------------------------|-------------------------|---------|
-| `next` | 1.2.3          | true       |         | -> | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
-| `next` | 1.2.3          | true       | false   | -> | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
-| `next` | 1.2.3          | true       | 'next'  | -> | `2.0.0-next.1`  | `2.0.0-next.1`          | `2.0.0-next.2`, `next`  | `next`  |
-| `next` | 1.2.3          | true       | 'beta'  | -> | `2.0.0-next.1`  | `2.0.0-next.1`, `beta`  | _same_                  | `next`  |
-| `next` | 1.2.3          | 'alpha'    |         | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | _same_                  | `next`  |
-| `next` | 1.2.3          | 'alpha'    | false   | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | _same_                  | `next`  |
-| `next` | 1.2.3          | 'alpha'    | 'next'  | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | `2.0.0-alpha.2`, `next` | `next`  |
-| `next` | 1.2.3          | 'alpha'    | 'beta'  | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`, `beta` | _same_                  | `next`  |
+| branch | version | prerelease | channel |    | version         | git tags                | Docker tags and S3 dirs | npm tag |
+|--------|---------|------------|---------|----|-----------------|-------------------------|-------------------------|---------|
+| `next` | 1.2.3   | true       |         | -> | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
+| `next` | 1.2.3   | true       | false   | -> | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
+| `next` | 1.2.3   | true       | 'next'  | -> | `2.0.0-next.1`  | `2.0.0-next.1`          | `2.0.0-next.2`, `next`  | `next`  |
+| `next` | 1.2.3   | true       | 'beta'  | -> | `2.0.0-next.1`  | `2.0.0-next.1`, `beta`  | _same_                  | `next`  |
+| `next` | 1.2.3   | 'alpha'    |         | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | _same_                  | `next`  |
+| `next` | 1.2.3   | 'alpha'    | false   | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | _same_                  | `next`  |
+| `next` | 1.2.3   | 'alpha'    | 'next'  | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | `2.0.0-alpha.2`, `next` | `next`  |
+| `next` | 1.2.3   | 'alpha'    | 'beta'  | -> | `2.0.0-alpha.1` | `2.0.0-alpha.2`, `beta` | _same_                  | `next`  |
 
 Big example. Given branch `main` with current version 2.4.0. Create branch `next` with following `.releaserc.json`:
 
