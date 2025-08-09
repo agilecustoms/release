@@ -1,17 +1,17 @@
 # Version generation
 
-There are three ways to generate a new version:
+There are three ways to generate the next version:
 
-1. (recommended) [semantic commits](./semantic-commits.md) — next version determined based on commit message prefixes
+1. [semantic commits](./semantic-commits.md) (recommended) — next version determined based on commit message prefixes
    such as `fix:`, `feat:`, `docs:`, `perf:`
 2. [version bump](#version-bump) — allows to bump a version w/o semantic commits
-3. [explicit version](#explicit-version) allows providing a new version as explicit input 
+3. [explicit version](#explicit-version) — provide a new version as explicit input 
 
 [Semantic commits](./semantic-commits.md) is recommended way, it allows you to use all features of this action (see table below).
 Big enterprise often does not need the full power of semantic commits but rather chooses simplicity.
-Finally, some projects seeking more flexibility may want to use explicit versioning.
+Projects seeking more flexibility may want to use explicit versioning
 
-| name                 | semantic commits | version bump | explicit version |
+| feature              | semantic commits | version bump | explicit version |
 |----------------------|------------------|--------------|------------------|
 | release notes        | ✅                | ❌️           | ❌️               |
 | changelog            | ✅                | ❌️           | ❌️               |
@@ -39,11 +39,9 @@ it allows to bump a minor/patch version even if there are no semantic commits
 - (planned) `minor` — bump a minor version, ignore semantic commits
 - (planned) `patch` — bump a patch version, ignore semantic commits
 
-When `version-bump` is set to `default-patch` or `default-minor`, the action will still generate release notes and changelog,
-
 ## Explicit version
 
-Alternatively to semantic commits and default version bump, you can provide an explicit version to be used for the release.
+Alternatively to "semantic commits" and "version bump", you can provide an explicit version to be used for the release
 
 This can be helpful in the following cases:
 - you have your own versioning scheme like `yyyy-mm-dd-HH:mm:ss`
