@@ -13,7 +13,7 @@ If a PR has no commit bumping a version, the `agilecustoms/release` action exit 
 
 Tech note. `agilecustoms/release` action uses semantic-release in **dryRun** mode:
 it generates next version and release notes.
-It doesn't commit changes, push tags nor create a GitHub release
+It doesn't commit changes, doesn't push tags nor create a GitHub release
 
 ## Presets
 
@@ -24,12 +24,12 @@ By default, semantic-release uses [angular](https://www.npmjs.com/package/conven
 Alternative gaining popularity is [conventionalcommits](https://www.npmjs.com/package/conventional-changelog-conventionalcommits) (6M weekly downloads).
 With conventionalcommits you have more flexibility on commit types and release sections (see examples below)
 
-**Configuration** can be provided via `release-plugins` input via `plugins` section in file `.releaserc.json`
+**Configuration** can be provided via `release-plugins` input OR in file `.releaserc.json` section `plugins`.
 To use non-default preset, you need:
 1) set desired preset in `@semantic-release/commit-analyzer` plugin (see example below)
 2) add npm dependency via `npm-extra-deps` input in `agilecustoms/release` action (see example below)
 
-Here is the summary of the [angular](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset (so you can understand are you fine with default or you need more):
+Here is the summary of the [angular](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) preset (so you can understand are you fine with default, or you need more):
 
 | prefix                                         | version bump      | release and changelog sections               | description                                                                                                                               |
 |------------------------------------------------|-------------------|----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
@@ -70,9 +70,8 @@ Make a commit with messages as per [angular](https://www.npmjs.com/package/conve
 docs: add more examples to README
 ```
 
-==> new patch version. Commit message is not reflected in release notes,
+==> new patch version. Due to angular preset limitation, commit message is not reflected in release notes,
 specifically no section `Documentation` nor `Bug Fixes` just title with version number
-
 
 ### conventionalcommits
 
