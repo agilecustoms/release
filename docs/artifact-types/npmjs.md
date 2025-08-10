@@ -1,4 +1,6 @@
-### publish in public npmjs repo
+# publish in npm repo
+
+**only public npmjs repositories are supported for now!**
 
 Publish in *a public* npmjs repository. Contribute to support private npmjs repositories if needed.
 This will generate new version, update a version in `package.json`, commit, push commit + tags and publish in npmjs.com

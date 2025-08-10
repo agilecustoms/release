@@ -1,4 +1,4 @@
-### publish in AWS CodeArtifact Maven repository
+# publish in AWS CodeArtifact Maven repository
 
 This action publishes maven artifacts in the AWS CodeArtifact repository.
 Note: it doesn't compile source code, nor run tests, it just updates a version in `pom.xml` and publishes it.

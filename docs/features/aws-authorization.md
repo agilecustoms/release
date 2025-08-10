@@ -4,14 +4,14 @@ Given
 - AWS account hosting artifacts. _Recommendation: have a dedicated account, not prod_
 - in this account you already have S3 bucket / ECR repository / CodeArtifact repository
 
-You need an IAM role and then "hook it up" in GitHub Action, see below:
+You need an IAM role that can be used from GitHub Action, see below:
 
 ## IAM Role
 
 Legacy approach (not supported): have a service account (user) with long-lived access keys and secrets stored in GitHub secrets
 
 Modern approach: use OpenID Connect (OIDC) between GitHub and AWS, so that GitHub workflows can assume an IAM role in AWS account.
-If you never used it, do not worry, it is easier than you think:
+Here is a [complete example using Terraform](https://github.com/agilecustoms/terraform-aws-ci-publisher?tab=readme-ov-file#how-to-create-a-role-with-this-policy). Step-by-step explanation:
 1. The only new step compared to the legacy approach is to create [IAM OIDC provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html).
 If you use Terraform, just use this resource:
 ```hcl
@@ -25,8 +25,6 @@ resource "aws_iam_openid_connect_provider" "github" {
 
 _Recommended name for the role is `ci/publisher`_
 
-[complete example using Terraform](https://github.com/agilecustoms/terraform-aws-ci-publisher?tab=readme-ov-file#how-to-create-a-role-with-this-policy)
-
 ## Use in GitHub Action
 
 1. (recommendation) Place AWS account where artifacts stored in GitHub org variable such as `AWS_ACCOUNT_DIST`
@@ -38,8 +36,8 @@ jobs:
   Release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       id-token: write
+      contents: read
     steps:
       # ...
       - name: Release
@@ -53,3 +51,6 @@ jobs:
 
 _Note: by default, a Job has permissions `contents: read`, since you need `id-token: write`, the default one is overridden,
 so if you need to read repository content, make sure to add `contents: read` explicitly_
+
+- `id-token: write` is to log in AWS ([details](./aws-authorization.md)), required to release artifact in any of S3, ECR, CodeArtifact
+- `contents: read` seem to be obvious. it is set by default, but when you set `id-token: ..` - you loose the default and now it needs to be set explicitly 

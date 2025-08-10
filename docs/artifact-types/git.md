@@ -1,4 +1,4 @@
-### No artifacts (git tags + GH release)
+# No artifacts (git tags + GH release)
 
 For example, for a repository with terraform code only - no binaries, just add git tag.
 Version will be automatically generated based on the latest version tag + commit messages.
