@@ -1,4 +1,4 @@
-### publish in AWS ECR
+# publish in AWS ECR
 
 First you build docker image, and then you release it with this action.
 Same as git tags, when you release version `1.2.3` with commit message `fix: JIRA-123`,

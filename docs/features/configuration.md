@@ -1,4 +1,4 @@
-# Configuration
+# Configuration (WIP)
 
 ## Plugins and dryRun mode
 

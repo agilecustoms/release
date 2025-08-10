@@ -1,4 +1,4 @@
-### publish in AWS S3
+# publish in AWS S3
 
 Convention: there should be `s3` directory in cwd. All content of this directory will be uploaded in S3 bucket<br>
 Ex: if the latest tag is '1.2.3' and single commit on top of it `fix: JIRA-123`, then files will be uploaded to `aws-s3-bucket/aws-s3-bucket-dir/1.2.4`
