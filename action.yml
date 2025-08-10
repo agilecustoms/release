@@ -59,6 +59,10 @@ inputs:
   npm-extra-deps:
     description: 'Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset'
     required: false
+  npm-visibility:
+    description: 'Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private'
+    required: false
+    default: 'public'
   pre-publish-script:
     description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
@@ -107,10 +111,16 @@ runs:
         echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npmjs token
-      if: env.NPM_PUBLIC_TOKEN && inputs.dev-release == 'true'
+      if: env.NPM_TOKEN && inputs.dev-release == 'true'
       shell: bash
       run: |
         echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
+
+    - name: Validate npm visibility
+      if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
+      shell: bash
+      run: |
+        echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
 
 ## Phase 1.2 - Validate the rest of inputs, infer defaults
 
@@ -338,12 +348,12 @@ runs:
     # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: env.NPM_PUBLIC_TOKEN
+      if: env.NPM_TOKEN
       shell: bash
       run: |
         # Publish in npmjs
         set +e
-        output=$(npm publish --access public --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
+        output=$(npm publish --access ${{ inputs.npm-visibility }} --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
         error_code=$?
         echo "$output"
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
@@ -354,7 +364,7 @@ runs:
         fi
         exit $error_code
       env:
-        NODE_AUTH_TOKEN: ${{ env.NPM_PUBLIC_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
 
 ## Phase 6 - Git push
 

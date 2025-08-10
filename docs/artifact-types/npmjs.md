@@ -9,7 +9,7 @@ steps:
   - name: Release
     uses: agilecustoms/release@v1
     env:
-      NPM_PUBLIC_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 ```
 
 **dev-release** assumes you publish a version named after the branch name, but npm only supports semantic versioning.

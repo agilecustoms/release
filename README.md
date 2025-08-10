@@ -2,7 +2,7 @@
 
 **This GH action is beta-testing now, planned to be released late Aug 2025**
 
-Release software artifacts in AWS (S3, ECR, CodeArtifact) with consistent versioning!
+Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
 
 ![Cover](docs/images/cover.png)
 
@@ -117,6 +117,7 @@ _There are no required inputs. The action only controls that combination of inpu
 | dev-branch-prefix           | feature/          | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                                                                                                                                 |
 | floating-tags               | true              | When next version to be released is `1.2.4`, then also release `1.2`, `1` and `latest`. Not desired for public terraform modules                                                                                                                                                            |
 | npm-extra-deps              |                   | Additional npm dependencies, needed to use non-default commit analyzer preset, ex. `conventional-changelog-conventionalcommits@9.1.0` use white space or new line to specify multiple deps (extremely rare)                                                                                 |
+| npm-visibility              | public            | Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private                                                                                                                                                                         |
 | node-version                | 22                | Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24                                                                                                                                                                                        |
 | pre-publish-script          |                   | Custom sh script that allows to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc). In this script you can use variable `$version`                                                                                                     |
 | release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) (see default), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md) |
@@ -135,10 +136,10 @@ _There are no required inputs. The action only controls that combination of inpu
 
 ## Environment variables
 
-| Name             | Description                                                                                                                                                                   |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GH_TOKEN         | Takes GH PAT with permission to bypass branch protection rule. Required if `release-gh: true` (default). See details in [gh-authorization](docs/features/gh-authorization.md) |
-| NPM_PUBLIC_TOKEN | If specified - will publish an npm package in public npmjs repo                                                                                                               |
+| Name      | Description                                                                                                                                                                   |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GH_TOKEN  | Takes GH PAT with permission to bypass branch protection rule. Required if `release-gh: true` (default). See details in [gh-authorization](docs/features/gh-authorization.md) |
+| NPM_TOKEN | If specified — publish npm package in npmjs repo. See [details](./docs/artifact-types/npmjs.md)                                                                               |
 
 ## Misc
 
