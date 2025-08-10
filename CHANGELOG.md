@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.2](https://github.com/agilecustoms/release/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-08-10)
+
+### Documentation
+
+* update cover image, add npmjs ([ecfc8c8](https://github.com/agilecustoms/release/commit/ecfc8c8788ac27a6b12d6d892a520305ba6cb61a))
+
+
 ## [1.0.0-beta.1](https://github.com/agilecustoms/release/compare/v0.17.0...v1.0.0-beta.1) (2025-08-10)
 
 ### ⚠ BREAKING CHANGES
