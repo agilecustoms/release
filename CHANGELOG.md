@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0-beta.1](https://github.com/agilecustoms/release/compare/v0.17.0...v1.0.0-beta.1) (2025-08-10)
+
+### ⚠ BREAKING CHANGES
+
+* first beta
+
+### Features
+
+* first beta ([b8a248f](https://github.com/agilecustoms/release/commit/b8a248fe5ca36ca0efd8629e6476ebbd82802e8c))
+
+
 ## [0.17.0](https://github.com/agilecustoms/release/compare/v0.16.0...v0.17.0) (2025-08-10)
 
 ### Features
