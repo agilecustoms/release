@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.3](https://github.com/agilecustoms/release/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2025-08-10)
+
+### Features
+
+* rename NPM_PUBLIC_TOKEN to be just NPM_TOKEN, add parameter 'npm-visibility' to support private packages ([19ca27a](https://github.com/agilecustoms/release/commit/19ca27a5be1941f45f628203f0e72f4aff9aaa24))
+
+
 ## [1.0.0-beta.2](https://github.com/agilecustoms/release/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-08-10)
 
 ### Documentation
