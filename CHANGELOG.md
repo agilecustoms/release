@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.17.0](https://github.com/agilecustoms/release/compare/v0.16.0...v0.17.0) (2025-08-10)
+
+### Features
+
+* change dev-branch-prefix default to be 'feature/' ([54c78e5](https://github.com/agilecustoms/release/commit/54c78e58b21ee91c35f33c37ac8f3e0df9fd6286))
+
+### Bug Fixes
+
+* update step names ([9bfbd0f](https://github.com/agilecustoms/release/commit/9bfbd0f20303056290038808d4d997a3e2fc003c))
+
+### Documentation
+
+* (mainly) semantic-commits update ([8d9861a](https://github.com/agilecustoms/release/commit/8d9861a8a93c3db4da16d4de2746507ad7ddb014))
+* GH authorization ([c2118e6](https://github.com/agilecustoms/release/commit/c2118e6fef519cfb4f21a5788534bb09c853f6d1))
+* improve semantic-commits.md ([dcd6786](https://github.com/agilecustoms/release/commit/dcd67863ff58acdecd30b743d5f52a97c014505f))
+* major doc update before release ([2be24db](https://github.com/agilecustoms/release/commit/2be24db0f857c5150b81c3b8c61837a13bec6bed))
+* update aws and gh authorization ([b4a8605](https://github.com/agilecustoms/release/commit/b4a8605ca5ac74f3bbf4b1639e85b42f130bf526))
+
+
 ## [0.16.0](https://github.com/agilecustoms/release/compare/v0.15.0...v0.16.0) (2025-08-06)
 
 ### Features
