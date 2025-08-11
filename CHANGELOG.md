@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.5](https://github.com/agilecustoms/release/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2025-08-11)
+
+### Documentation
+
+* testing document and troubleshooting updates ([ff68632](https://github.com/agilecustoms/release/commit/ff686327d3ebacebdf195dde82b2ba6ad23fbb7f))
+
+
 ## [1.0.0-beta.4](https://github.com/agilecustoms/release/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2025-08-11)
 
 ### Features
