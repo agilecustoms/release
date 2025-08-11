@@ -16,13 +16,13 @@ Projects seeking more flexibility may want to use explicit versioning
 | release notes        | ✅                | ❌️           | ❌️               |
 | changelog            | ✅                | ❌️           | ❌️               |
 | floating tags        | ✅                | ✅            | ✅                |
-| release channel      | ✅                | ⚠️           | ⚠️               |
+| release channel      | ✅                | ✅            | ⚠️               |
 | prerelease           | ✅                | ❌️           | ✅                |
 | maintenance releases | ✅                | ✅            | ✅                |
 
 ⚠️ Notes:
-- "semantic commits" takes 'release channel' from `.releaserc.json` file.
-"version bump" and "explicit version" must use `release-channel` input parameter instead
+- "semantic commits" and "version bump" take 'release channel' from `.releaserc.json` file.
+"explicit version" must use `release-channel` input parameter instead
 
 ## Version bump
 
