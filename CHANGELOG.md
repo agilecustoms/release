@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.6](https://github.com/agilecustoms/release/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2025-08-11)
+
+### Documentation
+
+* fix release channel support for 'version-bump' ([d7e5f97](https://github.com/agilecustoms/release/commit/d7e5f9768155b4a7ffe82fa5b82a36164581d0d0))
+
+
 ## [1.0.0-beta.5](https://github.com/agilecustoms/release/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2025-08-11)
 
 ### Documentation
