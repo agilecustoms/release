@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.4](https://github.com/agilecustoms/release/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2025-08-11)
+
+### Features
+
+* use new release-gen with cleaner error messages ([a7f9593](https://github.com/agilecustoms/release/commit/a7f95930dc23066982c6d7a901688aef3f86161a))
+
+
 ## [1.0.0-beta.3](https://github.com/agilecustoms/release/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2025-08-10)
 
 ### Features
