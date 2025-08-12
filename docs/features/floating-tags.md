@@ -43,8 +43,8 @@ Rules:
 
 For all configuration options, see [configuration](./configuration.md)
 
-GH Action `agilecustoms/release` uses npm library [semantic-release](https://www.npmjs.com/package/semantic-release) under the hood.
-It takes [configuration](https://semantic-release.gitbook.io/semantic-release/usage/configuration#configuration-file) from file `.releaserc.json` in the root of repository.
+GH Action `agilecustoms/release` uses npm library [semantic-release](https://www.npmjs.com/package/semantic-release) under the hood,
+see [configuration](https://semantic-release.gitbook.io/semantic-release/usage/configuration#configuration-file) for details.
 You can configure a release channel in `.releaserc.json` file or via GH action input `release-channel`. Input has precedence over a config file.
 `.releaserc.json` is recommended because it allows to have different configurations per repo and per branch.
 `release-channel` input is needed when you use "version bump" or "explicit version", see [version generation](./version-generation.md)
