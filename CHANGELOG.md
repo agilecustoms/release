@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.9](https://github.com/agilecustoms/release/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2025-08-12)
+
+### Miscellaneous
+
+* pin publish-s3 to v1.0.0 ([ca6cd84](https://github.com/agilecustoms/release/commit/ca6cd8460a59b1035c073a1f1acb54b0eb0cb898))
+
+
 ## [1.0.0-beta.8](https://github.com/agilecustoms/release/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2025-08-12)
 
 ### Documentation
