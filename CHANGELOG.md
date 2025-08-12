@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.10](https://github.com/agilecustoms/release/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-08-12)
+
+### Features
+
+* add java-version input - pass it into setup-maven-codeartifact action ([e707ff4](https://github.com/agilecustoms/release/commit/e707ff4254776e8a6694e1021713b3122a7d2a5c))
+
+
 ## [1.0.0-beta.9](https://github.com/agilecustoms/release/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2025-08-12)
 
 ### Miscellaneous
