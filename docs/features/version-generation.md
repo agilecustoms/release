@@ -17,12 +17,10 @@ Projects seeking more flexibility may want to use explicit versioning
 | changelog            | ✅                | ❌️           | ❌️               |
 | floating tags        | ✅                | ✅            | ✅                |
 | release channel      | ✅                | ✅            | ⚠️               |
-| prerelease           | ✅                | ❌️           | ✅                |
-| maintenance releases | ✅                | ✅            | ✅                |
+| prerelease           | ✅                | ⚠️           | ⚠️               |
+| maintenance releases | ✅                | ✅            | ⚠️               |
 
-⚠️ Notes:
-- "semantic commits" and "version bump" take 'release channel' from `.releaserc.json` file.
-"explicit version" must use `release-channel` input parameter instead
+See ⚠️ notes in the respective sections below
 
 ## Version bump
 
@@ -34,10 +32,14 @@ it allows to bump a minor/patch version even if there are no semantic commits
 
 `version-bump` can take the following values:
 - (no-value) — default, meaning use semantic commits
-- `default-minor` — if no semantic commits, default to minor bump
 - `default-patch` — if no semantic commits, default to patch bump
-- (planned) `minor` — bump a minor version, ignore semantic commits
+- `default-minor` — if no semantic commits, default to minor bump
 - (planned) `patch` — bump a patch version, ignore semantic commits
+- (planned) `minor` — bump a minor version, ignore semantic commits
+
+⚠️ See [prerelease](./prerelease.md) for details on how to make first commit in prerelease branch
+
+After first commit values `default-patch` and `default-minor` behave identical — just increment number in suffix `beta.1` -> `beta.2` 
 
 ## Explicit version
 
@@ -48,3 +50,9 @@ This can be helpful in the following cases:
 - you do not want to release every time a PR is merged in the main branch, but rather want to release on demand
 - quick alternative instead of fully fledged [prereleases](./prerelease.md) or [maintenance release](./maintenance-release.md)
 - (rare, typically not recommended) you want to re-release an existing version
+
+⚠️ "explicit version" takes "release channel" from `release-channel` input parameter
+("semantic commits" and "version bump" take it from `.releaserc.json` file)
+
+⚠️ it is possible to do prerelease and maintenance releases in "explicit version",
+but `agilecustoms/release` action does not provide any assistance/guardrails 

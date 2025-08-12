@@ -122,7 +122,7 @@ _There are no required inputs. The action only controls that combination of inpu
 | pre-publish-script          |                   | Custom sh script that allows to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc). In this script you can use variable `$version`                                                                                                     |
 | release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches) (see default), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md) |
 | release-gh                  | true              | If true, then create a GitHub release                                                                                                                                                                                                                                                       |
-| release-plugins             | (see description) | Semantic-release "plugins" configuration, see [details](./docs/features/semantic-commits.md#configuration)                                                                                                                                                                                  |
+| release-plugins             | (see description) | Semantic-release "plugins" configuration, see [details](./docs/features/configuration.md)                                                                                                                                                                                                   |
 | summary                     | (see description) | Text to print in workflow 'Release summary'. Default is `### Released ${version}`. Set empty string to omit summary generation                                                                                                                                                              |
 | tag-format                  | v${version}       | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                                                                                                                         |
 | version                     |                   | [Explicit version](./docs/features/version-generation.md#explicit-version) to use instead of auto-generation                                                                                                                                                                                |
@@ -146,6 +146,7 @@ _There are no required inputs. The action only controls that combination of inpu
 - [More about this project](./docs/about.md): history, motivation
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Contribution guideline](./docs/contribution.md)
+- [Feature test coverage](./docs/test-coverage.md)
 
 ## License
 
