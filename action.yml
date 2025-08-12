@@ -52,6 +52,10 @@ inputs:
     description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
+  java-version:
+    description: 'Java version to use with aws-codeartifact-maven'
+    required: false
+    default: '21'
   node-version:
     description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24'
     required: false
@@ -253,6 +257,7 @@ runs:
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
         aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
         aws-login: false # we already logged in AWS in a previous step
+        java-version: ${{ inputs.java-version }}
 
     - name: Update version in pom.xml
       if: hashFiles('pom.xml')
