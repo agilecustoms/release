@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.7](https://github.com/agilecustoms/release/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2025-08-12)
+
+### Documentation
+
+* cover entire lifecycle of a prerelease branch ([a99df7f](https://github.com/agilecustoms/release/commit/a99df7fdf242be4d63d3f49af56f07580c43f0e3))
+
+
 ## [1.0.0-beta.6](https://github.com/agilecustoms/release/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2025-08-11)
 
 ### Documentation
