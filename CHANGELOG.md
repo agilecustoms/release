@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.12](https://github.com/agilecustoms/release/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-08-13)
+
+### Features
+
+* explicit version mode now supports floating tags and release channel ([4379996](https://github.com/agilecustoms/release/commit/4379996531c9cd47e0236ab752400fb23bb21e75))
+
+
 ## [1.0.0-beta.11](https://github.com/agilecustoms/release/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-08-13)
 
 ### Features
