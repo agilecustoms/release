@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.11](https://github.com/agilecustoms/release/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-08-13)
+
+### Features
+
+* channel supports ${name} placeholder ([94405f0](https://github.com/agilecustoms/release/commit/94405f0a4c698f4fd16a53542e86a0d96a4bcb96))
+
+
 ## [1.0.0-beta.10](https://github.com/agilecustoms/release/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-08-12)
 
 ### Features
