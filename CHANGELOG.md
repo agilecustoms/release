@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.13](https://github.com/agilecustoms/release/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-08-13)
+
+### Documentation
+
+* update feature coverage for "version bump" mode ([4512b8c](https://github.com/agilecustoms/release/commit/4512b8c158f30246fe2c90d6170fb661cf2ce83e))
+
+
 ## [1.0.0-beta.12](https://github.com/agilecustoms/release/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-08-13)
 
 ### Features
