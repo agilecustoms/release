@@ -192,7 +192,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release == 'false'
-      uses: agilecustoms/release-gen@v2.11.3
+      uses: agilecustoms/release-gen@v2.12.0
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
