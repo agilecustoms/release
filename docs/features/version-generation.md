@@ -2,21 +2,19 @@
 
 There are three modes to generate the next version:
 
-1. [semantic commits](./semantic-commits.md) (recommended) — next version determined based on commit message prefixes.
-   such as `fix:`, `feat:`, `docs:`, `perf:`. This mode allows to use all features of this action (see table below)
+1. [semantic commits](./semantic-commits.md) (recommended) — next version determined based on commit message prefixes
+such as `fix:`, `feat:`, `docs:`, `perf:`. This mode allows to use all features of this action (see table below)
 2. [version bump](#version-bump) — allows to bump a version w/o semantic commits, useful in enterprise 
 3. [explicit version](#explicit-version) — provide a new version as explicit input
 
 | feature              | semantic commits | version bump | explicit version |
 |----------------------|------------------|--------------|------------------|
-| release notes        | ✅                | ❌️           | ❌️               |
-| changelog            | ✅                | ❌️           | ❌️               |
+| update CHANGELOG.md  | ✅                | ⚠️           | ❌️               |
+| GH release           | ✅                | ⚠️           | ❌️               |
 | floating tags        | ✅                | ✅            | ✅                |
 | release channel      | ✅                | ✅            | ⚠️               |
 | prerelease           | ✅                | ⚠️           | ⚠️               |
 | maintenance releases | ✅                | ✅            | ⚠️               |
-
-See ⚠️ notes in the respective sections below
 
 ## Version bump
 
@@ -33,7 +31,9 @@ it allows to bump a minor/patch version even if there are no semantic commits
 - (planned) `patch` — bump a patch version, ignore semantic commits
 - (planned) `minor` — bump a minor version, ignore semantic commits
 
-⚠️ See [prerelease](./prerelease.md) for details on how to make first commit in prerelease branch
+⚠️ Notes:
+- CHANGELOG.md updated / GH release created only if there is a semantic commit
+- See [prerelease](./prerelease.md) for details on how to make a first commit in the prerelease branch
 
 After first commit values `default-patch` and `default-minor` behave identical — just increment number in suffix `beta.1` -> `beta.2` 
 
@@ -47,10 +47,10 @@ This can be helpful in the following cases:
 - quick alternative instead of fully fledged [prereleases](./prerelease.md) or [maintenance release](./maintenance-release.md)
 - (rare, typically not recommended) you want to re-release an existing version
 
-⚠️ "explicit version" takes "release channel" from `release-channel` input parameter
+⚠️ Notes:
+- "explicit version" takes a release channel from `release-channel` input parameter
 ("semantic commits" and "version bump" take it from `.releaserc.json` file)
-
-⚠️ it is possible to do prerelease and maintenance releases in "explicit version",
+- it is possible to do prerelease and maintenance releases in "explicit version",
 but `agilecustoms/release` action does not provide any assistance/guardrails
 
 Table below shows how floating tags and release channel work in "explicit verison" mode:
