@@ -73,6 +73,9 @@ inputs:
   release-branches:
     description: 'semantic-release "branches" configuration'
     required: false
+  release-channel:
+    description: 'Repeat `.releaserc.json` `channel` behavior when set `version` explicitly'
+    required: false
   release-gh:
     description: 'If true, then create a GitHub release with the same name as the tag'
     required: false
@@ -188,18 +191,20 @@ runs:
 
     # CWD is /home/runner/work/release/release
     # generate a new version, release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
-    # note: run this step even if an explicit version is provided, (a version is ignored, but release notes are used)
     - name: Release generation
       id: release_gen
       if: inputs.dev-release == 'false'
-      uses: agilecustoms/release-gen@v2.12.0
+      uses: agilecustoms/release-gen@v2.13.1
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
+        floating_tags: ${{ inputs.floating-tags }}
         npm_extra_deps: ${{ inputs.npm-extra-deps }}
         release_branches: ${{ inputs.release-branches }}
+        release_channel: ${{ inputs.release-channel }}
         release_plugins: ${{ inputs.release-plugins }}
         tag_format: ${{ inputs.tag-format }}
+        version: ${{ inputs.version }}
         version_bump: ${{ inputs.version-bump }}
 
     - name: Finalize version and tags
@@ -211,18 +216,10 @@ runs:
           version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
           git_tags="$version"
           tags="$version"
-        elif [ -n "${{ inputs.version }}" ]; then
-          version="${{ inputs.version }}"
-          git_tags="$version"
-          tags="$version"
         else
           version="${{ steps.release_gen.outputs.version }}"
-          git_tags="$version"
-          tags="$version"
-          if [ "${{ inputs.floating-tags }}" = "true" ]; then
-            git_tags="${{ steps.release_gen.outputs.git_tags }}"
-            tags="${{ steps.release_gen.outputs.tags }}"
-          fi
+          git_tags="${{ steps.release_gen.outputs.git_tags }}"
+          tags="${{ steps.release_gen.outputs.tags }}"
         fi
         
         echo "version=$version" >> $GITHUB_OUTPUT

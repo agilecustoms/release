@@ -14,7 +14,7 @@ each of them provides a combination of plugins to release for a particular platf
 Since `agilecustoms/release` uses only two plugins (and only in dryRun mode) - there's no much value in support of shareable configurations.
 So shareable configurations are **NOT SUPPORTED**.
 In addition to semantic-release configuration file, `agilecustoms/release` takes configuration via [inputs](./../../README.md#inputs).
-Inputs take precedence over configuration file
+Inputs take precedence over a configuration file
 
 As an alternative form of configuration reuse (instead of sharable configurations) it is recommended
 to create your company-specific GH action wrapper and put common configuration as default inputs in that wrapper!
