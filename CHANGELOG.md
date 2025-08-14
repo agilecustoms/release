@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.22](https://github.com/agilecustoms/release/compare/v1.0.0-beta.21...v1.0.0-beta.22) (2025-08-14)
+
+### Bug Fixes
+
+* do not update version in pyproject.toml if dev-release = true ([e1cd095](https://github.com/agilecustoms/release/commit/e1cd095ac64d5feca58f60d18520d46f06711a9a))
+
+
 ## [1.0.0-beta.21](https://github.com/agilecustoms/release/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2025-08-14)
 
 ### Features
