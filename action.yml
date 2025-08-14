@@ -381,9 +381,6 @@ runs:
       shell: bash
       run: |
         # Git push
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        
         # fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
         
@@ -393,6 +390,8 @@ runs:
         [ -f "${{ inputs.changelog-file }}" ] && git add "${{ inputs.changelog-file }}"
         if ! git diff --cached --quiet; then
           git status --porcelain
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
         else
           echo "No changes to commit."
@@ -425,6 +424,8 @@ runs:
         git add -u
         if ! git diff --cached --quiet; then
           git status --porcelain
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Dev Release [skip ci]"
           git push origin ${{ github.ref_name }}
         else
