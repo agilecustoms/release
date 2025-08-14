@@ -69,7 +69,7 @@ Dev-release does not require PAT because it does not need to make a direct push 
 
 ```yaml
 jobs:
-  DevRelease:
+  Release:
     runs-on: ubuntu-latest
     permissions: # required only to publish artifacts in AWS
       id-token: write

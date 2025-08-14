@@ -392,6 +392,7 @@ runs:
         # one legitime new file is CHANGELOG.md, which is created by release-gen step
         [ -f "${{ inputs.changelog-file }}" ] && git add "${{ inputs.changelog-file }}"
         if ! git diff --cached --quiet; then
+          git status --porcelain  
           git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
         else
           echo "No changes to commit."

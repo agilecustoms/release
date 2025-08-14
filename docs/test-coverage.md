@@ -6,7 +6,7 @@ This is an internal document describing feature/test coverage
 - prerelease w/ custom suffix and channel - 1.0.0-beta4
 
 **gha-release**
-- release w/o PAT, just `permissions: contents: write` - 1.0.0-beta4
+- release w/o PAT, just `permissions: contents: write` (no CHANGELOG.md, no GH release) - 1.0.0-beta11
 - version-bump: default-minor + `release-channel` - 1.0.0-beta4
 
 **envctl**
@@ -20,5 +20,6 @@ This is an internal document describing feature/test coverage
 **db-evolution-runner**
 - prerelease w/ `version-bump: default-patch` and `channel: beta` - 1.0.0-beta6
 
-**gha-healthcheck**
+**env-cleanup**
 - explicit version
+- custom summary with ${version} - 1.0.0-beta2
