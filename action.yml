@@ -282,11 +282,11 @@ runs:
         npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
     - name: Setup Python
-      if: hashFiles('pyproject.toml')
+      if: hashFiles('pyproject.toml') && inputs.dev-release == 'false'
       uses: actions/setup-python@v5
 
     - name: Update version in pyproject.toml
-      if: hashFiles('pyproject.toml')
+      if: hashFiles('pyproject.toml') && inputs.dev-release == 'false'
       shell: bash
       run: |
         # Update version in pyproject.toml
