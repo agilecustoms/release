@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.18](https://github.com/agilecustoms/release/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2025-08-14)
+
+### Bug Fixes
+
+* git push dev-release only if there are changes ([09b058a](https://github.com/agilecustoms/release/commit/09b058aad535c493190e159e76b8395295f388be))
+
+
 ## [1.0.0-beta.17](https://github.com/agilecustoms/release/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2025-08-14)
 
 ### Miscellaneous
