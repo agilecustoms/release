@@ -423,6 +423,7 @@ runs:
         # Git push dev-release
         sudo chown -R "$(id -un):$(id -gn)" .
         git add -u
+        git status --porcelain
         git diff --cached --quiet || git commit -m "Dev Release [skip ci]"
         git push origin ${{ github.ref_name }}
 
