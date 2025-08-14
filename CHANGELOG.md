@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.15](https://github.com/agilecustoms/release/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-08-14)
+
+### Miscellaneous
+
+* log changed/added files before commit ([ee50494](https://github.com/agilecustoms/release/commit/ee504945052c2f0967301bcd13c36a00e7e906a0))
+
+
 ## [1.0.0-beta.14](https://github.com/agilecustoms/release/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2025-08-14)
 
 ### Miscellaneous
