@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.16](https://github.com/agilecustoms/release/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2025-08-14)
+
+### Bug Fixes
+
+* do not update version in package.json in dev-release mode ([9fb3c8d](https://github.com/agilecustoms/release/commit/9fb3c8d5125960c5c8a6b588b1d9ff35b39a1e5b))
+
+
 ## [1.0.0-beta.15](https://github.com/agilecustoms/release/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-08-14)
 
 ### Miscellaneous
