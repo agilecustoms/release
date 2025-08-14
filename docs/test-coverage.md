@@ -21,5 +21,8 @@ This is an internal document describing feature/test coverage
 - prerelease w/ `version-bump: default-patch` and `channel: beta` - 1.0.0-beta6
 
 **env-cleanup**
-- explicit version
+- explicit version w/ release channel - 1.0.0-beta15
 - custom summary with ${version} - 1.0.0-beta2
+
+**tt-web**
+- dev-release w/ disabled suffix enforcement - 1.0.0-beta15

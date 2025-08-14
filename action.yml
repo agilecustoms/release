@@ -264,14 +264,14 @@ runs:
         mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
     - name: Setup Node
-      if: hashFiles('package.json')
+      if: hashFiles('package.json') && inputs.dev-release == 'false'
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in package.json
-      if: hashFiles('package.json')
+      if: hashFiles('package.json') && inputs.dev-release == 'false'
       shell: bash
       run: |
         # Update version in package.json
@@ -392,7 +392,7 @@ runs:
         # one legitime new file is CHANGELOG.md, which is created by release-gen step
         [ -f "${{ inputs.changelog-file }}" ] && git add "${{ inputs.changelog-file }}"
         if ! git diff --cached --quiet; then
-          git status --porcelain  
+          git status --porcelain
           git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
         else
           echo "No changes to commit."
