@@ -40,14 +40,18 @@ inputs:
     description: 'Title of the changelog file (first line of the file)'
     required: false
     default: '# Changelog'
-  dev-release:
-    description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
-    required: false
-    default: 'false'
   dev-branch-prefix:
     description: 'Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement'
     required: false
     default: 'feature/'
+  dev-release:
+    description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
+    required: false
+    default: 'false'
+  dev-release-push:
+    description: 'Git push files changed during dev-release: update version in pom.xml, pyproject.toml and files modified by pre-publish-script'
+    required: false
+    default: 'false'
   floating-tags:
     description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
     required: false
@@ -416,7 +420,7 @@ runs:
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
     - name: Git push dev-release
-      if: inputs.dev-release == 'true'
+      if: inputs.dev-release == 'true' && inputs.dev-release-push == 'true'
       shell: bash
       run: |
         # Git push dev-release
