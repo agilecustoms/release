@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.20](https://github.com/agilecustoms/release/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2025-08-14)
+
+### Bug Fixes
+
+* run 'git config' right before commit ([0f6cf54](https://github.com/agilecustoms/release/commit/0f6cf54220533a397bc0b21c0603dc3cf36c71f4))
+
+
 ## [1.0.0-beta.19](https://github.com/agilecustoms/release/compare/v1.0.0-beta.18...v1.0.0-beta.19) (2025-08-14)
 
 ### Miscellaneous
