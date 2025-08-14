@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.21](https://github.com/agilecustoms/release/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2025-08-14)
+
+### Features
+
+* by default do not push git changes in dev-release mode ([2ef866e](https://github.com/agilecustoms/release/commit/2ef866e08fdc0a538e783813388988a9573a7664))
+
+
 ## [1.0.0-beta.20](https://github.com/agilecustoms/release/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2025-08-14)
 
 ### Bug Fixes
