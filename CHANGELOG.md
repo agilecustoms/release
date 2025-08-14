@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.14](https://github.com/agilecustoms/release/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2025-08-14)
+
+### Miscellaneous
+
+* pin setup-maven-codeartifact version ([883ff12](https://github.com/agilecustoms/release/commit/883ff121b407558f7eab3211d09c4b37db3215f9))
+
+
 ## [1.0.0-beta.13](https://github.com/agilecustoms/release/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-08-13)
 
 ### Documentation
