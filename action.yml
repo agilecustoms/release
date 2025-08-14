@@ -444,7 +444,7 @@ runs:
 ## Phase 8 - Print summary
 
     - name: Summary
-      if: inputs.summary
+      if: inputs.summary && inputs.dev-release == 'false'
       shell: bash
       run: |
         # Summary
