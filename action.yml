@@ -133,6 +133,12 @@ runs:
       run: |
         echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
 
+    - name: Validate dev-release and version inputs
+      if: inputs.dev-release == 'true' && inputs.version != ''
+      shell: bash
+      run: |
+        echo "Error: 'dev-release' and 'version' cannot be used together" >&2; exit 1
+
 ## Phase 1.2 - Validate the rest of inputs, infer defaults
 
     - name: Init

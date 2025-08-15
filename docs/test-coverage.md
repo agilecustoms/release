@@ -14,8 +14,8 @@ This is an internal document describing feature/test coverage
 - npm private - not tested
 
 **java-parent**
-- dev-release aws-codeartifact-maven - not tested
-- prerelease aws-codeartifact-maven - not tested
+- dev-release aws-codeartifact-maven - 1.0.0-beta22
+- prerelease aws-codeartifact-maven - 1.0.0-beta16
 
 **db-evolution-runner**
 - prerelease w/ `version-bump: default-patch` and `channel: beta` - 1.0.0-beta6
