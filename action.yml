@@ -105,7 +105,7 @@ runs:
   using: "composite"
   steps:
 
-## Phase 1.1 - Validate secrets (tokens) passed via env variables
+## Phase 1.1 - Validate secrets (tokens) passed via env variables and more
 
     - name: Validate trigger event
       shell: bash
@@ -115,29 +115,29 @@ runs:
           echo "Error: agilecustoms/release doesn't support on: pull_request/pull_request_target as a trigger" >&2; exit 1
         fi
 
-    - name: Validate GH token
-      if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
-      shell: bash
-      run: |
-        echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
-
-    - name: Validate npmjs token
-      if: env.NPM_TOKEN && inputs.dev-release == 'true'
+    - name: Validate dev-release and npmjs token
+      if: inputs.dev-release == 'true' && env.NPM_TOKEN
       shell: bash
       run: |
         echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
-
-    - name: Validate npm visibility
-      if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
-      shell: bash
-      run: |
-        echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
 
     - name: Validate dev-release and version inputs
       if: inputs.dev-release == 'true' && inputs.version != ''
       shell: bash
       run: |
         echo "Error: 'dev-release' and 'version' cannot be used together" >&2; exit 1
+
+    - name: Validate GH token
+      if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
+      shell: bash
+      run: |
+        echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
+
+    - name: Validate npm visibility
+      if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
+      shell: bash
+      run: |
+        echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
 
 ## Phase 1.2 - Validate the rest of inputs, infer defaults
 
