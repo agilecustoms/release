@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.23](https://github.com/agilecustoms/release/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2025-08-15)
+
+### Bug Fixes
+
+* prohibit dev-release and version used together ([3610fa4](https://github.com/agilecustoms/release/commit/3610fa411d7c7af474434543cf0becbfba2e167c))
+
+
 ## [1.0.0-beta.22](https://github.com/agilecustoms/release/compare/v1.0.0-beta.21...v1.0.0-beta.22) (2025-08-14)
 
 ### Bug Fixes
