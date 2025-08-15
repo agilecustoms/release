@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.24](https://github.com/agilecustoms/release/compare/v1.0.0-beta.23...v1.0.0-beta.24) (2025-08-15)
+
+### Miscellaneous
+
+* put dev-release validations close to each other ([da6ae8b](https://github.com/agilecustoms/release/commit/da6ae8b8dc27e86ce7ba662dcc5b54d189855dec))
+
+
 ## [1.0.0-beta.23](https://github.com/agilecustoms/release/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2025-08-15)
 
 ### Bug Fixes
