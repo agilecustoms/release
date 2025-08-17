@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.23](https://github.com/agilecustoms/release/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2025-08-17)
+
+### Miscellaneous
+
+* update configure-aws-credentials ([6206344](https://github.com/agilecustoms/release/commit/62063445cccceb682d4d9d790273959e7892b958))
+
+
 ## [1.0.0-beta.22](https://github.com/agilecustoms/release/compare/v1.0.0-beta.21...v1.0.0-beta.22) (2025-08-14)
 
 ### Bug Fixes
