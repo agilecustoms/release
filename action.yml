@@ -314,7 +314,9 @@ runs:
         service="${{ steps.init.outputs.service }}"
         ecr_image=${{ steps.login-ecr.outputs.registry }}/$service
         tags=$(echo "${{ steps.version.outputs.tags }}" | sed 's/[^ ]\+/imageTag=&/g')
-        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
+        if [ "${{ inputs.dev-release }}" = "false" ]; then
+          AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
+        fi
         tags="${{ steps.version.outputs.tags }}"
         for tag in $tags; do
           docker tag $service $ecr_image:$tag
