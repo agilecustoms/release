@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.24](https://github.com/agilecustoms/release/compare/v1.0.0-beta.23...v1.0.0-beta.24) (2025-08-17)
+
+### Features
+
+* remove 'git push' in dev-release mode ([3944b22](https://github.com/agilecustoms/release/commit/3944b223d934f1a17137f1e676602227fb2c38a8))
+
+
 ## [1.0.0-beta.23](https://github.com/agilecustoms/release/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2025-08-17)
 
 ### Miscellaneous
