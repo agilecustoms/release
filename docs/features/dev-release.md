@@ -12,16 +12,16 @@ It allows to temporarily release a version (= branch name), so that now you can 
 
 The table below shows a comparison of different release types:
 
-| Name                        | normal release and maintenance release | prerelease                            | dev-release                                                |
-|-----------------------------|----------------------------------------|---------------------------------------|------------------------------------------------------------|
-| intention                   | use in production                      | beta testing                          | dev testing                                                |
-| best use for                | software packages and deployable apps  | software packages and deployable apps | deployable apps                                            |
-| adoption                    | widely                                 | widely                                | popular in enterprise                                      |
-| version generation          | semantic commits or `version-bump`     | semantic commits                      | version = branch name, override on each push, no increment |
-| auto deletion               | ❌️                                     | ❌️                                    | ✅                                                          |
-| number of developers        | many                                   | many                                  | typically one                                              |
-| release notes and changelog | ✅                                      | ✅                                     | ❌️                                                         |
-| floating tags               | major, minor, latest                   | alpha/beta/rc                         | ❌️                                                         |
+| Name                        | normal release and maintenance release | prerelease                            | dev-release           |
+|-----------------------------|----------------------------------------|---------------------------------------|-----------------------|
+| intention                   | use in production                      | beta testing                          | dev testing           |
+| best use for                | software packages and deployable apps  | software packages and deployable apps | deployable apps       |
+| adoption                    | widely                                 | widely                                | popular in enterprise |
+| version generation          | "semantic commits" or "version-bump"   | "semantic commits" or "version bump"  | version = branch name |
+| auto deletion               | ❌️                                     | ❌️                                    | ✅                     |
+| number of developers        | many                                   | many                                  | typically one         |
+| release notes and changelog | ✅                                      | ✅                                     | ❌️                    |
+| floating tags               | major, minor, latest                   | alpha/beta/rc                         | ❌️                    |
 
 
 Dev release allows publishing artifacts temporarily for testing purposes:
@@ -29,8 +29,8 @@ you push your changes to the feature branch, the branch name becomes this dev-re
 - SemVer is _not_ generated
 - no git tags created, files in branch addressable by branch name
 - if branch name is `feature/login` then the version will be `feature-login`
-- parameter `dev-branch-prefix` (default value is `feature/`) enforces branch naming for dev releases,
-  it helps to automatically dispose dev-release artifacts. Set to empty string to disable such enforcement
+- parameter `dev-branch-prefix` (default value is `feature/`) enforces branch naming for dev releases.
+  This is needed for security and automatic resource disposal. Set to empty string to disable such enforcement (not recommended).
 - for each [artifact type](./../artifact-types/index.md), dev-release might have different semantics, see `dev-release` section for each artifact type
 
 Example of 'dev-release' usage with AWS S3:
@@ -41,7 +41,7 @@ steps:
     with:
       aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
       aws-region: us-east-1
-      aws-role: 'ci/publisher' # default
+      aws-role: 'ci/publisher-dev' # see "Security" section below
       aws-s3-bucket: 'mycompany-dist'
       dev-release: true
       dev-release-prefix: 'feature/' # default
@@ -59,3 +59,34 @@ Imagine a system that consists of two services A and B, and there is a repo C st
 And only C has a "Deploy" button!
 Now, you want to make a change in service A and test it, but since the only way to deploy a system is to deploy both services together,
 you must create a temporary release of A. This is a dev-release!
+
+## Configuration
+ 
+`dev-release` mode takes precedence over normal release modes ("semantic commits", "version-bump" and "explicit version").
+When `dev-release` is set to `true` it ignores most of the parameters that are used for normal releases.
+These are only parameters respected by dev-release:
+`aws-account`, `aws-ecr`, `aws-region`, `aws-role`, `aws-s3-bucket`, `aws-s3-dir`, `dev-branch-prefix`
+
+There is no error if `dev-release` used with incompatible parameter (like `tag-format` or `floating-tags`).
+General principle: ignore unused parameters, so that you can have one corporate gha wrapper for `agilecustoms/release`.
+
+Only parameter that conflicts with `dev-release` is `version` as it looks like a complete mistake
+
+## Security
+
+1. Override existing artifact
+2. Create unverified artifact that looks like normal
+
+npm and python Poetry only support SemVer versions so no dev-release.
+Maven on the other hand, allows arbitrary version format.
+Originally up to beta-22 it was possible to dev-release maven package in CodeArtifact.
+Problem is that there is no way to distinguish normal release from dev-release.
+I (author) decided to not allow dev-release for CodeArtifact entirely
+
+| Name         | non SemVer | overwrite | unreviewed next | auto cleanup |
+|--------------|------------|-----------|-----------------|--------------|
+| npmjs        | ❌️         | ✅ safe    | ❌️ unsafe       | ❌️           |
+| CodeArtifact | ✅          | ✅ safe    | ❌️ unsafe       | ❌️           |
+| S3           | ✅          | ✅ safe    | ✅ safe          | ✅            |
+| ECR          | ✅          | ✅ safe    | ❌️ unsafe       | ✅            |
+

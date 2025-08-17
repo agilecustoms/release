@@ -48,10 +48,6 @@ inputs:
     description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
     default: 'false'
-  dev-release-push:
-    description: 'Git push files changed during dev-release: update version in pom.xml, pyproject.toml and files modified by pre-publish-script'
-    required: false
-    default: 'false'
   floating-tags:
     description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
     required: false
@@ -122,12 +118,6 @@ runs:
       shell: bash
       run: |
         echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
-
-    - name: Validate npmjs token
-      if: env.NPM_TOKEN && inputs.dev-release == 'true'
-      shell: bash
-      run: |
-        echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
 
     - name: Validate npm visibility
       if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
@@ -251,7 +241,7 @@ runs:
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
     - name: Setup Java
-      if: hashFiles('pom.xml')
+      if: hashFiles('pom.xml') && inputs.dev-release == 'false'
       uses: agilecustoms/setup-maven-codeartifact@v1.5.7
       with:
         aws-account: ${{ inputs.aws-account }}
@@ -263,7 +253,7 @@ runs:
         java-version: ${{ inputs.java-version }}
 
     - name: Update version in pom.xml
-      if: hashFiles('pom.xml')
+      if: hashFiles('pom.xml') && inputs.dev-release == 'false'
       shell: bash
       run: |
         # Update version in pom.xml
@@ -296,7 +286,7 @@ runs:
         poetry version ${{ steps.version.outputs.version }}
 
     - name: Pre-publish script
-      if: inputs.pre-publish-script
+      if: inputs.pre-publish-script && inputs.dev-release == 'false'
       shell: bash
       run: |
         # Pre-publish script
@@ -337,7 +327,7 @@ runs:
     # TODO: verify phase still run in build and release jobs
     # TODO: checkstyle and enforcer still run in both jobs
     - name: Publish maven to CodeArtifact
-      if: inputs.aws-codeartifact-maven
+      if: inputs.aws-codeartifact-maven && inputs.dev-release == 'false'
       shell: bash
       run: |
         # Publish maven to CodeArtifact
@@ -356,7 +346,7 @@ runs:
     # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: env.NPM_TOKEN
+      if: env.NPM_TOKEN && inputs.dev-release == 'false'
       shell: bash
       run: |
         # Publish in npmjs
@@ -420,23 +410,6 @@ runs:
         
         # push changes along with tags atomically (use --force to overwrite old tags)
         git push --atomic origin ${{ github.ref_name }} $refs --force
-
-    - name: Git push dev-release
-      if: inputs.dev-release == 'true' && inputs.dev-release-push == 'true'
-      shell: bash
-      run: |
-        # Git push dev-release
-        sudo chown -R "$(id -un):$(id -gn)" .
-        git add -u
-        if ! git diff --cached --quiet; then
-          git status --porcelain
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Dev Release [skip ci]"
-          git push origin ${{ github.ref_name }}
-        else
-          echo "No changes to commit."
-        fi
 
 ## Phase 7 - GitHub Release
 

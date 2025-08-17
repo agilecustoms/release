@@ -35,7 +35,7 @@ The action comes with an **ecosystem**:
 | [git](./docs/artifact-types/git.md)                                       | ✅             | ✅           | ✅ — ❌️                     |
 | [AWS S3](./docs/artifact-types/aws-s3.md)                                 | ✅             | ✅           | ✅ — ✅                      |
 | [AWS ECR](./docs/artifact-types/aws-ecr.md)                               | ✅             | ✅           | ✅ — ✅                      |
-| [AWS CodeArtifact maven](./docs/artifact-types/aws-codeartifact-maven.md) | ❌️            | ⚠️          | ✅ — ❌️                     |
+| [AWS CodeArtifact maven](./docs/artifact-types/aws-codeartifact-maven.md) | ❌️            | ⚠️          | ❌️                         |
 | [npmjs](./docs/artifact-types/npmjs.md)                                   | ✅             | ⚠️          | ❌️                         |
 
 _See the respective artifact type to learn about idempotency limitations ⚠️_
@@ -115,7 +115,6 @@ _There are no required inputs. The action only controls that combination of inpu
 | changelog-title             | # Changelog       | Title of the changelog file (first line of the file)                                                                                                                                                                                                                          |
 | dev-branch-prefix           | feature/          | Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement                                                                                                                                                   |
 | dev-release                 | false             | Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                                                                                                                |
-| dev-release-push            | false             | Git push files changed during dev-release: update version in pom.xml, pyproject.toml and files modified by `pre-publish-script`                                                                                                                                               |
 | floating-tags               | true              | When next version to be released is `1.2.4`, then also release `1.2`, `1` and `latest`. Not desired for public terraform modules                                                                                                                                              |
 | npm-extra-deps              |                   | Additional npm dependencies, needed to use non-default commit analyzer preset, ex. `conventional-changelog-conventionalcommits@9.1.0` use white space or new line to specify multiple deps (extremely rare)                                                                   |
 | npm-visibility              | public            | Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private                                                                                                                                                           |
