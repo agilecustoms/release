@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-beta.25](https://github.com/agilecustoms/release/compare/v1.0.0-beta.24...v1.0.0-beta.25) (2025-08-17)
+
+### Bug Fixes
+
+* do not attempt to delete old tags in dev-release mode ([d7c033c](https://github.com/agilecustoms/release/commit/d7c033ce4e241fc4c103778778524e3ea21f244c))
+
+
 ## [1.0.0-beta.24](https://github.com/agilecustoms/release/compare/v1.0.0-beta.23...v1.0.0-beta.24) (2025-08-17)
 
 ### Features
