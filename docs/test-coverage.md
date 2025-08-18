@@ -10,6 +10,7 @@ This is an internal document describing feature/test coverage
 - version-bump: default-minor + `release-channel` - 1.0.0-beta4
 
 **envctl**
+- dev-release "skip" npm publish - 1.0.0-rc.1
 - npm public - 1.0.0-beta2
 - npm private - not tested
 
