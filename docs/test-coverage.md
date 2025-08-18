@@ -23,6 +23,7 @@ This is an internal document describing feature/test coverage
 **env-cleanup**
 - explicit version w/ release channel - 1.0.0-beta15
 - custom summary with ${version} - 1.0.0-beta2
+- dev-release in ECR, attempt to overwrite existing image, attempt to delete existing image - 1.0.0-beta25
 
 **tt-web**
-- dev-release w/ disabled suffix enforcement - 1.0.0-beta15
+- dev-release of S3 w/ disabled suffix enforcement - 1.0.0-beta15

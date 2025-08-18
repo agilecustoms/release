@@ -72,21 +72,51 @@ General principle: ignore unused parameters, so that you can have one corporate 
 
 Only parameter that conflicts with `dev-release` is `version` as it looks like a complete mistake
 
-## Security
-
-1. Override existing artifact
-2. Create unverified artifact that looks like normal
+## Supported artifact types
 
 npm and python Poetry only support SemVer versions so no dev-release.
 Maven on the other hand, allows arbitrary version format.
-Originally up to beta-22 it was possible to dev-release maven package in CodeArtifact.
+Originally (up to beta-22) it was possible to dev-release maven package in CodeArtifact.
 Problem is that there is no way to distinguish normal release from dev-release.
-I (author) decided to not allow dev-release for CodeArtifact entirely
+And also there is no way to automatically delete such dev-release artifacts.
+Then I (author) decided to not allow dev-release for CodeArtifact entirely
 
-| Name         | non SemVer | overwrite | unreviewed next | auto cleanup |
-|--------------|------------|-----------|-----------------|--------------|
-| npmjs        | ❌️         | ✅ safe    | ❌️ unsafe       | ❌️           |
-| CodeArtifact | ✅          | ✅ safe    | ❌️ unsafe       | ❌️           |
-| S3           | ✅          | ✅ safe    | ✅ safe          | ✅            |
-| ECR          | ✅          | ✅ safe    | ❌️ unsafe       | ✅            |
+## Security
 
+Dev-release mode brings self-service release capabilities to developers,
+but also brings security risks. Developer may try to use dev-release workflow to:
+
+1. Create unverified artifact that looks like normal
+2. Update (override) existing production artifact
+3. Delete production artifact
+
+| Name | create unverified | update  | delete  | overwrite | auto cleanup |
+|------|-------------------|---------|---------|-----------|--------------|
+| S3   | ✅ safe            | ✅ safe  | ✅ safe  | ✅ safe    | ✅            |
+| ECR  | ❌️ unsafe         | ✅ safe  | ✅ safe  | ✅ safe    | ✅            |
+
+On order to mitigate these risks, follow next practices:
+
+1. configure GitHub branch ruleset, so any changes in `main` branch are made via PR + review
+2. configure GitHub tag ruleset, so any tags can be created only by automation
+3. configure GitHub push ruleset with "Restrict file paths" `.github/**/*`
+4. configure 2 separate IAM roles:
+   - `ci/publisher` for normal releases (trust only protected branches), with full permissions to publish artifacts to S3, ECR and CodeArtifact
+   - `ci/publisher-dev` for dev-release (trust any branch), with limited permissions to publish artifacts to S3 and ECR
+
+For 'publisher-dev' you can use terraform module [terraform-aws-ci-publisher](https://github.com/agilecustoms/terraform-aws-ci-publisher).
+Dev mode available from [v1.1.0-beta.1](https://github.com/agilecustoms/terraform-aws-ci-publisher/releases/tag/v1.1.0-beta.1) 
+
+_Note: this documentation will be improved in Sep 2025 to better describe security practices for dev-release_
+
+| Name                               | publisher                              | publisher-dev                             |
+|------------------------------------|----------------------------------------|-------------------------------------------|
+| CodeArtifact PublishPackageVersion | Allow                                  |                                           |
+| S3 bucket policy                   | delete "Release=false" in 7 days       | same                                      |
+| S3 Create                          | Allow PutObject                        | Allow PutObject w/ tag Release=false      |
+| S3 Update                          | Allow PutObject                        | Deny PutObjectTagging w/ tag Release=true |
+| S3 Delete                          | Allow DeleteObject                     |                                           |
+| ECR repo policy                    | delete "feature-" in 7 days            | same                                      |
+| ECR Create                         | Allow PutImage                         | Allow PutImage                            |
+| ECR Update                         | Allow PutImage, Allow BatchDeleteImage |                                           |
+| ECR Delete                         | Allow BatchDeleteImage                 |                                           |
