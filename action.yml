@@ -114,7 +114,7 @@ runs:
 ## Phase 1.2 - Validate secrets (tokens) passed via env variables
 
     - name: Validate GH token
-      if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
+      if: inputs.release-gh == 'true' && inputs.dev-release != 'true' && !env.GH_TOKEN
       shell: bash
       run: |
         echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
@@ -189,7 +189,7 @@ runs:
     # generate a new version, release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
     - name: Release generation
       id: release_gen
-      if: inputs.dev-release == 'false'
+      if: inputs.dev-release != 'true'
       uses: agilecustoms/release-gen@v2.13.1
       with:
         changelog_file: ${{ inputs.changelog-file }}
@@ -241,7 +241,7 @@ runs:
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
     - name: Setup Java
-      if: hashFiles('pom.xml') && inputs.dev-release == 'false'
+      if: hashFiles('pom.xml') && inputs.dev-release != 'true'
       uses: agilecustoms/setup-maven-codeartifact@v1.5.7
       with:
         aws-account: ${{ inputs.aws-account }}
@@ -253,32 +253,32 @@ runs:
         java-version: ${{ inputs.java-version }}
 
     - name: Update version in pom.xml
-      if: hashFiles('pom.xml') && inputs.dev-release == 'false'
+      if: hashFiles('pom.xml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pom.xml
         mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
     - name: Setup Node
-      if: hashFiles('package.json') && inputs.dev-release == 'false'
+      if: hashFiles('package.json') && inputs.dev-release != 'true'
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in package.json
-      if: hashFiles('package.json') && inputs.dev-release == 'false'
+      if: hashFiles('package.json') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in package.json
         npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
     - name: Setup Python
-      if: hashFiles('pyproject.toml') && inputs.dev-release == 'false'
+      if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       uses: actions/setup-python@v5
 
     - name: Update version in pyproject.toml
-      if: hashFiles('pyproject.toml') && inputs.dev-release == 'false'
+      if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pyproject.toml
@@ -286,7 +286,7 @@ runs:
         poetry version ${{ steps.version.outputs.version }}
 
     - name: Pre-publish script
-      if: inputs.pre-publish-script && inputs.dev-release == 'false'
+      if: inputs.pre-publish-script && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Pre-publish script
@@ -314,7 +314,7 @@ runs:
         service="${{ steps.init.outputs.service }}"
         ecr_image=${{ steps.login-ecr.outputs.registry }}/$service
         tags=$(echo "${{ steps.version.outputs.tags }}" | sed 's/[^ ]\+/imageTag=&/g')
-        if [ "${{ inputs.dev-release }}" = "false" ]; then
+        if [ "${{ inputs.dev-release }}" != "true" ]; then
           AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
         fi
         tags="${{ steps.version.outputs.tags }}"
@@ -329,7 +329,7 @@ runs:
     # TODO: verify phase still run in build and release jobs
     # TODO: checkstyle and enforcer still run in both jobs
     - name: Publish maven to CodeArtifact
-      if: inputs.aws-codeartifact-maven && inputs.dev-release == 'false'
+      if: inputs.aws-codeartifact-maven && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish maven to CodeArtifact
@@ -348,7 +348,7 @@ runs:
     # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: env.NPM_TOKEN && inputs.dev-release == 'false'
+      if: env.NPM_TOKEN && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish in npmjs
@@ -375,7 +375,7 @@ runs:
 #        exit 1
 
     - name: Git push
-      if: inputs.dev-release == 'false'
+      if: inputs.dev-release != 'true'
       shell: bash
       run: |
         # Git push
@@ -417,7 +417,7 @@ runs:
 
     # standard --generate-notes just add one line "**Full Changelog**: https://github.com/agilecustoms/{repo}/compare/v0.1.3...v0.1.4"
     - name: GitHub Release
-      if: inputs.dev-release == 'false' && inputs.release-gh == 'true' && steps.release_gen.outputs.notes_tmp_file
+      if: inputs.dev-release != 'true' && inputs.release-gh == 'true' && steps.release_gen.outputs.notes_tmp_file
       shell: bash
       run: |
         # GitHub Release
@@ -426,7 +426,7 @@ runs:
 ## Phase 8 - Print summary
 
     - name: Summary
-      if: inputs.summary && inputs.dev-release == 'false'
+      if: inputs.summary && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Summary
