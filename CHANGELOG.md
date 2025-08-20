@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0-rc.2](https://github.com/agilecustoms/release/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2025-08-20)
+
+### Bug Fixes
+
+* change dev-release == false to be dev-release != true ([b6abc49](https://github.com/agilecustoms/release/commit/b6abc49b373c43f751899f50670f585c2ea2d74c))
+
+### Miscellaneous
+
+* use token from release env ([9c7ccb6](https://github.com/agilecustoms/release/commit/9c7ccb6a426e51024bea4520f4a6cb6a9201e083))
+
+
 ## [1.0.0-rc.1](https://github.com/agilecustoms/release/compare/v0.17.0...v1.0.0-rc.1) (2025-08-18)
 
 ### ⚠ BREAKING CHANGES
