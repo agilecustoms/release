@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-rc.4](https://github.com/agilecustoms/release/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2025-08-20)
+
+### Miscellaneous
+
+* bump downstream dependencies version - just maintenance updates ([1c3e794](https://github.com/agilecustoms/release/commit/1c3e7947309a6be7e3b5d24092c1c10659c2d739))
+
+
 ## [1.0.0-rc.3](https://github.com/agilecustoms/release/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2025-08-20)
 
 ### Bug Fixes
