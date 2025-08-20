@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-rc.3](https://github.com/agilecustoms/release/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2025-08-20)
+
+### Bug Fixes
+
+* use publish-s3v1.0.1 with graceful handling of dev-release input ([6617ea5](https://github.com/agilecustoms/release/commit/6617ea5d7eccbc6514dc2750d8bc930ed45c856f))
+
+
 ## [1.0.0-rc.2](https://github.com/agilecustoms/release/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2025-08-20)
 
 ### Bug Fixes
