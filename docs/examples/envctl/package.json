@@ -1,0 +1,29 @@
+{
+  "name": "@agilecustoms/envctl",
+  "description": "example",
+  "version": "0.23.13",
+  "author": "Alex Chekulaev",
+  "type": "module",
+  "bin": {
+    "envctl": "dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "package.json"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agilecustoms/envctl.git"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc",
+    "run": "node dist/index.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sts": "^3.716.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

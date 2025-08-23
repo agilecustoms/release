@@ -6,4 +6,4 @@
   - [Publish in AWS CodeArtifact Maven repository](./aws-codeartifact-maven.md)
 - Non-AWS
   - [Publish in npmjs repo](./npmjs.md)
-  - [No artifacts (git tags + GH release)](./git.md)
+  - [No artifacts, just git tags](./git.md)

@@ -1,0 +1,16 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Release:
+    uses: ./.github/workflows/release.yml
+    with:
+      environment: release
+    secrets: inherit
+    permissions:
+      contents: read
+      id-token: write

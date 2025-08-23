@@ -41,7 +41,7 @@ Rules:
 
 ## Release channel configuration
 
-For all configuration options, see [configuration](./configuration.md)
+For all configuration options, see [configuration](../configuration.md)
 
 There are three [version generation](./version-generation.md) modes.
 Modes "semantic commits" and "version bump" take configuration from file `.releaserc.json`.

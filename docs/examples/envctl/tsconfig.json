@@ -1,0 +1,11 @@
+// https://www.typescriptlang.org/tsconfig
+{
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "nodenext",
+    "outDir": "dist",
+  }
+}

@@ -13,7 +13,7 @@ I (Alex C) checked four most popular shareable configurations:
 each of them provides a combination of plugins to release for a particular platform.
 Since `agilecustoms/release` uses only two plugins (and only in dryRun mode) - there's no much value in support of shareable configurations.
 So shareable configurations are **NOT SUPPORTED**.
-In addition to semantic-release configuration file, `agilecustoms/release` takes configuration via [inputs](./../../README.md#inputs).
+In addition to semantic-release configuration file, `agilecustoms/release` takes configuration via [inputs](../README.md#inputs).
 Inputs take precedence over a configuration file
 
 As an alternative form of configuration reuse (instead of sharable configurations) it is recommended
@@ -25,7 +25,7 @@ Bottom line, these are only supported configuration options for semantic-release
 
 | config file section                                                                                                              | GH action input    | purpose                                                                                        |
 |----------------------------------------------------------------------------------------------------------------------------------|--------------------|------------------------------------------------------------------------------------------------|
-| `branches` ([details](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches)) | `release-branches` | mainly for [maintenance releases](./maintenance-release.md) and [prereleases](./prerelease.md) |
-| `plugins`                                                                                                                        | `release-plugins`  | mainly for [semantic versioning](./semantic-commits.md)                                        |
+| `branches` ([details](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches)) | `release-branches` | mainly for [maintenance releases](features/maintenance-release.md) and [prereleases](features/prerelease.md) |
+| `plugins`                                                                                                                        | `release-plugins`  | mainly for [semantic versioning](features/semantic-commits.md)                                        |
 | `tagFormat` ([details](https://semantic-release.gitbook.io/semantic-release/usage/configuration#tagformat))                      | `tag-format`       | tag format = version format (`v1.2.3`, `1.2.3`, `release-1.2.3`)                               |
-| `branches > .. > channel`                                                                                                        | `release-channel`  | mainly for [floating tags](./floating-tags.md)                                                 |
+| `branches > .. > channel`                                                                                                        | `release-channel`  | mainly for [floating tags](features/floating-tags.md)                                                 |

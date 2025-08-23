@@ -1,0 +1,59 @@
+name: Release API
+
+on:
+  workflow_call:
+    inputs:
+      dev-release:
+        required: false
+        type: boolean
+        default: false
+      environment:
+        required: false
+        type: string
+      release-channel:
+        required: false
+        type: string
+      version:
+        required: false
+        type: string
+
+jobs:
+  Build:
+    uses: ./.github/workflows/build.yml
+    with:
+      artifacts: true
+    secrets: inherit
+    permissions:
+      contents: read
+      id-token: write
+
+  Release:
+    name: Release
+    needs: Build
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read # read for checkout, write to push git tags
+      id-token: write # to request JWT from GitHub OIDC provider
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4 # download all (actually one from Build job: target/env-cleanup.jar)
+
+      - name: Docker build
+        run: docker build -t env-cleanup:latest
+
+      - name: Release
+        uses: agilecustoms/release@v1
+        with:
+          aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-region: us-east-1
+          aws-role: 'ci/publisher'
+          aws-ecr: true
+          dev-release: ${{ inputs.dev-release }}
+          release-channel: ${{ inputs.release-channel }}
+          version: ${{ inputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}

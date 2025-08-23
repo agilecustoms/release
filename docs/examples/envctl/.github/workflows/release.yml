@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Build:
+    uses: ./.github/workflows/build.yml
+    with:
+      artifacts: true
+    secrets: inherit
+
+
+  Release:
+    needs: Build
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Release
+        uses: agilecustoms/release@v1
+        with:
+          pre-publish-script: sed -i -E "s/(envctl-cache-key-)[^\n]+/\1$version/" "action.yml"
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # use regular GH_TOKEN for private repos, no GH_PUBLIC_RELEASES_TOKEN bcz envctl is a private repo, even though it publishes to the public NPM registry
+          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}

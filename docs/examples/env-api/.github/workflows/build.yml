@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches-ignore:
+      - main
+  workflow_call:
+    inputs:
+      artifacts:
+        required: false
+        type: boolean
+        default: false
+        description: upload artifacts or not
+
+jobs:
+  Build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # to request JWT from GitHub OIDC provider
+      contents: read # required for actions/checkout
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install dependencies
+        run: poetry install
+
+      # Linting, Type checks, tests
+
+      # Package in dist/app.zip
+
+      - name: Upload artifacts
+        if: inputs.artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: s3 # create artifact named s3 (so later on the download action will create <repo-root>/s3/ folder)
+          path: dist/app.zip

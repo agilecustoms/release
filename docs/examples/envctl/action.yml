@@ -1,0 +1,26 @@
+name: 'Setup envctl'
+description: 'GH Action wrapper for envctl'
+inputs:
+  demo-parameter:
+    description: 'description'
+    required: false
+    default: 'hello'
+runs:
+  using: "composite"
+  steps:
+    - name: Switch to Node 22
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Cache global npm
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-global-${{ runner.os }}-envctl-cache-key-0.23.13
+
+    - name: Install envctl CLI
+      shell: bash
+      run: |
+        # Install envctl CLI
+        npm install -g @agilecustoms/envctl

@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "envapi"
+version = "0.1.0"
+description = "Service to manage environments in dev account"
+authors = ["Alex Chekulaev <chekulaevalexey@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+dependency-injector = "^4.43.0"
+mypy-boto3-dynamodb = "^1.35.0"
+mypy-boto3-events = "^1.35.0"
+mypy-boto3-scheduler = "^1.37.0"
+pynamodb = "^6.0.1"
+
+[tool.poetry.group.dev.dependencies]
+aws-lambda-powertools = {extras = ["aws-sdk"], version = "3.14.0"} # use fixed version to keep in sync with lambda layer
+boto3-stubs = {extras = ["dynamodb", "events", "scheduler"], version = "^1.35.71"}
+fastapi = "^0.115.7"
+hypercorn = "^0.17.3"
+isort = "^6.0.0"
+mypy = "^1.13.0"
+pydantic = "^2.10.2"
+pylint = "^3.3.1"
+pytest = "^8.3.3"
+pytest-asyncio = "^1.0.0"
+pytest-cov = "^6.0.0"
+pyyaml = "^6.0.2"
+testcontainers = {extras = ["boto3"], version = "^4.9.2"}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
