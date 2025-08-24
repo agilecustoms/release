@@ -1,6 +1,6 @@
 name: 'Release'
 author: 'Alexey Chekulaev'
-description: 'generate new version, upload to s3, push tags and send to gitops'
+description: 'Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning'
 branding:
   icon: package
   color: green

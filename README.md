@@ -1,7 +1,5 @@
 # About
 
-**This GH action is beta-testing now, planned to be released late Aug 2025**
-
 Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
 
 ![Cover](docs/images/cover.png)
