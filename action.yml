@@ -1,4 +1,4 @@
-name: 'Release'
+name: 'Consistent Release'
 author: 'Alexey Chekulaev'
 description: 'Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning'
 branding:
