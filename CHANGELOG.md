@@ -1,5 +1,55 @@
 # Changelog
 
+## [1.0.0](https://github.com/agilecustoms/release/compare/v0.17.1...v1.0.0) (2025-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* first beta
+
+### Features
+
+* add java-version input - pass it into setup-maven-codeartifact action ([e707ff4](https://github.com/agilecustoms/release/commit/e707ff4254776e8a6694e1021713b3122a7d2a5c))
+* by default do not push git changes in dev-release mode ([2ef866e](https://github.com/agilecustoms/release/commit/2ef866e08fdc0a538e783813388988a9573a7664))
+* channel supports ${name} placeholder ([94405f0](https://github.com/agilecustoms/release/commit/94405f0a4c698f4fd16a53542e86a0d96a4bcb96))
+* explicit version mode now supports floating tags and release channel ([4379996](https://github.com/agilecustoms/release/commit/4379996531c9cd47e0236ab752400fb23bb21e75))
+* first beta ([b8a248f](https://github.com/agilecustoms/release/commit/b8a248fe5ca36ca0efd8629e6476ebbd82802e8c))
+* remove 'git push' in dev-release mode ([3944b22](https://github.com/agilecustoms/release/commit/3944b223d934f1a17137f1e676602227fb2c38a8))
+* rename NPM_PUBLIC_TOKEN to be just NPM_TOKEN, add parameter 'npm-visibility' to support private packages ([19ca27a](https://github.com/agilecustoms/release/commit/19ca27a5be1941f45f628203f0e72f4aff9aaa24))
+* use new release-gen with cleaner error messages ([a7f9593](https://github.com/agilecustoms/release/commit/a7f95930dc23066982c6d7a901688aef3f86161a))
+
+### Bug Fixes
+
+* change dev-release == false to be dev-release != true ([b6abc49](https://github.com/agilecustoms/release/commit/b6abc49b373c43f751899f50670f585c2ea2d74c))
+* do not attempt to delete old tags in dev-release mode ([d7c033c](https://github.com/agilecustoms/release/commit/d7c033ce4e241fc4c103778778524e3ea21f244c))
+* do not update version in package.json in dev-release mode ([9fb3c8d](https://github.com/agilecustoms/release/commit/9fb3c8d5125960c5c8a6b588b1d9ff35b39a1e5b))
+* do not update version in pyproject.toml if dev-release = true ([e1cd095](https://github.com/agilecustoms/release/commit/e1cd095ac64d5feca58f60d18520d46f06711a9a))
+* git push dev-release only if there are changes ([09b058a](https://github.com/agilecustoms/release/commit/09b058aad535c493190e159e76b8395295f388be))
+* run 'git config' right before commit ([0f6cf54](https://github.com/agilecustoms/release/commit/0f6cf54220533a397bc0b21c0603dc3cf36c71f4))
+* use publish-s3v1.0.1 with graceful handling of dev-release input ([6617ea5](https://github.com/agilecustoms/release/commit/6617ea5d7eccbc6514dc2750d8bc930ed45c856f))
+
+### Documentation
+
+* configuration.md ([f1bebe4](https://github.com/agilecustoms/release/commit/f1bebe4f03a1bd7f49c15a307eeda91df6a60b5d))
+* cover entire lifecycle of a prerelease branch ([a99df7f](https://github.com/agilecustoms/release/commit/a99df7fdf242be4d63d3f49af56f07580c43f0e3))
+* document artifact types, provide examples, update authorization documentation ([af6e516](https://github.com/agilecustoms/release/commit/af6e516cee8c1ebc736aeed6bd27b6fe50bc1557))
+* document security risks with dev-release mode and remediation ([200e162](https://github.com/agilecustoms/release/commit/200e162eba643ddca3c7da59df6d6db3b06ea6b0))
+* fix release channel support for 'version-bump' ([d7e5f97](https://github.com/agilecustoms/release/commit/d7e5f9768155b4a7ffe82fa5b82a36164581d0d0))
+* testing document and troubleshooting updates ([ff68632](https://github.com/agilecustoms/release/commit/ff686327d3ebacebdf195dde82b2ba6ad23fbb7f))
+* update cover image, add npmjs ([ecfc8c8](https://github.com/agilecustoms/release/commit/ecfc8c8788ac27a6b12d6d892a520305ba6cb61a))
+* update feature coverage for "version bump" mode ([4512b8c](https://github.com/agilecustoms/release/commit/4512b8c158f30246fe2c90d6170fb661cf2ce83e))
+
+### Miscellaneous
+
+* bump downstream dependencies version - just maintenance updates ([1c3e794](https://github.com/agilecustoms/release/commit/1c3e7947309a6be7e3b5d24092c1c10659c2d739))
+* do not print summary in dev-release mode ([3a50957](https://github.com/agilecustoms/release/commit/3a5095776b1334ae4b1679d9ef829feaef49ae5f))
+* log changed files before git push in dev-release mode ([4f4470c](https://github.com/agilecustoms/release/commit/4f4470c1544e5ee3706a54cdc4b7714c29fceb11))
+* log changed/added files before commit ([ee50494](https://github.com/agilecustoms/release/commit/ee504945052c2f0967301bcd13c36a00e7e906a0))
+* pin publish-s3 to v1.0.0 ([ca6cd84](https://github.com/agilecustoms/release/commit/ca6cd8460a59b1035c073a1f1acb54b0eb0cb898))
+* pin setup-maven-codeartifact version ([883ff12](https://github.com/agilecustoms/release/commit/883ff121b407558f7eab3211d09c4b37db3215f9))
+* update configure-aws-credentials ([6206344](https://github.com/agilecustoms/release/commit/62063445cccceb682d4d9d790273959e7892b958))
+* use token from release env ([9c7ccb6](https://github.com/agilecustoms/release/commit/9c7ccb6a426e51024bea4520f4a6cb6a9201e083))
+
+
 ## [1.0.0-rc.6](https://github.com/agilecustoms/release/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2025-08-24)
 
 ### Miscellaneous
