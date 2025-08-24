@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/agilecustoms/release/compare/v1.0.1...v1.0.2) (2025-08-24)
+
+### Documentation
+
+* update name to publish in GH marketplace ([eb7dfa6](https://github.com/agilecustoms/release/commit/eb7dfa6f5ffc067b1f54db03994476299feb2d81))
+
+
 ## [1.0.1](https://github.com/agilecustoms/release/compare/v1.0.0...v1.0.1) (2025-08-24)
 
 ### Documentation
