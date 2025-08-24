@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/agilecustoms/release/compare/v1.0.0...v1.0.1) (2025-08-24)
+
+### Documentation
+
+* change status from beta to released ([902f5d3](https://github.com/agilecustoms/release/commit/902f5d39d4d88ea277d4b95764d44b31e78ec7e6))
+
+
 ## [1.0.0](https://github.com/agilecustoms/release/compare/v0.17.1...v1.0.0) (2025-08-24)
 
 ### ⚠ BREAKING CHANGES
