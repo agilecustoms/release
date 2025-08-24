@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-rc.5](https://github.com/agilecustoms/release/compare/v1.0.0-rc.4...v1.0.0-rc.5) (2025-08-24)
+
+### Documentation
+
+* document artifact types, provide examples, update authorization documentation ([af6e516](https://github.com/agilecustoms/release/commit/af6e516cee8c1ebc736aeed6bd27b6fe50bc1557))
+
+
 ## [1.0.0-rc.4](https://github.com/agilecustoms/release/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2025-08-20)
 
 ### Miscellaneous
