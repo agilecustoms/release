@@ -11,7 +11,7 @@ It takes latest [SemVer](https://semver.org) tag and analyzes commit messages to
 
 If a PR has no commit bumping a version, the `agilecustoms/release` action exit with error
 
-Tech note. `agilecustoms/release` action uses semantic-release in **dryRun** mode:
+Tech note. `agilecustoms/release` action uses semantic-release in _dryRun_ mode:
 it generates next version and release notes.
 It doesn't commit changes, doesn't push tags nor create a GitHub release
 

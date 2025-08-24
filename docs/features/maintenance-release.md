@@ -1,8 +1,11 @@
 # Maintenance release
 
+_This document assumes you use [version generation](./version-generation.md) mode "semantic commits" or "version bump".
+"explicit version" does not provide any help with respect to maintenance versions, all you get is just [floating tags](./floating-tags.md)_
+
 Maintenance release is a release from a branch with a version range.
 A range can be reflected in branch name like `N.x.x` or `N.N.x` (where `N` is a number)
-OR branch may have an arbitrary name but assigned range.
+OR branch may have an arbitrary name but assigned `range` (see examples below).
 In both cases, the maintenance branch needs to be explicitly configured.
 Configuration can be provided in `.releaserc.json` file (preferred) or via `release-branches` input
 

@@ -1,0 +1,14 @@
+name: Dev Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Release:
+    uses: ./.github/workflows/release.yml
+    with:
+      dev-release: true
+    secrets: inherit
+    permissions:
+      contents: read
+      id-token: write

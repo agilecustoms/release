@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.agilecustoms</groupId>
+    <artifactId>root</artifactId>
+    <version>1.19.8</version>
+    <packaging>pom</packaging>
+
+    <!-- for `mvn deploy` to push artifacts to AWS CodeArtifact -->
+    <distributionManagement>
+        <repository>
+            <id>agilecustoms-maven</id>
+            <url>https://${env.ARTIFACT_STORE_HOST}/maven/maven/</url>
+        </repository>
+    </distributionManagement>
+
+    <modules>
+        <module>module1</module>
+        <module>module2</module>
+    </modules>
+</project>

@@ -1,0 +1,26 @@
+name: Manual Release
+run-name: "Release ${{ inputs.version }}"
+
+on:
+  workflow_dispatch: # but only on branch 'main'
+    inputs:
+      version:
+        type: string
+        required: true
+        description: explicit version to release
+      release-channel:
+        type: string
+        required: false
+        description: release channel to use with explicit version
+
+jobs:
+  Release:
+    uses: ./.github/workflows/release.yml
+    with:
+      environment: release
+      release-channel: ${{ inputs.release-channel }}
+      version: ${{ inputs.version }}
+    secrets: inherit
+    permissions:
+      contents: read
+      id-token: write

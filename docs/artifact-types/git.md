@@ -1,64 +1,54 @@
-# No artifacts (git tags + GH release)
+# No artifacts, just git tags
 
-For example, for a repository with terraform code only - no binaries, just add git tag.
-Version will be automatically generated based on the latest version tag + commit messages.
-Ex: if the latest tag is `1.2.3` and there is a single commit `fix: JIRA-123`, then the new tag will be `1.2.4`.
-Also tags `1`, `1.2` and `latest` will be overwritten to point to the same commit as `1.2.4`
+Now days many types of software is released just as source code with version tag: Terraform modules, GitHub Actions, Go modules, etc.
+This is the simplest scenario for `agilecustoms/release` as there is no need to publish any artifacts, just create a tag
 
-Adding/overwriting tags write access. It can be done in two ways:
+_Note: all examples use shared patterns: two workflows: Build and Release; parameter `npm-extra-deps` —
+covered in [Best practices](../best-practices.md); "release" GitHub environment — covered in [Authorization and security](../authorization.md)_
 
-**Use default GitHub token** (note permissions `contents: write`):
+## Terraform module
+
+Example: [terraform-aws-ci-publisher](https://github.com/agilecustoms/terraform-aws-ci-builder)
+
+[release.yml](https://github.com/agilecustoms/terraform-aws-ci-builder/blob/main/.github/workflows/release.yml)
 ```yaml
 jobs:
+  # ...
   Release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    # ...
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Release
-        uses: agilecustoms/release@v1
-        env:
-           GH_TOKEN: ${{ github.token }} # == ${{ secrets.GITHUB_TOKEN }}, required for GitHub release
-```
-
-**Use PAT**. Default token has lots of permissions, so alternatively you can use PAT with explicit permissions:
-```yaml
-jobs:
-  Release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
+      # ...
       - name: Release
         uses: agilecustoms/release@v1
         with:
-          GH_TOKEN: ${{ secrets.MY_GH_TOKEN }} # your PAT 
+          floating-tags: false
 ```
+When publish in Terraform registry you can't use floating tags (`latest`, `1`, `1.2`).
+For corporate terraform modules hosted in private GH repos you still can use floating tags
 
-### release terraform module
+## Composite GitHub Action
 
-Terraform modules 1) use v prefix and 2) do not accept floating tags (`latest`, `1`, `1.2`)
+Example: [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
+
+[release.yml](https://github.com/agilecustoms/setup-maven-codeartifact/blob/main/.github/workflows/release.yml)
 ```yaml
-steps:
-  - name: Release
-    uses: agilecustoms/release@v1
-    with:
-      floating-tags: false
+jobs:
+  Release:
+    # ...
+    steps:
+      # ...
+      - name: Release
+        uses: agilecustoms/release@v1
 ```
 
-### release TypeScript GH Action
+## Node.js GitHub Action
 
-As of 2025 TypeScript is still often requiring transpilation to JavaScript, especially for GitHub Actions, which still use Node 20 as runtime.
-So your GH Action repo looks like this:
+Example: [publish-s3](https://github.com/agilecustoms/publish-s3)
+
 ```
 <repo root>
-├── dist
+├── .github
+├── dist         <-- stored in git
 │   └── index.js <-- all .ts files transpiled and combined in this one
 ├── src
 │   ├── FileService.ts
@@ -68,18 +58,31 @@ So your GH Action repo looks like this:
 ├── package.json
 └── tsconfig.json
 ```
-In this setup you make changes in .ts files and push changes in a branch. When PR is merged, the release workflow is triggered.
-In release workflow your TS code is built again, and thus you have `dist/index.js` updated and needs to be committed and pushed.
 
+This is a Node.js based GitHub Action written in TypeScript.
+As of 2025 GitHub still doesn't natively support TypeScript, so transpilation is required.
+Plus it is better to combine all source code in one file and minimize for quicker downloads.
+This is all done by `ncc` compiler.
+
+[release.yml](https://github.com/agilecustoms/publish-s3/blob/main/.github/workflows/release.yml)
 ```yaml
 jobs:
+  # ...
   Release:
-    runs-on: ubuntu-latest
+    # ...
     steps:
-      # build TS code -> dist/index.js
-      
+      # ...
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        # after this we have changes in file dist/index.js
+
       - name: Release
         uses: agilecustoms/release@v1
-        env:
-          GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
 ```
+
+When developer merges a PR, the Release workflow is triggered:
+1. Release workflow calls Build workflow
+2. Build workflow compiles TypeScript files in a single `dist/index.js` file and uploads it as an artifact
+3. Release workflow downloads the artifact and calls `agilecustoms/release` action, then action:
+   1. commit `dist/index.js`
+   2. push commit and tags to the remote repository

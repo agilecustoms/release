@@ -18,7 +18,7 @@ Consider git branches (from old to new):
 |---------|---------|---------|---|----------------|--------------------------------|------------------------------|---------|
 | `1.1.x` | 1.1.10  |         | ⇒ | _1.1.11_       | `1.1.11`, `1.1`                | _same_                       | 1.1.x   |
 | `1.1.x` | 1.1.10  | _false_ | ⇒ | _1.1.11_       | `1.1.11`, `1.1`                | _same_                       | 1.1.x   |
-| `1.1.x` | 1.1.10  | 1.1.x   | ⇒ | _1.1.11_       | `1.1.11`, `1.1`                | `1.1.11`, `1.1`, `1.1.x`     | 1.2.x   |
+| `1.1.x` | 1.1.10  | 1.1.x   | ⇒ | _1.1.11_       | `1.1.11`, `1.1`                | `1.1.11`, `1.1`, `1.1.x`     | 1.1.x   |
 | `1.1.x` | 1.1.10  | legacy  | ⇒ | _1.1.11_       | `1.1.11`, `1.1`, `legacy`      | _same_                       | legacy  |
 | `1.x.x` | 1.5.5   |         | ⇒ | _1.6.0_        | `1.6.0`, `1.6`, `1`            | _same_                       | 1.x.x   |
 | `1.x.x` | 1.5.5   | 1.x.x   | ⇒ | _1.6.0_        | `1.6.0`, `1.6`, `1`            | `1.6.0`, `1.6`, `1`, `1.x.x` | 1.x.x   |
@@ -41,13 +41,12 @@ Rules:
 
 ## Release channel configuration
 
-For all configuration options, see [configuration](./configuration.md)
+For all configuration options, see [configuration](../configuration.md)
 
-GH Action `agilecustoms/release` uses npm library [semantic-release](https://www.npmjs.com/package/semantic-release) under the hood.
-It takes [configuration](https://semantic-release.gitbook.io/semantic-release/usage/configuration#configuration-file) from file `.releaserc.json` in the root of repository.
-You can configure a release channel in `.releaserc.json` file or via GH action input `release-channel`. Input has precedence over a config file.
-`.releaserc.json` is recommended because it allows to have different configurations per repo and per branch.
-`release-channel` input is needed when you use "version bump" or "explicit version", see [version generation](./version-generation.md)
+There are three [version generation](./version-generation.md) modes.
+Modes "semantic commits" and "version bump" take configuration from file `.releaserc.json`.
+You can configure release channel there as `channel` property in `branches` section.
+For version generation mode "explicit version" use GH action input `release-channel`
 
 Example of `.releaserc.json` for a table above:
 ```json

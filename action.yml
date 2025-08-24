@@ -40,18 +40,22 @@ inputs:
     description: 'Title of the changelog file (first line of the file)'
     required: false
     default: '# Changelog'
-  dev-release:
-    description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
-    required: false
-    default: 'false'
   dev-branch-prefix:
     description: 'Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement'
     required: false
     default: 'feature/'
+  dev-release:
+    description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
+    required: false
+    default: 'false'
   floating-tags:
     description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
+  java-version:
+    description: 'Java version to use with aws-codeartifact-maven'
+    required: false
+    default: '21'
   node-version:
     description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24'
     required: false
@@ -59,11 +63,18 @@ inputs:
   npm-extra-deps:
     description: 'Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset'
     required: false
+  npm-visibility:
+    description: 'Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private'
+    required: false
+    default: 'public'
   pre-publish-script:
     description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
   release-branches:
     description: 'semantic-release "branches" configuration'
+    required: false
+  release-channel:
+    description: 'Repeat `.releaserc.json` `channel` behavior when set `version` explicitly'
     required: false
   release-gh:
     description: 'If true, then create a GitHub release with the same name as the tag'
@@ -90,7 +101,7 @@ runs:
   using: "composite"
   steps:
 
-## Phase 1.1 - Validate secrets (tokens) passed via env variables
+## Phase 1.1 - Validate event trigger
 
     - name: Validate trigger event
       shell: bash
@@ -100,19 +111,21 @@ runs:
           echo "Error: agilecustoms/release doesn't support on: pull_request/pull_request_target as a trigger" >&2; exit 1
         fi
 
+## Phase 1.2 - Validate secrets (tokens) passed via env variables
+
     - name: Validate GH token
-      if: inputs.release-gh == 'true' && inputs.dev-release == 'false' && !env.GH_TOKEN
+      if: inputs.release-gh == 'true' && inputs.dev-release != 'true' && !env.GH_TOKEN
       shell: bash
       run: |
         echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
 
-    - name: Validate npmjs token
-      if: env.NPM_PUBLIC_TOKEN && inputs.dev-release == 'true'
+    - name: Validate npm visibility
+      if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
       shell: bash
       run: |
-        echo "Error: npmjs does not support dev-release (version inferred from branch name), npmjs only supports semver" >&2; exit 1
+        echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
 
-## Phase 1.2 - Validate the rest of inputs, infer defaults
+## Phase 1.3 - Validate the rest of inputs, infer defaults
 
     - name: Init
       id: init
@@ -174,18 +187,20 @@ runs:
 
     # CWD is /home/runner/work/release/release
     # generate a new version, release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
-    # note: run this step even if an explicit version is provided, (a version is ignored, but release notes are used)
     - name: Release generation
       id: release_gen
-      if: inputs.dev-release == 'false'
-      uses: agilecustoms/release-gen@main
+      if: inputs.dev-release != 'true'
+      uses: agilecustoms/release-gen@v2.13.3
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
+        floating_tags: ${{ inputs.floating-tags }}
         npm_extra_deps: ${{ inputs.npm-extra-deps }}
         release_branches: ${{ inputs.release-branches }}
+        release_channel: ${{ inputs.release-channel }}
         release_plugins: ${{ inputs.release-plugins }}
         tag_format: ${{ inputs.tag-format }}
+        version: ${{ inputs.version }}
         version_bump: ${{ inputs.version-bump }}
 
     - name: Finalize version and tags
@@ -197,18 +212,10 @@ runs:
           version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
           git_tags="$version"
           tags="$version"
-        elif [ -n "${{ inputs.version }}" ]; then
-          version="${{ inputs.version }}"
-          git_tags="$version"
-          tags="$version"
         else
           version="${{ steps.release_gen.outputs.version }}"
-          git_tags="$version"
-          tags="$version"
-          if [ "${{ inputs.floating-tags }}" = "true" ]; then
-            git_tags="${{ steps.release_gen.outputs.git_tags }}"
-            tags="${{ steps.release_gen.outputs.tags }}"
-          fi
+          git_tags="${{ steps.release_gen.outputs.git_tags }}"
+          tags="${{ steps.release_gen.outputs.tags }}"
         fi
         
         echo "version=$version" >> $GITHUB_OUTPUT
@@ -220,7 +227,7 @@ runs:
     - name: Log in AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
       id: login-aws
-      uses: aws-actions/configure-aws-credentials@v4.2.1 # v4 doesn't point to the most recent 4.x.x :(
+      uses: aws-actions/configure-aws-credentials@v4.3.1 # v4 doesn't point to the most recent 4.x.x :(
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
@@ -234,8 +241,8 @@ runs:
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
     - name: Setup Java
-      if: hashFiles('pom.xml')
-      uses: agilecustoms/setup-maven-codeartifact@v1
+      if: hashFiles('pom.xml') && inputs.dev-release != 'true'
+      uses: agilecustoms/setup-maven-codeartifact@v1.5.8
       with:
         aws-account: ${{ inputs.aws-account }}
         aws-region: ${{ inputs.aws-region }}
@@ -243,34 +250,35 @@ runs:
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
         aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
         aws-login: false # we already logged in AWS in a previous step
+        java-version: ${{ inputs.java-version }}
 
     - name: Update version in pom.xml
-      if: hashFiles('pom.xml')
+      if: hashFiles('pom.xml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pom.xml
         mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
 
     - name: Setup Node
-      if: hashFiles('package.json')
+      if: hashFiles('package.json') && inputs.dev-release != 'true'
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in package.json
-      if: hashFiles('package.json')
+      if: hashFiles('package.json') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in package.json
         npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
     - name: Setup Python
-      if: hashFiles('pyproject.toml')
+      if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       uses: actions/setup-python@v5
 
     - name: Update version in pyproject.toml
-      if: hashFiles('pyproject.toml')
+      if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pyproject.toml
@@ -278,7 +286,7 @@ runs:
         poetry version ${{ steps.version.outputs.version }}
 
     - name: Pre-publish script
-      if: inputs.pre-publish-script
+      if: inputs.pre-publish-script && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Pre-publish script
@@ -288,7 +296,7 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v0.1.18
+      uses: agilecustoms/publish-s3@v1.0.1
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
@@ -306,7 +314,9 @@ runs:
         service="${{ steps.init.outputs.service }}"
         ecr_image=${{ steps.login-ecr.outputs.registry }}/$service
         tags=$(echo "${{ steps.version.outputs.tags }}" | sed 's/[^ ]\+/imageTag=&/g')
-        AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
+        if [ "${{ inputs.dev-release }}" != "true" ]; then
+          AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
+        fi
         tags="${{ steps.version.outputs.tags }}"
         for tag in $tags; do
           docker tag $service $ecr_image:$tag
@@ -319,7 +329,7 @@ runs:
     # TODO: verify phase still run in build and release jobs
     # TODO: checkstyle and enforcer still run in both jobs
     - name: Publish maven to CodeArtifact
-      if: inputs.aws-codeartifact-maven
+      if: inputs.aws-codeartifact-maven && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish maven to CodeArtifact
@@ -338,12 +348,12 @@ runs:
     # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: env.NPM_PUBLIC_TOKEN
+      if: env.NPM_TOKEN && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish in npmjs
         set +e
-        output=$(npm publish --access public --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
+        output=$(npm publish --access ${{ inputs.npm-visibility }} --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
         error_code=$?
         echo "$output"
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
@@ -354,7 +364,7 @@ runs:
         fi
         exit $error_code
       env:
-        NODE_AUTH_TOKEN: ${{ env.NPM_PUBLIC_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
 
 ## Phase 6 - Git push
 
@@ -365,13 +375,10 @@ runs:
 #        exit 1
 
     - name: Git push
-      if: inputs.dev-release == 'false'
+      if: inputs.dev-release != 'true'
       shell: bash
       run: |
         # Git push
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        
         # fix any permission issues from earlier steps (npm version can create files with root permissions)
         sudo chown -R "$(id -un):$(id -gn)" .
         
@@ -380,6 +387,9 @@ runs:
         # one legitime new file is CHANGELOG.md, which is created by release-gen step
         [ -f "${{ inputs.changelog-file }}" ] && git add "${{ inputs.changelog-file }}"
         if ! git diff --cached --quiet; then
+          git status --porcelain
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Release version ${{ steps.version.outputs.version }} [skip ci]"
         else
           echo "No changes to commit."
@@ -403,21 +413,11 @@ runs:
         # push changes along with tags atomically (use --force to overwrite old tags)
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
-    - name: Git push dev-release
-      if: inputs.dev-release == 'true'
-      shell: bash
-      run: |
-        # Git push dev-release
-        sudo chown -R "$(id -un):$(id -gn)" .
-        git add -u
-        git diff --cached --quiet || git commit -m "Dev Release [skip ci]"
-        git push origin ${{ github.ref_name }}
-
 ## Phase 7 - GitHub Release
 
     # standard --generate-notes just add one line "**Full Changelog**: https://github.com/agilecustoms/{repo}/compare/v0.1.3...v0.1.4"
     - name: GitHub Release
-      if: inputs.dev-release == 'false' && inputs.release-gh == 'true' && steps.release_gen.outputs.notes_tmp_file
+      if: inputs.dev-release != 'true' && inputs.release-gh == 'true' && steps.release_gen.outputs.notes_tmp_file
       shell: bash
       run: |
         # GitHub Release
@@ -426,7 +426,7 @@ runs:
 ## Phase 8 - Print summary
 
     - name: Summary
-      if: inputs.summary
+      if: inputs.summary && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Summary
