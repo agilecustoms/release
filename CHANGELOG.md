@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-rc.6](https://github.com/agilecustoms/release/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2025-08-24)
+
+### Miscellaneous
+
+* pin publish-s3 to specific version ([6e8800d](https://github.com/agilecustoms/release/commit/6e8800d4280e98d2fcb6d39d36396c395dd00f61))
+
+
 ## [0.17.1](https://github.com/agilecustoms/release/compare/v0.17.0...v0.17.1) (2025-08-12)
 
 ### Miscellaneous
