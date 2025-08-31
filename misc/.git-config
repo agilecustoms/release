@@ -1,3 +1,5 @@
+# example of .git/config file (token in fake)
+# used this example to debug/understand step "Git authorization"
 [core]
 	repositoryformatversion = 0
 	filemode = true

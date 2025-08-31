@@ -20,7 +20,7 @@ Now we need to grant a permission to bypass this rule to a release workflow so i
 
 This is where PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) 
 comes into play: in this "tag ruleset" you configure a Role that can bypass it,
-then a person possessing this role needs to create a PAT to use it in the release workflow
+then a person possessing this role needs to create a PAT to use it in the release workflow:
 - either a fine-grained PAT with `Contents "Read and write"`
 - or classic PAT with `repo` scope
 
@@ -38,6 +38,20 @@ The better option is to create a **GitHub environment** (lets call it `release`)
 Then configure this environment so that only protected branches can use it.
 Finally, in the release workflow (assuming it is run on push in protected branch) you specify `environment: release` to access a secret
 
+`agilecustoms/release` action takes this PAT via env variable `GH_TOKEN`:
+```yaml
+jobs:
+  Release:
+    environment: release
+    # ...
+    steps:
+      # ...
+      - name: Release
+        uses: agilecustoms/release@v1
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # secret can have any name, use `GH_TOKEN` for consistency
+```
+
 One problem left: what if two "bad" developers act together: one creates a PR to change release workflow to print PAT,
 and second approves it? To mitigate this risk you configure `CODEOWNERS` so that only trusted people can approve changes in `.github/**/*`
 
@@ -53,7 +67,7 @@ At this point GitHub security should be in a good shape. Only problem — it is 
 tag protection rules, create environment and configure its access from protected branches, configure CODEOWNERS.
 In the world of microservices it is quite common to have 50+ repositories, so it is a lot of work to do it manually.
 You can automate this via provisioning GitHub repos via Terraform (there is a [GitHub provider](https://registry.terraform.io/providers/integrations/github/latest/docs)).
-Fall 2025 I plan to release a Terraform module that will do all this work for you.
+Fall 2025 I plan to release a Terraform module that will do all this work for you
 
 ## AWS Authorization
 
