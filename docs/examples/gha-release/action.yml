@@ -1,0 +1,112 @@
+name: 'Release'
+description: 'MyCompany wrapper for GH action agilecustoms/release'
+inputs:
+  aws-codeartifact-maven:
+    required: false
+  aws-ecr:
+    required: false
+  dev-branch-prefix:
+    required: false
+    default: 'feature/'
+  dev-release:
+    required: false
+    default: 'false'
+  floating-tags:
+    required: false
+    default: 'true'
+  node-version:
+    required: false
+    default: '22'
+  pre-publish-script:
+    required: false
+  release-channel:
+    required: false
+  release-gh:
+    required: false
+    default: 'true'
+  release-plugins:
+    required: false
+    default: |
+      [
+        [
+          "@semantic-release/commit-analyzer",
+          {
+            "preset": "conventionalcommits",
+            "releaseRules": [
+              { "type": "perf", "release": false },
+              { "type": "docs", "release": "patch" },
+              { "type": "misc", "release": "patch" }
+            ]
+          }
+        ],
+        [
+          "@semantic-release/release-notes-generator",
+          {
+            "preset": "conventionalcommits",
+            "presetConfig": {
+              "types": [
+                {
+                  "type": "feat",
+                  "section": "Features"
+                },
+                {
+                  "type": "fix",
+                  "section": "Bug Fixes"
+                },
+                {
+                  "type": "docs",
+                  "section": "Documentation"
+                },
+                {
+                  "type": "misc",
+                  "section": "Miscellaneous"
+                }
+              ]
+            }
+          }
+        ]
+      ]
+  summary:
+    required: false
+    default: '### Released ${version} :pushpin:'
+  tag-format:
+    required: false
+    default: '${version}'
+  version:
+    required: false
+  version-bump:
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: release
+      id: release
+      uses: agilecustoms/release@v1
+      with:
+        # company-specific defaults
+        aws-account: 123456789012
+        aws-region: us-east-1
+        aws-role: ${{ inputs.dev-release == 'true' && 'ci/publisher-dev' || 'ci/publisher' }}
+        aws-codeartifact-domain: mycompany
+        aws-s3-bucket: mycompany-dist
+        npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
+        # pass through inputs
+        aws-codeartifact-maven: ${{ inputs.aws-codeartifact-maven }}
+        aws-ecr: ${{ inputs.aws-ecr }}
+        dev-branch-prefix: ${{ inputs.dev-branch-prefix }}
+        dev-release: ${{ inputs.dev-release }}
+        floating-tags: ${{ inputs.floating-tags }}
+        node-version: ${{ inputs.node-version }}
+        pre-publish-script: ${{ inputs.pre-publish-script }}
+        release-channel: ${{ inputs.release-channel }}
+        release-gh: ${{ inputs.release-gh }}
+        release-plugins: ${{ inputs.release-plugins }}
+        summary: ${{ inputs.summary }}
+        tag-format: ${{ inputs.tag-format }}
+        version: ${{ inputs.version }}
+        version-bump: ${{ inputs.version-bump }}
+
+outputs:
+  version:
+    value: ${{ steps.release.outputs.version }}

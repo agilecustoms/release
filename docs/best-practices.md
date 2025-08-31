@@ -139,4 +139,19 @@ For more details see [semantic commits](./features/semantic-commits.md)
 
 ## Company-specific gha-release wrapper
 
-TBD
+In many [examples](./examples) you may some inputs repeat, such as `aws-account`, `aws-region`, `aws-role`.
+You can reduce code reputation by creating your own wrapper around `agilecustoms/release`.
+For this just create a new GH repo with single file `action.yml`, see example [gha-release](./examples/gha-release).
+Here you provide company-specific defaults, see comment `# company-specific defaults`.
+For parameters that may vary - you add them in `inputs` section and pass them through, see comment `# pass through inputs`.
+For pass-through inputs you can use either same defaults as in `agilecustoms/release` (like `floating-tags` default is true)
+and for others you may want to set your own defaults (like `summary`).
+
+Especially useful to provide default value for input `release-plugins`.
+This is the recommended way to have shared release configuration among multiple repos.
+Alternative is to have `.releaserc.json` file in each repo, but then you need to maintain it in multiple places.
+See [configuration](./configuration.md) for more details on configuration options.
+
+Tech note. Once you create your custom GH action wrapper, make sure other repos can access it.
+For this go to your repo Settings > Actions > General > "Workflow permissions" > "Access" >
+set "Accessible from repositories in the '_mycompany_' organization"
