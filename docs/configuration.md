@@ -23,9 +23,9 @@ to create your company-specific GH action wrapper and put common configuration a
 
 Bottom line, these are only supported configuration options for semantic-release:
 
-| config file section                                                                                                              | GH action input    | purpose                                                                                        |
-|----------------------------------------------------------------------------------------------------------------------------------|--------------------|------------------------------------------------------------------------------------------------|
-| `branches` ([details](https://semantic-release.gitbook.io/semantic-release/usage/configuration?utm_source=chatgpt.com#branches)) | `release-branches` | mainly for [maintenance releases](features/maintenance-release.md) and [prereleases](features/prerelease.md) |
-| `plugins`                                                                                                                        | `release-plugins`  | mainly for [semantic versioning](features/semantic-commits.md)                                        |
-| `tagFormat` ([details](https://semantic-release.gitbook.io/semantic-release/usage/configuration#tagformat))                      | `tag-format`       | tag format = version format (`v1.2.3`, `1.2.3`, `release-1.2.3`)                               |
-| `branches > .. > channel`                                                                                                        | `release-channel`  | mainly for [floating tags](features/floating-tags.md)                                                 |
+| config file section                                                                                         | GH action input    | purpose                                                                                                      |
+|-------------------------------------------------------------------------------------------------------------|--------------------|--------------------------------------------------------------------------------------------------------------|
+| `branches` ([details](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches))   | `release-branches` | mainly for [maintenance releases](features/maintenance-release.md) and [prereleases](features/prerelease.md) |
+| `plugins`                                                                                                   | `release-plugins`  | mainly for [semantic versioning](features/semantic-commits.md)                                               |
+| `tagFormat` ([details](https://semantic-release.gitbook.io/semantic-release/usage/configuration#tagformat)) | `tag-format`       | tag format = version format (`v1.2.3`, `1.2.3`, `release-1.2.3`)                                             |
+| `branches > .. > channel`                                                                                   | `release-channel`  | mainly for [floating tags](features/floating-tags.md)                                                        |
