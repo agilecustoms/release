@@ -161,8 +161,8 @@ runs:
         fi
 
         if [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
-          if [ -z "${{ inputs.aws-codeartifact-domain }}" ] || [ -z "${{ inputs.aws-codeartifact-repository }}" ]; then
-            echo "Error: aws-codeartifact-domain and aws-codeartifact-repository must be provided when aws-codeartifact-maven is true" >&2
+          if [ -z "${{ inputs.aws-codeartifact-domain }}" ]; then
+            echo "Error: aws-codeartifact-domain must be provided when aws-codeartifact-maven is true" >&2
             exit 1
           fi
         fi
@@ -248,7 +248,7 @@ runs:
         aws-region: ${{ inputs.aws-region }}
         aws-role: ${{ inputs.aws-role }}
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
-        aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
+        aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository || 'maven' }}
         aws-login: false # we already logged in AWS in a previous step
         java-version: ${{ inputs.java-version }}
 
