@@ -16,8 +16,8 @@ Additionally, you can specify `aws-s3-dir`, then files will be uploaded to `{aws
 
 In this section we'll cover some examples of releasing software artifacts in S3:
 - [Python lambda function](#python-lambda-function)
-- [Go lambda function](#go-lambda-function)
 - [Static website](#static-website)
+- [Go lambda function](#go-lambda-function)
 - [Java CLI application](#java-cli-application)
 - [dev-release](#dev-release)
 
@@ -91,10 +91,6 @@ module "env_api" {
 ```
 
 Note file `infrastructure/vars.tf` has variable `aVersion` which is used in `infrastructure/lambda.tf` as part of `s3_key`
-
-## Go lambda function
-
-TBD
 
 ## Static website
 
@@ -173,13 +169,21 @@ module "tt_web" {
 Note file `infrastructure/main.tf` has variable `aVersion` which is datasource `aws_s3_objects` to access (download) files
 from dist S3 bucket and then upload them in static website using resource `aws_s3_object_copy`
 
+## Go lambda function
+
+TBD
+
 ## Java CLI application
 
 TBD
 
 ## dev-release
 
-TBD
+S3 supports [dev-release](../features/dev-release.md). Branch name `feature/login` becomes a version `feature-login`,
+and files uploaded at `{aws-s3-bucket}/{current-repo-name}/feature-login/`
 
-Publish files in `{aws-s3-bucket}/{current-repo-name}/{current-branch-name}/` directory.
-Each S3 file will be tagged with `Release=false`, so you can set up lifecycle rule to delete such files after 30 days!
+`agilecustoms/release` action adds tag `Release` to each S3 object. In normal mode `Release=true`, in dev-release mode `Release=false`.
+It is important for security and cleanup:
+- you can configure S3 lifecycle rule to auto-remove objects with tag `Release=false` after 30 days
+- IAM role (e.g. `ci/publisher-dev`) used in dev-release workflow can distinguish between normal release and dev-release:
+  it allows to override `Release=false` objects and deny to override `Release=true`

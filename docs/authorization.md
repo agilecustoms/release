@@ -115,29 +115,10 @@ so if you need to read repository content, make sure to add `contents: read` exp
 
 ## dev-release security
 
-TBD
-
-Dev-release does not require PAT because it does not need to make a direct push in the protected branch
-
-```yaml
-jobs:
-  Release:
-    runs-on: ubuntu-latest
-    environment: release
-    permissions: # required only to publish artifacts in AWS
-      contents: read
-      id-token: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      # ...
-
-      - name: Release
-        uses: agilecustoms/gha-release@main
-        with:
-          dev-release: true
-```
+`agilecustoms/release` has major feature [dev-release](./features/dev-release.md).
+It is basically a release self-service for developers.
+Use of this feature assumes all security measures described above are already in place!
+Additional dev-release specific security considerations are placed in the [dev-release security](./features/dev-release.md#security) section
 
 ## Advanced
 

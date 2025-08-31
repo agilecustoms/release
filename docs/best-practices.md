@@ -152,6 +152,9 @@ This is the recommended way to have shared release configuration among multiple 
 Alternative is to have `.releaserc.json` file in each repo, but then you need to maintain it in multiple places.
 See [configuration](./configuration.md) for more details on configuration options.
 
+Security note. In "dev-release" mode the `aws-role` is set to `ci/publisher-dev` which has limited permissions,
+see [dev-release security](./authorization.md#dev-release-security) for details
+
 Tech note. Once you create your custom GH action wrapper, make sure other repos can access it.
 For this go to your repo Settings > Actions > General > "Workflow permissions" > "Access" >
 set "Accessible from repositories in the '_mycompany_' organization"

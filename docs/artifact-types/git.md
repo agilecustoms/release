@@ -6,6 +6,11 @@ This is the simplest scenario for `agilecustoms/release` as there is no need to 
 _Note: all examples use shared patterns: two workflows: Build and Release; parameter `npm-extra-deps` —
 covered in [Best practices](../best-practices.md); "release" GitHub environment — covered in [Authorization and security](../authorization.md)_
 
+- [Terraform module](#terraform-module)
+- [Composite GitHub Action](#composite-github-action)
+- [Node.js GitHub Action](#nodejs-github-action)
+- [dev-release](#dev-release)
+
 ## Terraform module
 
 Example: [terraform-aws-ci-publisher](https://github.com/agilecustoms/terraform-aws-ci-builder)
@@ -86,3 +91,14 @@ When developer merges a PR, the Release workflow is triggered:
 3. Release workflow downloads the artifact and calls `agilecustoms/release` action, then action:
    1. commit `dist/index.js`
    2. push commit and tags to the remote repository
+
+## dev-release
+
+Git formally supports [dev-release](../features/dev-release.md). It just means you can create a feature branch
+and run `agilecustoms/release` action in `dev-release` mode on this branch.
+Git acts like glue for all other artifacts: branch `feature/login` becomes `feature-login` version.
+IaC files such as Terraform are accessible via `?ref=feature/login`
+
+Input `dev-branch-prefix` (default is `feature/`) enforces that only branches with this prefix
+can run `agilecustoms/release` in dev-release mode.
+This helps with [security](../features/dev-release.md#security) and auto cleanup
