@@ -41,7 +41,7 @@ inputs:
     required: false
     default: '# Changelog'
   dev-branch-prefix:
-    description: 'Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement'
+    description: 'Allows to enforce branch prefix for dev-releases, this helps to write auto-disposal rules. Empty string disables enforcement'
     required: false
     default: 'feature/'
   dev-release:
@@ -68,7 +68,7 @@ inputs:
     required: false
     default: 'public'
   pre-publish-script:
-    description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
+    description: 'sh script that allows you to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
   release-branches:
     description: 'semantic-release "branches" configuration'
@@ -88,7 +88,7 @@ inputs:
     required: false
     default: '### Released ${version}'
   tag-format:
-    description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
+    description: 'By default, the tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
   version:
     description: 'Explicit version to use instead of auto-generation'

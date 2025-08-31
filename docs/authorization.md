@@ -1,6 +1,6 @@
 # Authorization and security
 
-In this document we'll cover next topics:
+In this document we'll cover the following topics:
 - [GitHub Authorization and security](#github-authorization-and-security)
 - [AWS Authorization](#aws-authorization)
 - [dev-release security](#dev-release-security)
@@ -13,9 +13,9 @@ These are characteristics for a typical GitHub project ([TLDR](#final-gh-repo-se
 - release workflow creates new tag (for now forget about automated changes such CHANGELOG.md)
 - developer can push changes in non-protected branch such as `feature/login`
 
-Now look into last two points: there is a hidden **security implication**. For a developer to do their job,
+Now look at the last two points: there is a hidden **security implication**. For a developer to do their job,
 you need to grant them a `contents: write` permission, but this permission also allows to push arbitrary git tags!
-Solution? Use GitHub feature "tag ruleset" to prohibit all tags creation, update and deletion.
+Solution? Use the GitHub feature "tag ruleset" to prohibit all tags creation, update and deletion.
 Now we need to grant a permission to bypass this rule to a release workflow so it can create tags!
 
 This is where PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) 
@@ -24,13 +24,13 @@ then a person possessing this role needs to create a PAT to use it in the releas
 - either a fine-grained PAT with `Contents "Read and write"`
 - or classic PAT with `repo` scope
 
-Next big question: **how to ensure this PAT is not compromised**?
-Like developer make a mistake/malicious workflow in a feature branch to print PAT in file and then upload it as artifact.
+Next big question: **how do you ensure this PAT is not compromised**?
+Like when a developer makes a mistake/malicious workflow in a feature branch to print PAT in file and then upload it as artifact.
 There are two solutions:
 
 For private/internal repositories you can use **push ruleset** to prohibit any changes in `.github/**/*`.
 This restriction is even stronger than `CODEOWNERS`: GitHub will reject any push that attempts to change workflow files!
-So you can put the PAT in organization level secret and access it from all repos. Problem 1: if any repo miss this rule,
+So you can put the PAT in an organization-level secret and access it from all repos. Problem 1: if any repo misses this rule,
 the token still can leak. Problem 2: it is not scalable — only admins can change `.github/**/*` files,
 other developers can't even create a PR for improvements!
 
@@ -52,7 +52,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # secret can have any name, use `GH_TOKEN` for consistency
 ```
 
-One problem left: what if two "bad" developers act together: one creates a PR to change release workflow to print PAT,
+One problem remains: what if two "bad" developers act together: one creates a PR to change release workflow to print PAT,
 and second approves it? To mitigate this risk you configure `CODEOWNERS` so that only trusted people can approve changes in `.github/**/*`
 
 ### Final GH repo setup

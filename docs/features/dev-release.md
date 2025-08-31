@@ -5,10 +5,10 @@ It sounds similar to prerelease, so let's clarify the difference:
 
 **prerelease** is an industry standard, though some tools use different terms
 like "prerelease" (GitHub), distribution tags (npm), suffix "-SNAPSHOT" (maven), suffixes "-beta", "rc" (Gradle, NuGet, PyPI, pip).
-Idea: release a version widely available for testing and potential to become the next major release
+Idea: release a version widely available for testing and with potential to become the next major release
 
 **dev-release** is a way to overcome the inability to spin up the entire env locally.
-It allows to temporarily release a version (= branch name), so that now you can deploy it in sandbox or dev environment for testing or POC
+It allows you to temporarily release a version (= branch name), so that now you can deploy it in sandbox or dev environment for testing or POC
 
 The table below shows a comparison of different release types:
 
@@ -31,7 +31,7 @@ you push your changes to the feature branch, the branch name becomes this dev-re
 - no git tags created, files in branch addressable by branch name
 - `/` gets replaced with `-`, so branch `feature/login` gives version `feature-login`
 - parameter `dev-branch-prefix` (default value is `feature/`) enforces branch naming for dev releases.
-  This is needed for security and automatic resource disposal. Set to empty string to disable such enforcement (not recommended)
+  This is needed for security and automatic resource disposal. Set to an empty string to disable such enforcement (not recommended)
 - for each [artifact type](./../artifact-types/index.md), dev-release might have different semantics, see `dev-release` section for each artifact type
 
 Example of 'dev-release' usage with AWS S3:
@@ -50,7 +50,7 @@ steps:
 
 ## Motivation
 
-_How did we live w/o a dev-release before?
+_How did we live without a dev-release before?
 We do use microservices in our team, and we just have a CI/CD pipeline that can build a feature branch and deploy it to a dev server.
 So we do not need dev-release, right?_
 

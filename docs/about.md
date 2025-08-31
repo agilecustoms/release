@@ -6,14 +6,14 @@ In 2023, I (Alexey Chekulaev) started to work on a project that consists of mult
 First, I did not find a good GH action to upload files in S3, so I did one myself.
 Then I felt a lack of GH action to publish Maven packages in AWS CodeArtifact, so I had to develop two more actions:
 one to publish and one to resolve existing packages.
-Spring 2025 I started my second project, the number of services grew and so grew a volume of similar code in release pipelines.
+In spring 2025 I started my second project, the number of services grew and so grew a volume of similar code in release pipelines.
 Then I combined all of them into a single action `agilecustoms/gha-release`.
 But then (summer 2025) I decided to make it public and extracted stuff not specific to AgileCustoms into a separate action `agilecustoms/release`
 
 ## Current state
 
 Currently (July 2025) this action is being used in two private AgileCustoms projects with over 20+ repositories,
-which allows me (author) to have good coverage on different release scenarios
+which allows me as the author to have good coverage of different release scenarios
 
 Did I think about a plugin system? Yes, I did. Having every type of artifact as a plugin would be great.
 The problem is that right now this GH action is a combination of other GH actions, my custom GH actions (composite and Node.js ones) and some shell scripts.
