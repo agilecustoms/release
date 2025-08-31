@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches-ignore:
+      - main
+  workflow_call:
+    inputs:
+      artifacts:
+        type: boolean
+        default: false
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Switch to Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Lint and Test ...
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifacts
+        if: inputs.artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist # take everything from dist/ folder
+          name: s3 #  and create an artifact named s3 (so later on the download action will create <repo-root>/dist/ folder)

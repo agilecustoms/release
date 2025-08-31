@@ -14,9 +14,9 @@ At this point Build workflow does not produce any artifacts, it just tells you i
 Once it is good, you typically create a PR and get approvals
 
 Upon PR merge, the Release workflow is triggered (it is configured to run on push in `main` branch).
-Then Release workflow calls Build workflow again, this time intent is to get artifacts!
+Then the Release workflow calls Build workflow again, this time intent is to get artifacts!
 
-These are typical setup for these two workflows:
+There is a typical setup for these two workflows:
 
 `build.yml`
 ```yaml
