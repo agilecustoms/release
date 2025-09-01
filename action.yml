@@ -1,10 +1,6 @@
 name: 'Consistent Release'
 author: 'Alexey Chekulaev'
-description: >
-  Automate consistent, secure releases of software artifacts to AWS (S3, ECR, CodeArtifact) and npm.
-  Supports semantic versioning, changelog generation, floating tags, prereleases, and dev-releases.
-  Publish binaries, Docker images, IaC, and raw files with idempotent, repeatable workflows — ideal
-  for microservices and multi-artifact projects.
+description: 'Automate secure, repeatable releases to AWS and npm with semantic versioning, dev-releases and multi‑artifact support'
 branding:
   icon: package
   color: green
