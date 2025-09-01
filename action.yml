@@ -30,7 +30,7 @@ inputs:
     description: 'Required if uploading to S3 (i.e. s3/ directory exists)'
     required: false
   aws-s3-dir:
-    description: 'Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
+    description: 'Allows you to specify S3 bucket directory to upload artifacts to. By default, just place in `bucket/{repo-name}/{version}/*`'
     required: false
   changelog-file:
     description: 'Changelog file path. Pass empty string to disable changelog generation'
@@ -68,7 +68,7 @@ inputs:
     required: false
     default: 'public'
   pre-publish-script:
-    description: 'sh script that allows you to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
+    description: 'Shell script that allows you to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
   release-branches:
     description: 'semantic-release "branches" configuration'
@@ -94,7 +94,7 @@ inputs:
     description: 'Explicit version to use instead of auto-generation'
     required: false
   version-bump:
-    description: 'Allows to bump a version w/o semantic commits'
+    description: 'Allows you to bump a version without semantic commits'
     required: false
 
 runs:
@@ -117,7 +117,7 @@ runs:
       if: inputs.release-gh == 'true' && inputs.dev-release != 'true' && !env.GH_TOKEN
       shell: bash
       run: |
-        echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
+        echo "Error: env variable GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npm visibility
       if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
