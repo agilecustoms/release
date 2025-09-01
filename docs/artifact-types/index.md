@@ -5,5 +5,5 @@
   - [Publish in AWS ECR](./aws-ecr.md)
   - [Publish in AWS CodeArtifact Maven repository](./aws-codeartifact-maven.md)
 - Non-AWS
-  - [Publish in npmjs repo](./npmjs.md)
+  - [Publish in npmjs](./npmjs.md)
   - [No artifacts, just git tags](./git.md)

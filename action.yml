@@ -1,6 +1,10 @@
 name: 'Consistent Release'
 author: 'Alexey Chekulaev'
-description: 'Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning'
+description: >
+  Automate consistent, secure releases of software artifacts to AWS (S3, ECR, CodeArtifact) and npm.
+  Supports semantic versioning, changelog generation, floating tags, prereleases, and dev-releases.
+  Publish binaries, Docker images, IaC, and raw files with idempotent, repeatable workflows — ideal
+  for microservices and multi-artifact projects.
 branding:
   icon: package
   color: green
@@ -12,13 +16,13 @@ inputs:
     description: 'AWS region'
     required: false
   aws-role:
-    description: 'IAM role to assume to publish, ex. `/ci/publisher`'
+    description: 'IAM role to assume to publish, e.g., `ci/publisher`'
     required: false
   aws-codeartifact-domain:
-    description: 'CodeArtifact domain name, ex. `mycompany`'
+    description: 'CodeArtifact domain name, e.g., `mycompany`'
     required: false
   aws-codeartifact-repository:
-    description: 'CodeArtifact repository name, ex. `maven`'
+    description: 'CodeArtifact repository name, e.g., `maven`'
     required: false
   aws-codeartifact-maven:
     description: 'If true, then publish maven artifacts to AWS CodeArtifact'
@@ -30,7 +34,7 @@ inputs:
     description: 'Required if uploading to S3 (i.e. s3/ directory exists)'
     required: false
   aws-s3-dir:
-    description: 'Allows to specify S3 bucket directory to upload artifacts to. By default just place in `bucket/{repo-name}/{version}/*`'
+    description: 'Allows you to specify S3 bucket directory to upload artifacts to. By default, just place in `bucket/{repo-name}/{version}/*`'
     required: false
   changelog-file:
     description: 'Changelog file path. Pass empty string to disable changelog generation'
@@ -41,15 +45,15 @@ inputs:
     required: false
     default: '# Changelog'
   dev-branch-prefix:
-    description: 'Allows to enforce branch prefix for dev-releases, this help to write auto-disposal rules. Empty string disables enforcement'
+    description: 'Allows you to enforce branch prefix for dev-releases; this helps to write auto-disposal rules. Empty string disables enforcement'
     required: false
     default: 'feature/'
   dev-release:
-    description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
+    description: 'Allows you to create a temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
     default: 'false'
   floating-tags:
-    description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
+    description: 'When the next version to be released is 1.2.4, then also release 1, 1.2, and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
   java-version:
@@ -57,7 +61,7 @@ inputs:
     required: false
     default: '21'
   node-version:
-    description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24'
+    description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24 (latest at time of writing)'
     required: false
     default: '22'
   npm-extra-deps:
@@ -68,7 +72,7 @@ inputs:
     required: false
     default: 'public'
   pre-publish-script:
-    description: 'sh script that allows to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
+    description: 'Shell script that allows you to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
   release-branches:
     description: 'semantic-release "branches" configuration'
@@ -84,17 +88,17 @@ inputs:
     description: 'semantic-release plugins configuration'
     required: false
   summary:
-    description: 'If true, then print summary to the GitHub Actions summary page'
+    description: 'Text to print in step summary. Can use `${version}` placeholder. Default is `### Released ${version}`. Set empty string to omit summary generation'
     required: false
     default: '### Released ${version}'
   tag-format:
-    description: 'By-default tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
+    description: 'By default, the tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
   version:
     description: 'Explicit version to use instead of auto-generation'
     required: false
   version-bump:
-    description: 'Allows to bump a version w/o semantic commits'
+    description: 'Allows you to bump a version without semantic commits'
     required: false
 
 runs:
@@ -117,7 +121,7 @@ runs:
       if: inputs.release-gh == 'true' && inputs.dev-release != 'true' && !env.GH_TOKEN
       shell: bash
       run: |
-        echo "Error: env: GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
+        echo "Error: env variable GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npm visibility
       if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
@@ -161,8 +165,8 @@ runs:
         fi
 
         if [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
-          if [ -z "${{ inputs.aws-codeartifact-domain }}" ] || [ -z "${{ inputs.aws-codeartifact-repository }}" ]; then
-            echo "Error: aws-codeartifact-domain and aws-codeartifact-repository must be provided when aws-codeartifact-maven is true" >&2
+          if [ -z "${{ inputs.aws-codeartifact-domain }}" ]; then
+            echo "Error: aws-codeartifact-domain must be provided when aws-codeartifact-maven is true" >&2
             exit 1
           fi
         fi
@@ -174,9 +178,9 @@ runs:
 
 ## Phase 2 - Release generation
 
-    # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }}
+    # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }} see misc/.git-config for example
     # alternatively user may want to use an explicit PAT, then need to configure git to use it.
-    # Besides 'git push', release_gen _probes_ git push, that's why it is in front of release_gen
+    # Besides 'git push', the release_gen _probes_ git push, that's why it is in front of release_gen
     - name: Git authorization
       if: env.GH_TOKEN
       shell: bash
@@ -248,7 +252,7 @@ runs:
         aws-region: ${{ inputs.aws-region }}
         aws-role: ${{ inputs.aws-role }}
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
-        aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
+        aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository || 'maven' }}
         aws-login: false # we already logged in AWS in a previous step
         java-version: ${{ inputs.java-version }}
 

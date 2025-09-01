@@ -6,9 +6,9 @@ _Note: all examples use shared patterns: two workflows: Build and Release — co
 - [AWS Lambda running Spring Boot application in Docker](#aws-lambda-running-spring-boot-application-in-docker)
   - [Workflow reuse](#workflow-reuse)
   - [Application code and IaC](#application-code-and-iac)
-  - [dev-release](#dev-release)
   - [explicit version](#explicit-version)
   - [setup-maven-codeartifact](#setup-maven-codeartifact)
+- [dev-release](#dev-release)
 
 ## AWS Lambda running Spring Boot application in Docker
 
@@ -101,22 +101,6 @@ module "env_cleanup" {
 
 Note file `infrastructure/vars.tf` has variable `aVersion` which is used in `infrastructure/lambda.tf` to set ECR image URL
 
-### dev-release
-
-ECR supports [dev-releases](../features/dev-release.md): Docker image gets published with tag equal to branch name
-(branch name `feature/login` becomes ECR tag `feature-login`).
-`agilecustoms/release` action enforces branch name prefix. Itt can be configured with `dev-branch-prefix` input (default is `feature/`).
-ECR allows you to configure lifecycle rules by tag prefix, this allows to remove dev-releases automatically in few days!
-
-There is one important gotcha: you can't re-run dev-release for immutable ECR repo:
-- immutable ECR repo prevents pushing image for existing tag
-- tag can be deleted, but IAM doesn't allow to configure permissions selectively for tag prefix,
-so if you allow deleting tags — it is a risk that developer can remove some non-dev tag
-- if you make ECR repo mutable — it is a risk that developer can override non-dev tag
-
-So if you need to re-run dev-release shortly (before old tag expired) the workaround is just to create a new branch
-(simply increment a number in branch name)
-
 ### explicit version
 
 This example showcases how to use [explicit version](../features/version-generation.md#explicit-version).
@@ -146,3 +130,20 @@ see [build.yml](../examples/env-cleanup/.github/workflows/build.yml) workflow fi
 ```
 
 It also uses OIDC to assume IAM role and access CodeArtifact in read-only mode with role `ci/builder`
+
+## dev-release
+
+ECR supports [dev-release](../features/dev-release.md): Docker image gets published with tag equal to branch name
+(branch name `feature/login` becomes ECR tag `feature-login`).
+`agilecustoms/release` action enforces branch name prefix (configured via `dev-branch-prefix`, default is `feature/`).
+On the other hand, the ECR supports lifecycle rules by tag prefix.
+So if you apply both — you can be sure that all self-service artifacts are removed automatically in a few days!
+
+There is one important gotcha: you can't re-run dev-release for immutable ECR repo:
+- immutable ECR repo prevents pushing image for an existing tag
+- tag can be deleted, but IAM doesn't allow to configure permissions selectively for tag prefix,
+  so if you allow deleting tags — it is a risk that a developer can remove some non-dev tag
+- if you make ECR repo mutable — it is a risk that a developer can override a non-dev tag
+
+So if you need to re-run dev-release shortly (before old tag expired), the workaround is just to create a new branch:
+`feature/login` -> `feature/login-2` and run dev-release from it

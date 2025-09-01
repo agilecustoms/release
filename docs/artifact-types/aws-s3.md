@@ -3,7 +3,7 @@
 _Note: all examples use shared patterns: two workflows: Build and Release — covered in [Best practices](../best-practices.md);
 "release" GitHub environment and AWS IAM authorization — covered in [Authorization and security](../authorization.md)_
 
-AWS S3 is very powerful, and specifically it works very well for software distribution.
+AWS S3 is very powerful, and specifically, it works very well for software distribution.
 S3 allows flexible read and write permissions by prefix and by tags. And it has rules for expiration so you can auto remove temporary artifacts 
 
 For publishing in S3 the `agilecustoms/release` uses a simple convention:
@@ -16,9 +16,8 @@ Additionally, you can specify `aws-s3-dir`, then files will be uploaded to `{aws
 
 In this section we'll cover some examples of releasing software artifacts in S3:
 - [Python lambda function](#python-lambda-function)
-  - [Application code and IaC](#application-code-and-iac)
-- [Go lambda function](#go-lambda-function)
 - [Static website](#static-website)
+- [Go lambda function](#go-lambda-function)
 - [Java CLI application](#java-cli-application)
 - [dev-release](#dev-release)
 
@@ -55,7 +54,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
 
-      # this will download `app.zip` in `s3` directory (see Build workflow)
+      # this will download `app.zip` and place it in `s3` directory (see Build workflow)
       # next step recognize that `s3` directory exists and upload all files from it to S3
 
       - name: Release
@@ -78,7 +77,7 @@ When developer merges a PR, the Release workflow is triggered:
    4. upload `s3/app.zip` to `agilecustoms-dist/env-api/{version}/app.zip`
    5. push git commit and tags to the remote repository
 
-### Application code and IaC
+### IaC
 
 This is an example of a microservice that consists of an application (Python) code and IaC (Terraform in `infrastructure` directory).
 Upon release the `agilecustoms/release` generates a new version, and it is used as git tag and S3 prefix.
@@ -93,11 +92,84 @@ module "env_api" {
 
 Note file `infrastructure/vars.tf` has variable `aVersion` which is used in `infrastructure/lambda.tf` as part of `s3_key`
 
-## Go lambda function
-
-TBD
-
 ## Static website
+
+Example: [tt-web](../examples/tt-web) — it is from AgileCustoms repository with all code removed, only workflows left
+
+```
+<repo root>
+├── .github/
+├── dist/             <-- created in Build workflow
+│   ├── assets/ 
+│   └── index.html
+├── infrastructure/   <-- terraform code
+├── src/              <-- TypeScript code
+└── package.json
+```
+
+In this example a standard npm is used to manage dependencies and `vite` to build static files.
+Note: there is no 'package' phase like in Python. That's because AWS offers static website hosting directly from S3 bucket,
+and it also offers "copy files" API available in Terraform as `aws_s3_object_copy` resource.
+So the distribution format (how release files are stored) should match how S3 serves static files.
+
+Also, this example showcases use of corporate action `mycompany/gha-release` which is a thin wrapper around `agilecustoms/release`.
+In this action you provide all defaults, so your release workflow gets even simpler, see [details](../best-practices.md#company-specific-gha-release-wrapper)
+
+```yaml
+jobs:
+  Build:
+    uses: ./.github/workflows/build.yml
+    # ...
+
+  Release:
+    needs: Build
+    # ...
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      # this will download static assets and place them in `s3` directory (see Build workflow)
+      # next step recognize that `s3` directory exists and upload all files from it to S3
+
+      - name: Release
+        uses: mycompany/gha-release@main
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+```
+
+When developer merges a PR, the Release workflow is triggered:
+1. Release workflow calls Build workflow
+2. Build workflow uses `vite` to compile TypeScript in JavaScript and place final bundled code in `dist` directory, then Build workflow uploads `dist` directory as an artifact named `s3`
+3. Release workflow downloads the artifact, so you get `s3/{dist content}`
+4. Release workflow calls `mycompany/release-gha` action
+5. `mycompany/release-gha` calls `agilecustoms/release` passing lots of defaults: `aws-account`, `aws-region`, `aws-s3-bucket` and others
+6. `aguilecustoms/release` action then:
+    1. generate next version based on commit messages
+    2. authorize in AWS with role `ci/publisher`, see [Authorization and security](../authorization.md)
+    3. update version in `package.json`
+    4. upload `s3/*` to `mycompany-dist/tt-web/{version}/*`
+    5. push git commit and tags to the remote repository
+
+### IaC
+
+This is an example of a microservice that consists of an application (TypeScript) code and IaC (Terraform in `infrastructure` directory).
+Upon release the `agilecustoms/release` generates a new version, and it is used as git tag and S3 prefix.
+So your code and infrastructure are in sync! Now you can deploy infra and code like this:
+
+```hcl
+module "tt_web" {
+  source = "git::https://github.com/agilecustoms/tt-web.git//infrastructure?ref=1.2.3"
+  aVersion = "1.2.3"
+}
+```
+
+Note file `infrastructure/main.tf` has variable `aVersion` which is datasource `aws_s3_objects` to access (download) files
+from dist S3 bucket and then upload them in static website using resource `aws_s3_object_copy`
+
+## Go lambda function
 
 TBD
 
@@ -107,7 +179,11 @@ TBD
 
 ## dev-release
 
-TBD
+S3 supports [dev-release](../features/dev-release.md). Branch name `feature/login` becomes a version `feature-login`,
+and files uploaded at `{aws-s3-bucket}/{current-repo-name}/feature-login/`
 
-Publish files in `{aws-s3-bucket}/{current-repo-name}/{current-branch-name}/` directory.
-Each S3 file will be tagged with `Release=false`, so you can set up lifecycle rule to delete such files after 30 days!
+`agilecustoms/release` action adds tag `Release` to each S3 object. In normal mode `Release=true`, in dev-release mode `Release=false`.
+It is important for security and cleanup:
+- you can configure S3 lifecycle rule to auto-remove objects with tag `Release=false` after 30 days
+- IAM role (e.g. `ci/publisher-dev`) used in dev-release workflow can distinguish between normal release and dev-release:
+  it allows to override `Release=false` objects and deny to override `Release=true`

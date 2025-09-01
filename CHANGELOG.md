@@ -16,10 +16,6 @@
 
 ## [1.0.0](https://github.com/agilecustoms/release/compare/v0.17.1...v1.0.0) (2025-08-24)
 
-### ⚠ BREAKING CHANGES
-
-* first beta
-
 ### Features
 
 * add java-version input - pass it into setup-maven-codeartifact action ([e707ff4](https://github.com/agilecustoms/release/commit/e707ff4254776e8a6694e1021713b3122a7d2a5c))

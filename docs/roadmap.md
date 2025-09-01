@@ -1,14 +1,18 @@
 # Roadmap
 
-Below is the list of potential future features:
+Fall 2025:
+- Terraform module to create security-aware GitHub repo
+- GitHub action to access terraform modules from corporate private GH repos
+- setup-maven-codeartifact support Maven 4
+- publish in Maven central
+- publish Python packages (pip and Twine) in CodeArtifact
 
+Potential future features (not prioritized):
 - publish in AWS CodeArtifact. Every artifact type will require a corresponding GH action like [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
   - npm (and Yarn) repository
-  - pip (and Twine) repository
   - Gradle repository
 - publish in non-AWS repositories
   - private npmjs repository
-  - Maven central
 - GitHub release
   - ability to specify a list of files to include release
   - integration between release and issues/PRs, ex: close issues fixed in a release, see [semantic-release/github](https://github.com/semantic-release/github)

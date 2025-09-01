@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Build:
+    uses: ./.github/workflows/build.yml
+    with:
+      artifacts: true
+    secrets: inherit
+    permissions:
+      contents: read
+      id-token: write
+
+  Release:
+    needs: Build
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Release
+        uses: agilecustoms/gha-release@main
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}

@@ -1,7 +1,7 @@
 # Best practices
 
 - [Build and Release](#build-and-release)
-- [conventional commits](#conventional-commits)
+- [Conventional commits](#conventional-commits)
 - [Company-specific gha-release wrapper](#company-specific-gha-release-wrapper)
 
 ## Build and Release
@@ -14,9 +14,9 @@ At this point Build workflow does not produce any artifacts, it just tells you i
 Once it is good, you typically create a PR and get approvals
 
 Upon PR merge, the Release workflow is triggered (it is configured to run on push in `main` branch).
-Then Release workflow calls Build workflow again, this time intent is to get artifacts!
+Then the Release workflow calls Build workflow again, this time intent is to get artifacts!
 
-These are typical setup for these two workflows:
+There is a typical setup for these two workflows:
 
 `build.yml`
 ```yaml
@@ -52,7 +52,7 @@ jobs:
       # Build/Package the artifact(s)
 
       - name: Upload artifacts
-        if: inputs.artifacts # no sense to upload artifacts on every push in a feature branch
+        if: inputs.artifacts # no point in uploading artifacts on every push in a feature branch
         uses: actions/upload-artifact@v4
         with: # configure what to upload
 ```
@@ -79,7 +79,7 @@ jobs:
   Release:
     needs: Build
     runs-on: ubuntu-latest
-    environment: release # hold `GH_TOKEN` secret, available only for `main` branch
+    environment: release # holds the `GH_TOKEN` secret, available only for `main` branch
     permissions:
       contents: read # required for checkout
       id-token: write # not always required, only if at some step you assume AWS role via OIDC
@@ -97,7 +97,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # required to push commit and tags
 ```
 
-## conventional commits
+## Conventional commits
 
 `agilecustoms/release` uses [semantic-release](https://github.com/semantic-release/semantic-release)
 for next version generation. semantic-release has several presets for different commit message conventions.
@@ -135,8 +135,26 @@ Non-default presets require additional npm dependency. This is why in many examp
     npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
 ``` 
 
-For more details see [semantic commits](./features/semantic-commits.md) 
+For more details see [Semantic commits](./features/semantic-commits.md) 
 
 ## Company-specific gha-release wrapper
 
-TBD
+In many [examples](./examples) you may some inputs repeat, such as `aws-account`, `aws-region`, `aws-role`.
+You can reduce code repetition by creating your own wrapper around `agilecustoms/release`.
+For this just create a new GH repo with single file `action.yml`, see example [gha-release](./examples/gha-release).
+Here you provide company-specific defaults, see comment `# company-specific defaults`.
+For parameters that may vary - you add them in `inputs` section and pass them through, see comment `# pass through inputs`.
+For pass-through inputs you can use either same defaults as in `agilecustoms/release` (like `floating-tags` default is true)
+and for others you may want to set your own defaults (like `summary`).
+
+Especially useful to provide default value for input `release-plugins`.
+This is the recommended way to have shared release configuration among multiple repos.
+Alternative is to have `.releaserc.json` file in each repo, but then you need to maintain it in multiple places.
+See [configuration](./configuration.md) for more details on configuration options.
+
+Security note. In "dev-release" mode the `aws-role` is set to `ci/publisher-dev` which has limited permissions,
+see [dev-release security](./authorization.md#dev-release-security) for details
+
+Tech note. Once you create your custom GH action wrapper, make sure other repos can access it.
+For this go to your repo Settings > Actions > General > "Workflow permissions" > "Access" >
+set "Accessible from repositories in the '_mycompany_' organization"
