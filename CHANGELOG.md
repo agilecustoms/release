@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.1.0](https://github.com/agilecustoms/release/compare/v1.0.2...v1.1.0) (2025-09-01)
+
+### Features
+
+* default value for 'aws-codeartifact-repository' input ([2bdf70d](https://github.com/agilecustoms/release/commit/2bdf70d96ad85b3dee9d0ba66800abd7dd5eb140))
+
+### Documentation
+
+* add example of company-specific GH action wrapper ([41d35b4](https://github.com/agilecustoms/release/commit/41d35b4793769ae9cb3e9c91762b4ab2e6c85834))
+* add example of releasing static web site ([df7b247](https://github.com/agilecustoms/release/commit/df7b2471f02ed989632c4bd3c721352ddba26b00))
+* document dev-release security ([c9167e3](https://github.com/agilecustoms/release/commit/c9167e34a33237b837ca0db874e3721554be8dee))
+* review with AI-1 [skip ci] ([20210de](https://github.com/agilecustoms/release/commit/20210de9287281be9a7cba8f7b0969cd46e85485))
+* review with AI-2 [skip ci] ([d379a14](https://github.com/agilecustoms/release/commit/d379a14300f7a128e62018051129c76fd9da4ec8))
+* review with AI-3 [skip ci] ([cb3896a](https://github.com/agilecustoms/release/commit/cb3896ae1981d9dd90dc063ad6694d126cbfb343))
+* review with AI-4 [skip ci] ([fb7de40](https://github.com/agilecustoms/release/commit/fb7de407cf5079f4564250999f63cf3df30632d0))
+* review with AI-5 [skip ci] ([cad4f67](https://github.com/agilecustoms/release/commit/cad4f672328ba1983c828f3da2054eaf1610021d))
+* review with AI-6 [skip ci] ([32f2f50](https://github.com/agilecustoms/release/commit/32f2f5079044cdbbbb9748345fb738ab42594859))
+* review with AI-7 [skip ci] ([9d404f0](https://github.com/agilecustoms/release/commit/9d404f03ce46f5c94ee26824ace829f3e3f3e053))
+
+### Miscellaneous
+
+* update description for Marketplace ([574f27f](https://github.com/agilecustoms/release/commit/574f27f39b028dab76c8cfd9df95d448bd8a0ba4))
+
+
 ## [1.0.2](https://github.com/agilecustoms/release/compare/v1.0.1...v1.0.2) (2025-08-24)
 
 ### Documentation
