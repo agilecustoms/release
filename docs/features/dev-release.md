@@ -8,20 +8,21 @@ like "prerelease" (GitHub), distribution tags (npm), suffix "-SNAPSHOT" (maven),
 Idea: release a version widely available for testing and with potential to become the next major release
 
 **dev-release** is a way to overcome the inability to spin up the entire env locally.
-It allows you to temporarily release a version (= branch name), so that now you can deploy it in sandbox or dev environment for testing or POC
+It allows you to temporarily release a version (= branch name), so that you can deploy it in sandbox or dev environment for testing or POC
 
 The table below shows a comparison of different release types:
 
-| Name                        | normal release and maintenance release | prerelease                            | dev-release           |
-|-----------------------------|----------------------------------------|---------------------------------------|-----------------------|
-| intention                   | use in production                      | beta testing                          | dev testing           |
-| best use for                | software packages and deployable apps  | software packages and deployable apps | deployable apps       |
-| adoption                    | widely                                 | widely                                | popular in enterprise |
-| version generation          | "semantic commits" or "version-bump"   | "semantic commits" or "version bump"  | version = branch name |
-| auto deletion               | ❌️                                     | ❌️                                    | ✅                     |
-| number of developers        | many                                   | many                                  | typically one         |
-| release notes and changelog | ✅                                      | ✅                                     | ❌️                    |
-| floating tags               | major, minor, latest                   | alpha/beta/rc                         | ❌️                    |
+| Name                        | normal release and maintenance release        | prerelease                                    | dev-release              |
+|-----------------------------|-----------------------------------------------|-----------------------------------------------|--------------------------|
+| intention                   | use in production                             | beta testing                                  | dev testing              |
+| best use for                | software packages and deployable apps         | software packages and deployable apps         | deployable apps          |
+| adoption                    | widely                                        | widely                                        | popular in enterprise    |
+| version generation          | "semantic commits" or "version-bump"          | "semantic commits" or "version bump"          | version = branch name    |
+| auto deletion               | ❌️                                            | ❌️                                            | ✅                        |
+| number of developers        | many                                          | many                                          | typically one            |
+| release notes and changelog | ✅                                             | ✅                                             | ❌️                       |
+| floating tags               | major, minor, latest                          | alpha / beta / rc                             | ❌️                       |
+| trigger                     | push in protected branch (including PR merge) | push in protected branch (including PR merge) | Manual workflow dispatch |
 
 
 Dev release allows publishing artifacts temporarily for testing purposes:
@@ -32,30 +33,46 @@ you push your changes to the feature branch, the branch name becomes this dev-re
 - `/` gets replaced with `-`, so branch `feature/login` gives version `feature-login`
 - parameter `dev-branch-prefix` (default value is `feature/`) enforces branch naming for dev releases.
   This is needed for security and automatic resource disposal. Set to an empty string to disable such enforcement (not recommended)
-- for each [artifact type](./../artifact-types/index.md), dev-release might have different semantics, see `dev-release` section for each artifact type
+- for each [artifact type](./../artifact-types/index.md), dev-release might have different semantics,
+  see "dev-release" section for each artifact type
 
-Example of 'dev-release' usage with AWS S3:
+dev-release workflow blueprint:
+
 ```yaml
-steps:
-  - name: Release
-    uses: agilecustoms/release@v1
-    with:
-      aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
-      aws-region: us-east-1
-      aws-role: 'ci/publisher-dev' # see "Security" section below
-      aws-s3-bucket: 'mycompany-dist'
-      dev-release: true
-      dev-release-prefix: 'feature/' # default
+name: Dev Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # ...
+  Release:
+    # ...
+    steps:
+      # ...
+      - name: Release
+        uses: agilecustoms/release@v1
+        with:
+          aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-region: us-east-1
+          aws-role: 'ci/publisher-dev' # see "Security" section below
+          aws-s3-bucket: 'mycompany-dist'
+          dev-release: true
+          dev-release-prefix: 'feature/' # default
 ```
+
+Complete examples:
+- [AWS S3](../examples/env-api/.github/workflows/release-dev.yml), see [details](../artifact-types/aws-s3.md#dev-release)
+- [AWS ECR](../examples/env-cleanup/.github/workflows/release-dev.yml), see [details](../artifact-types/aws-ecr.md#dev-release)
 
 ## Motivation
 
 _How did we live without a dev-release before?
-We do use microservices in our team, and we just have a CI/CD pipeline that can build a feature branch and deploy it to a dev server.
+We do use microservices in our team, and we just have a CI/CD pipeline that can build a feature branch and deploy it to a dev environment.
 So we do not need dev-release, right?_
 
 Build-and-deploy is kind of a "shortcut" and it may work in simple scenarios.
-The reality is that a system is a _combination_ of multiple services, and true deployment takes a combination of services!
+The reality is that a system consists of multiple services, and true deployment takes a combination of services!
 Imagine a system that consists of two services A and B, and there is a repo C storing the current combination: `A@v1.0`, `B@v1.1`.
 And only C has a "Deploy" button!
 Now, you want to make a change in service A and test it, but since the only way to deploy a system is to deploy both services together,
