@@ -1,6 +1,6 @@
 # Dev release
 
-Besides normal releases, prereleases and maintenance releases, this action supports a special type of release called **dev-release**.
+Besides normal releases, prereleases, and maintenance releases, this action supports a special type of release called **dev-release**.
 It sounds similar to prerelease, so let's clarify the difference:
 
 **prerelease** is an industry standard, though some tools use different terms

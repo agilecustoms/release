@@ -12,13 +12,13 @@ inputs:
     description: 'AWS region'
     required: false
   aws-role:
-    description: 'IAM role to assume to publish, ex. `/ci/publisher`'
+    description: 'IAM role to assume to publish, e.g., `/ci/publisher`'
     required: false
   aws-codeartifact-domain:
-    description: 'CodeArtifact domain name, ex. `mycompany`'
+    description: 'CodeArtifact domain name, e.g., `mycompany`'
     required: false
   aws-codeartifact-repository:
-    description: 'CodeArtifact repository name, ex. `maven`'
+    description: 'CodeArtifact repository name, e.g., `maven`'
     required: false
   aws-codeartifact-maven:
     description: 'If true, then publish maven artifacts to AWS CodeArtifact'
@@ -41,15 +41,15 @@ inputs:
     required: false
     default: '# Changelog'
   dev-branch-prefix:
-    description: 'Allows to enforce branch prefix for dev-releases, this helps to write auto-disposal rules. Empty string disables enforcement'
+    description: 'Allows you to enforce branch prefix for dev-releases; this helps to write auto-disposal rules. Empty string disables enforcement'
     required: false
     default: 'feature/'
   dev-release:
-    description: 'Allows to create temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
+    description: 'Allows you to create a temporary named release, mainly for dev testing. Implementation is different for all supported artifact types'
     required: false
     default: 'false'
   floating-tags:
-    description: 'When next version to be released is 1.2.4, then also release 1, 1.2 and latest. Not desired for public terraform modules'
+    description: 'When the next version to be released is 1.2.4, then also release 1, 1.2, and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
   java-version:
