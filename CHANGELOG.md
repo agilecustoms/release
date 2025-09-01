@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/agilecustoms/release/compare/v1.1.0...v1.1.1) (2025-09-01)
+
+### Miscellaneous
+
+* update description for Marketplace (must be less than 125 characters) ([d0b781e](https://github.com/agilecustoms/release/commit/d0b781e6f4cf1a0b8f332faebf4b3626b68484e5))
+
+
 ## [1.1.0](https://github.com/agilecustoms/release/compare/v1.0.2...v1.1.0) (2025-09-01)
 
 ### Features
