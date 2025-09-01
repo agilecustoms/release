@@ -10,8 +10,6 @@ This is especially useful in microservices where the releases are _binary_ + _Ia
 
 The action comes with an **ecosystem**:
 - Terraform modules to provide AWS roles and policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
-- (Fall 2025) Terraform module to create security-aware GitHub repo
-- (Fall 2025) GitHub action to access terraform modules from corporate private GH repos
 - GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
 - documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
 - [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
@@ -31,13 +29,13 @@ The action comes with an **ecosystem**:
 
 ## Artifact types ⇔ features
 
-| Artifact type                                                             | floating tags | idempotency | dev-release — auto cleanup |
-|---------------------------------------------------------------------------|---------------|-------------|----------------------------|
-| [git](./docs/artifact-types/git.md)                                       | ✅             | ✅           | ✅ — ❌️                     |
-| [AWS S3](./docs/artifact-types/aws-s3.md)                                 | ✅             | ✅           | ✅ — ✅                      |
-| [AWS ECR](./docs/artifact-types/aws-ecr.md)                               | ✅             | ✅           | ✅ — ✅                      |
-| [AWS CodeArtifact maven](./docs/artifact-types/aws-codeartifact-maven.md) | ❌️            | ⚠️          | ❌️                         |
-| [npmjs](./docs/artifact-types/npmjs.md)                                   | ✅             | ⚠️          | ❌️                         |
+| Artifact type                                                             | floating tags | idempotency | dev-release | auto cleanup |
+|---------------------------------------------------------------------------|---------------|-------------|-------------|--------------|
+| [git](./docs/artifact-types/git.md)                                       | ✅             | ✅           | ✅ ️         | ✅            |
+| [AWS S3](./docs/artifact-types/aws-s3.md)                                 | ✅             | ✅           | ✅           | ✅            |
+| [AWS ECR](./docs/artifact-types/aws-ecr.md)                               | ✅             | ✅           | ✅           | ✅            |
+| [AWS CodeArtifact maven](./docs/artifact-types/aws-codeartifact-maven.md) | ❌️            | ⚠️          | ❌️          | N/A          |
+| [npmjs](./docs/artifact-types/npmjs.md)                                   | ✅             | ⚠️          | ❌️          | N/A          |
 
 _See the respective artifact type to learn about idempotency limitations ⚠️_
 
@@ -58,10 +56,10 @@ on:
 jobs:
   Release:
     runs-on: ubuntu-latest
-    environment: release
+    environment: release # has secret GH_TOKEN - a PAT with permission to bypass branch protection rule
     permissions:
-      contents: read
-      id-token: write
+      contents: read     # to checkout code
+      id-token: write    # to assume AWS role via OIDC
     steps:
       # (example) package AWS Lambda code as a zip archive in ./s3 directory
         
@@ -79,7 +77,7 @@ jobs:
 Assume:
 - you store artifacts in AWS account "Dist" and its number is stored in GH org variable `AWS_ACCOUNT_DIST`
 - you have an S3 bucket `mycompany-dist` in `us-east-1` region
-- there is a role `ci/publisher` with permissions to upload files in this S3 bucket
+- there is a role `ci/publisher` with permissions to upload files in this S3 bucket and trust policy that allows to assume this role from GH action
 - you have repo `mycompany/myapp`
 - current release branch `main` has a protection rule so all changes must be done via PR
 - you have a GH environment `release` associated with branch `main`
@@ -93,7 +91,7 @@ Scenario:
 - build steps (omitted) produced a directory `./s3` with files (like a zip archive for AWS Lambda)
 
 The action will:
-- generate a new version `v1.3.0`
+- generate a new version `v1.3.0` (minor bump based on commit message prefix `feat:`)
 - upload files from `./s3` directory to S3 bucket `mycompany-dist` at path `/myapp/v1.3.0/`
 - update `CHANGELOG.md` with release notes
 - push tags `v1.3.0`, `v1.3`, `v1` and `latest` to the remote repository
@@ -111,7 +109,7 @@ _There are no required inputs. The action only controls that the combination of 
 | aws-codeartifact-maven      |                   | If true, then publish maven artifacts to AWS CodeArtifact                                                                                                                                                                                              |
 | aws-ecr                     |                   | If true, then push docker image to AWS ECR, [example](./docs/artifact-types/aws-ecr.md)                                                                                                                                                                |
 | aws-region                  |                   | AWS region                                                                                                                                                                                                                                             |
-| aws-role                    |                   | AWS IAM role to assume to publish, e.g., `/ci/publisher`                                                                                                                                                                                               |
+| aws-role                    |                   | AWS IAM role to assume to publish, e.g., `ci/publisher`                                                                                                                                                                                                |
 | aws-s3-bucket               |                   | AWS S3 bucket to upload artifacts to                                                                                                                                                                                                                   |
 | aws-s3-dir                  |                   | Allows you to specify AWS S3 bucket directory to upload artifacts to. By default, just place in `bucket/{repo-name}/{version}/*`                                                                                                                       |
 | changelog-file              | CHANGELOG.md      | Changelog file path. Pass an empty string to disable changelog generation                                                                                                                                                                              |
@@ -121,7 +119,7 @@ _There are no required inputs. The action only controls that the combination of 
 | floating-tags               | true              | When next version to be released is `1.2.4`, then also release `1.2`, `1` and `latest`. Not desired for public terraform modules                                                                                                                       |
 | npm-extra-deps              |                   | Additional npm dependencies needed to use non-default commit analyzer preset, e.g., `conventional-changelog-conventionalcommits@9.1.0`. Use white space or new line to specify multiple deps (extremely rare)                                          |
 | npm-visibility              | public            | Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private (not tested yet). [Example](./docs/artifact-types/npmjs.md)                                                                        |
-| node-version                | 22                | Node.js version to publish npm packages. Default is 22 because it is the highest pre-cached in Ubuntu 24                                                                                                                                               |
+| node-version                | 22                | Node.js version to publish npm packages. Default is 22 because it is the highest pre-cached in Ubuntu 24 (latest at time of writing)                                                                                                                   |
 | java-version                | 21                | Java version to use with input `aws-codeartifact-maven`. [Example](./docs/artifact-types/aws-codeartifact-maven.md)                                                                                                                                    |
 | pre-publish-script          |                   | Custom sh script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variable `$version`. See example in [npmjs](./docs/artifact-types/npmjs.md)   |
 | release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md) |
@@ -141,10 +139,10 @@ _There are no required inputs. The action only controls that the combination of 
 
 ## Environment variables
 
-| Name      | Description                                                                                                                                                                       |
-|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GH_TOKEN  | Takes GH PAT with permission to bypass the branch protection rule. Required if `release-gh: true` (default). See details in [Authorization and Security](./docs/authorization.md) |
-| NPM_TOKEN | If specified, publish npm package in npmjs repo. See [details](./docs/artifact-types/npmjs.md)                                                                                    |
+| Name      | Description                                                                                                                                       |
+|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| GH_TOKEN  | Takes GH PAT with permission to bypass the branch and tags protection rules. See details in [Authorization and Security](./docs/authorization.md) |
+| NPM_TOKEN | If specified, publish npm package in npmjs repo. See [details](./docs/artifact-types/npmjs.md)                                                    |
 
 ## Misc
 

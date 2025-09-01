@@ -12,7 +12,7 @@ inputs:
     description: 'AWS region'
     required: false
   aws-role:
-    description: 'IAM role to assume to publish, e.g., `/ci/publisher`'
+    description: 'IAM role to assume to publish, e.g., `ci/publisher`'
     required: false
   aws-codeartifact-domain:
     description: 'CodeArtifact domain name, e.g., `mycompany`'
@@ -57,7 +57,7 @@ inputs:
     required: false
     default: '21'
   node-version:
-    description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24'
+    description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24 (latest at time of writing)'
     required: false
     default: '22'
   npm-extra-deps:
