@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/agilecustoms/release/compare/v1.1.1...v1.1.2) (2025-09-06)
+
+### Documentation
+
+* dev-release risk analysis ([919c275](https://github.com/agilecustoms/release/commit/919c2751ddedbb22e86859b6a8c8dae9578a8355))
+
+
 ## [1.1.1](https://github.com/agilecustoms/release/compare/v1.1.0...v1.1.1) (2025-09-01)
 
 ### Miscellaneous
