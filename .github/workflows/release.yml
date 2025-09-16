@@ -22,3 +22,5 @@ jobs:
           npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
         env:
           GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
+
+# dummy change
