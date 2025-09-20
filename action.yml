@@ -275,7 +275,7 @@ runs:
 
     - name: Setup Python
       if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
 
     - name: Update version in pyproject.toml
       if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
