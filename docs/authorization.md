@@ -148,7 +148,7 @@ jobs:
     environment: release
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
 
@@ -173,7 +173,7 @@ Option 1 (recommended): pass PAT in `agilecustoms/release` env variable `GH_TOKE
 Option 2: pass PAT in `github/checkout` `token` parameter
 ```yaml
 - name: Checkout
-  uses: actions/checkout@v4
+  uses: actions/checkout@v5
   with:
     token: ${{ secrets.GH_TOKEN }}
 ```

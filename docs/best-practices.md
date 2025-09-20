@@ -43,7 +43,7 @@ jobs:
       id-token: write # not always required, only if at some step you assume AWS role via OIDC
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Setup tools
       # Install dependencies
@@ -85,7 +85,7 @@ jobs:
       id-token: write # not always required, only if at some step you assume AWS role via OIDC
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download artifacts
         uses: actions/download-artifact@v4

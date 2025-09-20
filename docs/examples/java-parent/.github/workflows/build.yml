@@ -21,7 +21,7 @@ jobs:
       id-token: write # to request JWT from GitHub OIDC provider (used in 'gha-prepare-java-build' action)
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # use default aws-role (ci/builder), default java-version (21) and default java-distribution (temurin)
       - name: Setup Java

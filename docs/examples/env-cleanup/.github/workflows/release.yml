@@ -37,7 +37,7 @@ jobs:
       id-token: write # to request JWT from GitHub OIDC provider
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download artifacts
         uses: actions/download-artifact@v4 # download all (actually one from Build job: target/env-cleanup.jar)
