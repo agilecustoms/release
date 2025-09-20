@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
 
       # this will download `app.zip` and place it in `s3` directory (see Build workflow)
       # next step recognize that `s3` directory exists and upload all files from it to S3
@@ -129,7 +129,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
 
       # this will download static assets and place them in `s3` directory (see Build workflow)
       # next step recognize that `s3` directory exists and upload all files from it to S3

@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4 # download all (actually one from Build job: target/env-cleanup.jar)
+        uses: actions/download-artifact@v5 # download all (actually one from Build job: target/env-cleanup.jar)
 
       - name: Docker build
         run: docker build -t env-cleanup:latest
