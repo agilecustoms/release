@@ -236,7 +236,7 @@ runs:
     - name: Log in Amazon ECR
       if: inputs.aws-ecr
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.{region}.amazonaws.com
+      uses: aws-actions/amazon-ecr-login@v2 # last release Oct 2023. outputs.registry = {acc_id}.dkr.ecr.{region}.amazonaws.com
 
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
@@ -261,7 +261,7 @@ runs:
 
     - name: Setup Node
       if: hashFiles('package.json') && inputs.dev-release != 'true'
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
