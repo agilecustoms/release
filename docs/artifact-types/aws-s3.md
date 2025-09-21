@@ -53,8 +53,10 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v5
+        with:
+          path: s3
 
-      # this will download `app.zip` and place it in `s3` directory (see Build workflow)
+      # this will download `app.zip` and place it in `s3` directory
       # next step recognize that `s3` directory exists and upload all files from it to S3
 
       - name: Release
@@ -130,8 +132,10 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v5
+        with:
+          path: s3
 
-      # this will download static assets and place them in `s3` directory (see Build workflow)
+      # this will download static assets and place them in `s3` directory
       # next step recognize that `s3` directory exists and upload all files from it to S3
 
       - name: Release

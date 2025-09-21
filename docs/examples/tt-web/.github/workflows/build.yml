@@ -35,4 +35,3 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: dist # take everything from dist/ folder
-          name: s3 #  and create an artifact named s3 (so later on the download action will create <repo-root>/dist/ folder)

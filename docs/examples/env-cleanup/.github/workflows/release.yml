@@ -41,6 +41,8 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v5 # download all (actually one from Build job: target/env-cleanup.jar)
+        with:
+          path: target
 
       - name: Docker build
         run: docker build -t env-cleanup:latest

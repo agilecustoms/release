@@ -38,7 +38,6 @@ jobs:
         if: inputs.artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build
           path: |
             module1/target/**
             module2/target/**

@@ -25,6 +25,8 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v5
+        with:
+          path: s3
 
       - name: Release
         uses: agilecustoms/gha-release@main

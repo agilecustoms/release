@@ -40,5 +40,4 @@ jobs:
         if: inputs.artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: s3 # create artifact named s3 (so later on the download action will create <repo-root>/s3/ folder)
           path: dist/app.zip

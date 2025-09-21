@@ -40,4 +40,3 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: target/app.jar
-          name: target #  so later on the download action will create <repo-root>/target/ folder

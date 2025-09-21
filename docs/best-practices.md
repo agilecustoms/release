@@ -89,6 +89,8 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v5
+        with:
+          path: # where to download artifact(s)
 
       - name: Release
         uses: agilecustoms/release@v1

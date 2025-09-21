@@ -28,9 +28,6 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v5
-        with:
-          name: build
-          path: . # allow flattening (or "unfold") artifacts
 
       - name: Release
         uses: agilecustoms/release@v1
