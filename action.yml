@@ -67,6 +67,10 @@ inputs:
     description: 'Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private'
     required: false
     default: 'public'
+  python-version:
+    description: 'Python version, so far only used to bump version in pyproject.toml'
+    required: false
+    default: '3.13'
   pre-publish-script:
     description: 'Shell script that allows you to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
     required: false
@@ -276,6 +280,8 @@ runs:
     - name: Setup Python
       if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
 
     - name: Update version in pyproject.toml
       if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
