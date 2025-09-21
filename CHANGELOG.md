@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/agilecustoms/release/compare/v1.1.3...v1.2.0) (2025-09-21)
+
+### Features
+
+* add python-version input ([76f9a6f](https://github.com/agilecustoms/release/commit/76f9a6f8f726a285dacbf6316cd3324dc5b38d27))
+
+### Documentation
+
+* fix description [skip ci] ([d682583](https://github.com/agilecustoms/release/commit/d68258391328429521d37c65d9087c7efcc8d269))
+
+### Miscellaneous
+
+* update configure-aws-credentials to v5 ([8cb4076](https://github.com/agilecustoms/release/commit/8cb4076be2ff873aeacf553ced08b7cedc194a9e))
+
+
 ## [1.1.3](https://github.com/agilecustoms/release/compare/v1.1.2...v1.1.3) (2025-09-21)
 
 ### Documentation
