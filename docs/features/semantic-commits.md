@@ -49,7 +49,7 @@ In this example we'll provide configuration via `release-plugins` input:
 
 ```yaml
 - name: Release
-  uses: agilecustoms/release@v1
+  uses: agilecustoms/release@v2
   with:
     release-plugins: |
       [
@@ -95,7 +95,7 @@ In this example we'll put configuration in `.relaserc.json` file in repo root:
 Use `npm-extra-deps` input in `agilecustoms/release` action to add _conventionalcommits_ npm dependency:
 ```yaml
 - name: Release
-  uses: agilecustoms/release@v1
+  uses: agilecustoms/release@v2
   with:
     npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
 ```
