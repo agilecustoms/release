@@ -189,10 +189,13 @@ runs:
         creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
         git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
-    - name: Setup Node
-      uses: actions/setup-node@v5
-      with:
-        node-version: 24
+# release-gen uses Node24, but it also calls external 'npm' to install extra deps
+# I can either install Node24 here OR let release-gen use default Node/NPM for deps installation
+# Will start from the latter, so commented out
+#    - name: Set up Node
+#      uses: actions/setup-node@v5
+#      with:
+#        node-version: 24
 
     # CWD is /home/runner/work/release/release
     # generate a new version, release notes (available in file outputs.notes_file) and also update file CHANGELOG.md
