@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/agilecustoms/release/compare/v1.1.2...v1.1.3) (2025-09-21)
+
+### Bug Fixes
+
+* update documentation for new github actions checkout and download-artifact ([2e92732](https://github.com/agilecustoms/release/commit/2e9273277efd02ed6d48f900991160464c7fa20d))
+
+
 ## [1.1.2](https://github.com/agilecustoms/release/compare/v1.1.1...v1.1.2) (2025-09-06)
 
 ### Documentation
