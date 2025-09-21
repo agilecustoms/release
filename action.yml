@@ -194,7 +194,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v2.13.3
+      uses: agilecustoms/release-gen@v3.0
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -246,7 +246,7 @@ runs:
 
     - name: Setup Java
       if: hashFiles('pom.xml') && inputs.dev-release != 'true'
-      uses: agilecustoms/setup-maven-codeartifact@v1.5.8
+      uses: agilecustoms/setup-maven-codeartifact@v2.0
       with:
         aws-account: ${{ inputs.aws-account }}
         aws-region: ${{ inputs.aws-region }}
@@ -265,7 +265,7 @@ runs:
 
     - name: Setup Node
       if: hashFiles('package.json') && inputs.dev-release != 'true'
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
@@ -279,7 +279,7 @@ runs:
 
     - name: Setup Python
       if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -302,7 +302,7 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v1.0.1
+      uses: agilecustoms/publish-s3@v2.0
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}

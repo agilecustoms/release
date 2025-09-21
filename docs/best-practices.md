@@ -93,7 +93,7 @@ jobs:
           path: # where to download artifact(s)
 
       - name: Release
-        uses: agilecustoms/release@v1
+        uses: agilecustoms/release@v2
         with: # parameters specific to artifact type(s) being released 
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # required to push commit and tags
@@ -132,7 +132,7 @@ Non-default presets require additional npm dependency. This is why in many examp
 
 ```yaml
 - name: Release
-  uses: agilecustoms/release@v1
+  uses: agilecustoms/release@v2
   with:
     npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
 ``` 

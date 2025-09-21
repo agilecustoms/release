@@ -57,7 +57,7 @@ jobs:
     steps:
       # ...
       - name: Release
-        uses: agilecustoms/release@v1
+        uses: agilecustoms/release@v2
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
