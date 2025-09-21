@@ -1,6 +1,6 @@
 name: 'Consistent Release'
 author: 'Alexey Chekulaev'
-description: 'Automate secure, repeatable releases to AWS and npm with semantic versioning, self-service releases and multi‑artifact support'
+description: 'Secure, repeatable releases to AWS and npm with semantic versioning, self-service releases and multi‑artifact support'
 branding:
   icon: package
   color: green
