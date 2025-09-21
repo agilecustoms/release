@@ -21,10 +21,10 @@ jobs:
       contents: read # required for actions/checkout
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -40,5 +40,4 @@ jobs:
         if: inputs.artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: s3 # create artifact named s3 (so later on the download action will create <repo-root>/s3/ folder)
           path: dist/app.zip

@@ -78,7 +78,9 @@ jobs:
     steps:
       # ...
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
+        with:
+          path: dist
         # after this we have changes in file dist/index.js
 
       - name: Release

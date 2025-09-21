@@ -48,7 +48,9 @@ jobs:
     steps:
       # ...
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
+        with:
+          path: dist
 
       - name: Release
         uses: agilecustoms/release@main
