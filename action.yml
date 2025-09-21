@@ -227,7 +227,7 @@ runs:
     - name: Log in AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
       id: login-aws
-      uses: aws-actions/configure-aws-credentials@v5.0.0 # TODO: update periodically, bcz v4 doesn't point to the most recent 4.x.x :(
+      uses: aws-actions/configure-aws-credentials@v5.0.0 # TODO: update periodically as it has no floating tags
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
@@ -236,7 +236,7 @@ runs:
     - name: Log in Amazon ECR
       if: inputs.aws-ecr
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2 # last release Oct 2023. outputs.registry = {acc_id}.dkr.ecr.{region}.amazonaws.com
+      uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.{region}.amazonaws.com
 
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
