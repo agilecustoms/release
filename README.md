@@ -9,6 +9,7 @@ You can release **any combination** of software packages, binary files, docker i
 This is especially useful in microservices where the releases are _binary_ + _IaC_ versioned via git tag
 
 The action comes with an **ecosystem**:
+- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
 - Terraform modules to provide AWS roles and policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
 - GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
 - documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
