@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/agilecustoms/release/compare/v2.0.0...v2.0.1) (2025-09-30)
+
+### Documentation
+
+* add link to terraform module to create release-ready github repos ([d75d4b8](https://github.com/agilecustoms/release/commit/d75d4b81d41cea8bc930a91743a75f6ed1a82153))
+
+
 ## [2.0.0](https://github.com/agilecustoms/release/compare/v1.2.0...v2.0.0) (2025-09-21)
 
 ### ⚠ BREAKING CHANGES
