@@ -11,11 +11,13 @@ This is especially useful in microservices where the releases are _binary_ + _Ia
 The action comes with an **ecosystem**:
 - Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
 - Terraform modules to provide AWS roles and policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
+- Terraform module to create security-aware [GitHub repositories](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
 - GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
 - documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
 - [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
 - Release workflow [best practices](./docs/best-practices.md)
-- Articles: [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e)
+- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
+  🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
 
 ## Features
 
