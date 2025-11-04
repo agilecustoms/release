@@ -37,6 +37,6 @@ jobs:
 
       - name: Upload artifacts
         if: ${{ inputs.artifacts }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: target/app.jar

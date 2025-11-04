@@ -4,7 +4,7 @@ _Note: all examples use shared patterns: two workflows: Build and Release — co
 "release" GitHub environment and AWS IAM authorization — covered in [Authorization and security](../authorization.md)_
 
 AWS S3 is very powerful, and specifically, it works very well for software distribution.
-S3 allows flexible read and write permissions by prefix and by tags. And it has rules for expiration so you can auto remove temporary artifacts 
+S3 allows flexible read and write permissions by prefix and by tags. And it has rules for expiration, so you can auto remove temporary artifacts 
 
 For publishing in S3 the `agilecustoms/release` uses a simple convention:
 if there is an `s3` directory in cwd, then all files from it will be uploaded to S3 bucket
@@ -23,7 +23,7 @@ In this section we'll cover some examples of releasing software artifacts in S3:
 
 ## Python lambda function
 
-Example: [env-api](../examples/env-api) — it is from AgileCustoms repository with all code removed, only workflows left
+Example: [env-api](../examples/env-api) — it is from the AgileCustoms repository with all code removed, only workflows left
 
 ```
 <repo root>
@@ -40,10 +40,7 @@ main part is that in the Build workflow you create a zip file with your code and
 
 ```yaml
 jobs:
-  Build:
-    uses: ./.github/workflows/build.yml
-    # ...
-
+  # ...
   Release:
     needs: Build
     # ...
@@ -68,12 +65,12 @@ jobs:
           aws-s3-bucket: 'agilecustoms-dist'
 ```
 
-When developer merges a PR, the Release workflow is triggered:
-1. Release workflow calls Build workflow
-2. Build workflow packages python code and dependencies in `dist/app.zip` file and uploads it as an artifact named `s3`
-3. Release workflow downloads the artifact, so you get `s3/app.zip`
-4. Release workflow calls `agilecustoms/release` action, then action:
-   1. generate next version based on commit messages
+When a developer merges a PR, the Release workflow is triggered:
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
+2. Build job packages python code and dependencies in `dist/app.zip` file and uploads it as an artifact named `s3`
+3. Release job downloads the artifact, so you get `s3/app.zip`
+4. Release job calls `agilecustoms/release` action, then action:
+   1. generate the next version based on commit messages
    2. authorize in AWS with role `ci/publisher`, see [Authorization and security](../authorization.md)
    3. update version in `pyproject.toml`
    4. upload `s3/app.zip` to `agilecustoms-dist/env-api/{version}/app.zip`
@@ -119,10 +116,7 @@ In this action you provide all defaults, so your release workflow gets even simp
 
 ```yaml
 jobs:
-  Build:
-    uses: ./.github/workflows/build.yml
-    # ...
-
+  # ...
   Release:
     needs: Build
     # ...

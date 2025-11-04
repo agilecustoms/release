@@ -6,17 +6,32 @@
 
 ## Build and Release
 
-In all my projects and all [examples](./examples) I use two workflows: Build and Release.
-Sometimes when there is nothing to build, I call it Validate instead of Build, [example](https://github.com/agilecustoms/terraform-aws-ci-publisher/blob/main/.github/workflows/validate.yml)
+Build and Release are two distinct actions. Build should happen on each push in a feature branch
+for early feedback about code quality (lint, tests). Once code is merged into `main` branch there should be Build (again!) and Release.
+There are two ways how you can organize your workflows:
+1. (simple) you have one workflow with two jobs: Build and Release.
+ Build is run all the time, and a Release job is conditioned to run only on `main` branch
+2. (advanced) you have two workflows: Build and Release. Build workflow is called on every push in non-main branches, 
+ and also it can be called from another workflow (`on: workflow_call:`).
+ Release workflow is called only on push in the `main` branch, and inside it calls Build workflow
+ Advanced setup is used when there are multiple types of releases: besides normal (when feature is merged into `main` branch)
+ there are [dev-release](./features/dev-release.md) and "fixed version" when a version is passed explicitly as workflow argument:
+```
+      /- normal release
+build -- dev release
+      \- fixed version release
+```
+3. (Docker specific) GitHub uses two actions: `actions/upload-artifact` and `actions/download-artifact` to pass files
+ between jobs. If you place `docker build` command in Build job - you can't access it in Release.
+ So the only way is to place `docker build` in a Release job. Finally, if you have multiple release options,
+ you end up with a workflow layout like this [example](./examples/env-cleanup):
+```
+                 /- normal release
+build -- release -- dev release
+                 \- fixed version release
+```
 
-Build is called on every push in non-main branches. It runs all quality checks such as linters and tests.
-At this point Build workflow does not produce any artifacts, it just tells you if your code is good or not.
-Once it is good, you typically create a PR and get approvals
-
-Upon PR merge, the Release workflow is triggered (it is configured to run on push in `main` branch).
-Then the Release workflow calls Build workflow again, this time intent is to get artifacts!
-
-There is a typical setup for these two workflows:
+Below is an example of advanced setup (two workflows):
 
 `build.yml`
 ```yaml
@@ -53,7 +68,7 @@ jobs:
 
       - name: Upload artifacts
         if: inputs.artifacts # no point in uploading artifacts on every push in a feature branch
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with: # configure what to upload
 ```
 

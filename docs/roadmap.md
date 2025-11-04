@@ -1,7 +1,6 @@
 # Roadmap
 
-Fall 2025:
-- Terraform module to create security-aware GitHub repo
+Next:
 - GitHub action to access terraform modules from corporate private GH repos
 - setup-maven-codeartifact support Maven 4
 - publish in Maven central

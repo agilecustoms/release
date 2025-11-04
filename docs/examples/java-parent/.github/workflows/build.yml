@@ -2,16 +2,6 @@ name: Build
 
 on:
   push:
-    branches-ignore:
-      - main
-
-  workflow_call:
-    inputs:
-      artifacts:
-        required: false
-        type: boolean
-        default: false
-        description: upload artifacts or not
 
 jobs:
   Build:
@@ -35,9 +25,34 @@ jobs:
         run: mvn --no-transfer-progress verify
 
       - name: Upload artifacts
-        if: inputs.artifacts
-        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v5
         with:
           path: |
-            module1/target/**
-            module2/target/**
+            checkstyle-rules/target/**
+            openapi/target/**
+
+  Release:
+    if: github.ref == 'refs/heads/main'
+    needs: Build
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      id-token: write # to request JWT from GitHub OIDC provider (used in 'gha-prepare-java' action)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+
+      - name: Release
+        uses: agilecustoms/release@v2
+        with:
+          aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-region: us-east-1
+          aws-role: 'ci/publisher'
+          aws-codeartifact-maven: true
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}

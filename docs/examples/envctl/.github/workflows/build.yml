@@ -2,15 +2,6 @@ name: Build
 
 on:
   push:
-    branches-ignore:
-      - main
-  workflow_call:
-    inputs:
-      artifacts:
-        required: false
-        type: boolean
-        default: false
-        description: upload artifacts or not
 
 jobs:
   Build:
@@ -34,7 +25,29 @@ jobs:
         run: npm run build
 
       - name: Upload artifacts
-        if: inputs.artifacts
-        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v5
         with:
           path: dist # take everything from dist/ folder
+
+  Release:
+    if: github.ref == 'refs/heads/main'
+    needs: Build
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: dist
+
+      - name: Release
+        uses: agilecustoms/release@v2
+        with:
+          pre-publish-script: sed -i -E "s/(envctl-cache-key-)[^\n]+/\1$version/" "action.yml"
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
