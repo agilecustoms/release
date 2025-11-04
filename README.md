@@ -23,7 +23,7 @@ The action comes with an **ecosystem**:
 
 - automatic and manual [version generation](./docs/features/version-generation.md)
 - release notes generation and changelog update
-- [floating tags](./docs/features/floating-tags.md) — given current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
+- [floating tags](./docs/features/floating-tags.md) — given, current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
 - [maintenance releases](./docs/features/maintenance-release.md) — made from branch like `1.x.x` (given `2.x.x` development is in `main`)
 - [prereleases](./docs/features/prerelease.md) — develop a next (often major, sometimes minor) version, typically made from a branch `next`
 - [dev-release](./docs/features/dev-release.md) — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
