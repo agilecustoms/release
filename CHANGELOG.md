@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/agilecustoms/release/compare/v2.0.1...v2.0.2) (2025-11-04)
+
+### Miscellaneous
+
+* pin dependencies minor versions ([80fb518](https://github.com/agilecustoms/release/commit/80fb5188996d525fe7ff169ff4ae166273b14d77))
+
+
 ## [2.0.1](https://github.com/agilecustoms/release/compare/v2.0.0...v2.0.1) (2025-09-30)
 
 ### Documentation
