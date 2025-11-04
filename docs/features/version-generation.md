@@ -53,7 +53,7 @@ This can be helpful in the following cases:
 - it is possible to do prerelease and maintenance releases in "explicit version",
 but `agilecustoms/release` action does not provide any assistance/guardrails
 
-Table below shows how floating tags and release channel work in "explicit verison" mode:
+The table below shows how floating tags and release channel work in "explicit version" mode:
 
 | branch  | version | floating tags | channel |   | git tags                      | Docker tags and S3 dirs     | npm tag |
 |---------|---------|---------------|---------|---|-------------------------------|-----------------------------|---------|

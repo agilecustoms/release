@@ -1,7 +1,7 @@
 # Floating tags and release channel
 
 **Floating tags** are tags that move! When you release `1.2.4` then tags `1` and `1.2` move to point to `1.2.4`.
-This feature primarily supported by Git and Docker, they both use tags. It is also supported by AWS S3.
+This feature is primarily supported by Git and Docker, they both use tags. It is also supported by AWS S3.
 AWS S3 mimics file system structure: path/object ~ dir/file. Given version stored in dir `1.2`, you can override its content
 — sort of "move" the tag
 
@@ -45,7 +45,7 @@ For all configuration options, see [configuration](../configuration.md)
 
 There are three [version generation](./version-generation.md) modes.
 Modes "semantic commits" and "version bump" take configuration from file `.releaserc.json`.
-You can configure release channel there as `channel` property in `branches` section.
+You can configure a release channel there as `channel` property in `branches` section.
 For version generation mode "explicit version" use GH action input `release-channel`
 
 Example of `.releaserc.json` for a table above:

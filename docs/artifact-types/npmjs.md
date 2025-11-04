@@ -7,8 +7,8 @@ _Note: all examples use shared patterns: two workflows: Build and Release — co
 
 ## Public NPM package
 
-Example: [envctl](../examples/envctl) - it is from AgileCustoms repository with all code removed, only workflows left.
-GitHub repository is private, but published as public NPM package `@agilecustoms/envctl`
+Example: [envctl](../examples/envctl) — it is from the AgileCustoms repository with all code removed, only workflows left.
+GitHub repository is private but published as public NPM package `@agilecustoms/envctl`
 
 ```
 <repo root>
@@ -23,9 +23,9 @@ GitHub repository is private, but published as public NPM package `@agilecustoms
 └── tsconfig.json
 ```
 
-Also this repository is a GH action. It acts as a wrapper for npm cli app, thus file `action.yml`.
-`envctl` is an NPM package, not "all in one" JS file, so installation assumes pulling all dependencies.
-To make it faster I use cache in `action.yml` file:
+Also, this repository is a GH action. It acts as a wrapper for npm cli app, thus file `action.yml`.
+`envctl` is an NPM package, not "all-in-one" JS file, so installation assumes pulling all dependencies.
+To make it faster, I use cache in `action.yml` file:
 
 ```yaml
 - name: Cache global npm
@@ -39,9 +39,7 @@ Cache needs to be updated on every release, so I use `pre-publish-script` to upd
 
 ```yaml
 jobs:
-  Build:
-    uses: ./.github/workflows/build.yml
-
+  # ...
   Release:
     needs: Build
     # ...
@@ -61,11 +59,11 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }} # to publish in npmjs
 ```
 
-When developer merges a PR, the Release workflow is triggered:
-1. Release workflow calls Build workflow
-2. Build workflow compiles TypeScript in JavaScript in directory `dist` and uploads entire `dist` as an artifact
-3. Release workflow downloads the artifact and calls `agilecustoms/release` action, then action:
-   1. generate next version based on commit messages
+When a developer merges a PR, the Release workflow is triggered:
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
+2. Build job compiles TypeScript in JavaScript in directory `dist` and uploads entire `dist` as an artifact
+3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
+   1. generate the next version based on commit messages
    2. call `pre-publish-script` with this version to update cache key in `action.yml`
    3. update version in `package.json`
    4. run `npm publish` to publish package in npmjs using `NPM_TOKEN`

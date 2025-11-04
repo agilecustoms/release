@@ -40,7 +40,7 @@ you push your changes to the feature branch, the branch name becomes this dev-re
 - parameter `dev-branch-prefix` (default value is `feature/`) enforces branch naming for dev releases.
   This is needed for security and automatic resource disposal. Set to an empty string to disable such enforcement (not recommended)
 - for each [artifact type](./../artifact-types/index.md), dev-release might have different semantics,
-  see "dev-release" section for each artifact type
+  see the "dev-release" section for each artifact type
 
 dev-release workflow blueprint:
 

@@ -87,10 +87,10 @@ jobs:
         uses: agilecustoms/release@v2
 ```
 
-When developer merges a PR, the Release workflow is triggered:
-1. Release workflow calls Build workflow
-2. Build workflow compiles TypeScript files in a single `dist/index.js` file and uploads it as an artifact
-3. Release workflow downloads the artifact and calls `agilecustoms/release` action, then action:
+When a developer merges a PR, the Release workflow is triggered:
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
+2. Build job compiles TypeScript files in a single `dist/index.js` file and uploads it as an artifact
+3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. commit `dist/index.js`
    2. push commit and tags to the remote repository
 

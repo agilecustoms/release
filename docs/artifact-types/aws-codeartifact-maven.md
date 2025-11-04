@@ -20,9 +20,7 @@ It is a multi-module maven project.
 
 ```yaml
 jobs:
-  Build:
-    uses: ./.github/workflows/build.yml
-
+  # ...
   Release:
     needs: Build
     # ...
@@ -40,7 +38,7 @@ jobs:
           aws-codeartifact-maven: true # tells action to publish in AWS CodeArtifact Maven repo
 ```
 
-Besides release workflow, next infrastructure pieces must be aligned:
+Besides the release workflow, the next infrastructure pieces must be aligned:
 1. There should be an IAM role (`ci/publisher`) which can be assumed by GitHub Actions via OIDC, see [Authorization and security](../authorization.md)
 2. AWS IAM role's policy should allow `codeartifact:PublishPackageVersion` and few more actions.
    You can use Terraform module [ci-publisher](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest)
@@ -58,11 +56,11 @@ Besides release workflow, next infrastructure pieces must be aligned:
 ```
 Here `<id>` has format `{domain}-{repository}`, so replace `agilecustoms` with your company name.
 
-When developer merges a PR, the Release workflow is triggered:
-1. Release workflow calls Build workflow
-2. Build workflow compiles java code in `target/*.jar` files and uploads them as an artifact
-3. Release workflow downloads the artifact and calls `agilecustoms/release` action, then action:
-   1. generate next version based on commit messages
+When a developer merges a PR, the Release workflow is triggered:
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
+2. Build job compiles java code in `target/*.jar` files and uploads them as an artifact
+3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
+   1. generate the next version based on commit messages
    2. call `agilecustoms/setup-maven-codeartifact`, this action:
       1. authorize in AWS CodeArtifact, see [Authorization and security](../authorization.md)
       2. generate env variable `ARTIFACT_STORE_HOST`
@@ -74,7 +72,7 @@ When developer merges a PR, the Release workflow is triggered:
 
 ### setup-maven-codeartifact
 
-Main intent of this example is to demonstrate how to _PUBLISH_ Maven packages in CodeArtifact.
+The main intent of this example is to demonstrate how to _PUBLISH_ Maven packages in CodeArtifact.
 But first an artifact needs to be built. If this maven module depends on other module(s) published in CodeArtifact,
 you can use [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact) to access them.
 See [build.yml](../examples/java-parent/.github/workflows/build.yml) workflow file:

@@ -4,7 +4,7 @@
 This chapter describes the default mode — "semantic commits"
 
 "semantic commits" mode is powered by NPM library [semantic-release](https://github.com/semantic-release).
-It takes latest [SemVer](https://semver.org) tag and analyzes commit messages to determine a next version following these rules:
+It takes latest [SemVer](https://semver.org) tag and analyzes commit messages to determine the next version following these rules:
 - commits with `fix:` prefix ⇒ increment a patch version
 - commits with `feat:` prefix ⇒ increment a minor version
 - commits with `BREAKING CHANGE:` ⇒ increment a major version

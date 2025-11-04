@@ -54,7 +54,7 @@ jobs:
 ```
 
 One problem remains: what if two "bad" developers act together: one creates a PR to change the release workflow to print PAT,
-and second approves it? To mitigate this risk you configure `CODEOWNERS` so that only trusted people can approve changes in `.github/**/*`
+and the second approves it? To mitigate this risk you configure `CODEOWNERS` so that only trusted people can approve changes in `.github/**/*`
 
 ### Final GH repo setup
 
@@ -67,8 +67,8 @@ and second approves it? To mitigate this risk you configure `CODEOWNERS` so that
 At this point, GitHub security should be in good shape. Only problem — it is quite a lot of work: configure branch protection rules,
 tag protection rules, create an environment and configure its access from protected branches, configure CODEOWNERS.
 In the world of microservices it is quite common to have 50+ repositories, so it is a lot of work to do it manually.
-You can automate this via provisioning GitHub repos via Terraform (there is a [GitHub provider](https://registry.terraform.io/providers/integrations/github/latest/docs)).
-Fall 2025 I plan to release a Terraform module that will do all this work for you
+Here is a production ready [terraform module](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
+to provision security-aware GitHub repositories
 
 ## AWS Authorization
 
@@ -136,8 +136,6 @@ Use of this feature assumes all security measures described above are already in
 Additional dev-release specific security considerations are placed in the [dev-release security](./features/dev-release.md#security) section
 
 ## Advanced
-
-TBD
 
 ### persist-credentials: false
 
