@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.1.0](https://github.com/agilecustoms/release/compare/v2.0.2...v2.1.0) (2025-11-04)
+
+### Features
+
+* switch to node 24 before calling release-gen action (because now some of its dependencies require node 24) ([ec609df](https://github.com/agilecustoms/release/commit/ec609dfb3b9d5cbcd6f472dc6c247cf23bc30295))
+
+### Documentation
+
+* add a link to the new Terraform module to provision security-aware GH repos ([5874372](https://github.com/agilecustoms/release/commit/587437203fde13314d216b875361078264ea5894))
+* update documentation, mainly to cover best practices of using one workflow with two jobs (Build and Release) and two workflows: Build and Release ([eec2a87](https://github.com/agilecustoms/release/commit/eec2a875dbef7c1d453c9d7717e602474c8f834e))
+
+### Miscellaneous
+
+* update dependencies ([a140477](https://github.com/agilecustoms/release/commit/a140477aaae6fdaddc7f3c53cc1ab07a13713d87))
+* use release-gen@v3.1.0 which now require Node 24 (release action itself requires node 24 from v2) ([d2f8f13](https://github.com/agilecustoms/release/commit/d2f8f139cef20e27d6b4b6ecd0e1117f63212e14))
+
+
 ## [2.0.2](https://github.com/agilecustoms/release/compare/v2.0.1...v2.0.2) (2025-11-04)
 
 ### Miscellaneous
