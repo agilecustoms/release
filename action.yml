@@ -238,7 +238,7 @@ runs:
     - name: Log in AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
       id: login-aws
-      uses: aws-actions/configure-aws-credentials@v5.1.0 # TODO: update periodically as it has no floating tags
+      uses: aws-actions/configure-aws-credentials@v5.1.0 # TODO: floating tag v5 is available, but updates must be controlled
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
