@@ -178,8 +178,8 @@ runs:
 
 ## Phase 2 - Release generation
 
-    # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }} see misc/.git-config for example
-    # alternatively user may want to use an explicit PAT, then need to configure git to use it.
+    # By default, (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }} see misc/.git-config for example
+    # Alternatively user may want to use an explicit PAT, then need to configure git to use it
     # Besides 'git push', the release_gen _probes_ git push, that's why it is in front of release_gen
     - name: Git authorization
       if: env.GH_TOKEN
