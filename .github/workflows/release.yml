@@ -8,7 +8,7 @@ on:
 
 jobs:
   Release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     environment: release
     steps:
       - name: Checkout
