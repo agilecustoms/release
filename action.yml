@@ -253,7 +253,7 @@ runs:
 
     - name: Setup Java
       if: hashFiles('pom.xml') && inputs.dev-release != 'true'
-      uses: agilecustoms/setup-maven-codeartifact@v2.0.1
+      uses: agilecustoms/setup-maven-codeartifact@v2.0.3
       with:
         aws-account: ${{ inputs.aws-account }}
         aws-region: ${{ inputs.aws-region }}
