@@ -21,7 +21,7 @@ inputs:
     description: 'CodeArtifact repository name, e.g., `maven`'
     required: false
   aws-codeartifact-maven:
-    description: 'If true, then publish maven artifacts to AWS CodeArtifact'
+    description: 'Two possible values: build and publish. publish - publish maven artifacts to AWS CodeArtifact, build - just access CodeArtifact to update version in pom.xml'
     required: false
   aws-ecr:
     description: 'If true, then push docker image to ECR'
@@ -52,8 +52,19 @@ inputs:
     description: 'When the next version to be released is 1.2.4, then also release 1, 1.2, and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
+  java-cache:
+    description: 'Enabled by default, specify empty string to disable caching'
+    required: false
+    default: 'maven'
+  java-cache-dependency-path:
+    description: 'see https://github.com/actions/setup-java "cache-dependency-path"'
+    required: false
+  java-distribution:
+    description: 'Java distribution, use Temurin as it is pre-cached in ubuntu-latest'
+    required: false
+    default: 'temurin'
   java-version:
-    description: 'Java version to use with aws-codeartifact-maven'
+    description: 'Java version to use'
     required: false
     default: '21'
   node-version:
@@ -161,16 +172,16 @@ runs:
           echo "aws_s3=true" >> $GITHUB_OUTPUT
         fi
         
-        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
+        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ -n "${{ inputs.aws-codeartifact-maven }}" ]; then
           if [ -z "${{ inputs.aws-account }}" ] || [ -z "${{ inputs.aws-region }}" ] || [ -z "${{ inputs.aws-role }}" ]; then
             echo "Error: aws-account, aws-region, and aws-role must all be provided" >&2
             exit 1
           fi
         fi
 
-        if [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
+        if [ -n "${{ inputs.aws-codeartifact-maven }}" ]; then
           if [ -z "${{ inputs.aws-codeartifact-domain }}" ]; then
-            echo "Error: aws-codeartifact-domain must be provided when aws-codeartifact-maven is true" >&2
+            echo "Error: aws-codeartifact-domain must be provided when aws-codeartifact-maven is set" >&2
             exit 1
           fi
         fi
@@ -257,6 +268,15 @@ runs:
 
     - name: Setup Java
       if: hashFiles('pom.xml') && inputs.dev-release != 'true'
+      uses: actions/setup-java@v5
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.java-distribution }}
+        cache: ${{ inputs.java-cache }}
+        cache-dependency-path: ${{ inputs.java-cache-dependency-path }}
+
+    - name: Setup Maven CodeArtifact
+      if: inputs.aws-codeartifact-maven
       uses: agilecustoms/setup-maven-codeartifact@v2.1.0
       with:
         aws-account: ${{ inputs.aws-account }}
@@ -265,7 +285,7 @@ runs:
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
         aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository || 'maven' }}
         aws-login: false # we already logged in AWS in a previous step
-        java-version: ${{ inputs.java-version }}
+        java-setup: false
 
     - name: Update version in pom.xml
       if: inputs.update-version-in-manifest == 'true' && hashFiles('pom.xml') && inputs.dev-release != 'true'
@@ -275,7 +295,6 @@ runs:
         mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
     # maven first creates effective pom, which requires resolving parent dependencies,
     # so unfortunately, even just to update versions in pom.xml, we need to have AWS CodeArtifact access :(
-
 
     - name: Setup Node
       if: hashFiles('package.json') && inputs.dev-release != 'true'
@@ -349,7 +368,7 @@ runs:
     # TODO: verify phase still run in build and release jobs
     # TODO: checkstyle and enforcer still run in both jobs
     - name: Publish maven to CodeArtifact
-      if: inputs.aws-codeartifact-maven && inputs.dev-release != 'true'
+      if: inputs.aws-codeartifact-maven == 'publish' && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish maven to CodeArtifact
