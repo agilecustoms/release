@@ -277,7 +277,7 @@ runs:
 
     - name: Setup Maven CodeArtifact
       if: inputs.aws-codeartifact-maven
-      uses: agilecustoms/setup-maven-codeartifact@v2.1.0
+      uses: agilecustoms/setup-maven-codeartifact@v2.1.1
       with:
         aws-account: ${{ inputs.aws-account }}
         aws-region: ${{ inputs.aws-region }}
