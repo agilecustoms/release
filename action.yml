@@ -292,7 +292,9 @@ runs:
       shell: bash
       run: |
         # Update version in pom.xml
-        mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
+        MVN=mvn
+        if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
+        "$MVN" --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
     # maven first creates effective pom, which requires resolving parent dependencies,
     # so unfortunately, even just to update versions in pom.xml, we need to have AWS CodeArtifact access :(
 
@@ -373,7 +375,9 @@ runs:
       run: |
         # Publish maven to CodeArtifact
         set +e
-        output=$(mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
+        MVN=mvn
+        if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
+        output=$($MVN --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
         error_code=$?
         echo "$output"
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
