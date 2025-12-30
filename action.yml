@@ -374,7 +374,6 @@ runs:
       shell: bash
       run: |
         # Publish maven to CodeArtifact
-        set +e
         MVN=mvn
         if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
         output=$($MVN --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
@@ -395,7 +394,6 @@ runs:
       shell: bash
       run: |
         # Publish in npmjs
-        set +e
         output=$(npm publish --access ${{ inputs.npm-visibility }} --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
         error_code=$?
         echo "$output"
