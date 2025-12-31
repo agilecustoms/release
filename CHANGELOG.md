@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.0.0](https://github.com/agilecustoms/release/compare/v2.1.0...v3.0.0) (2025-12-31)
+
+### ⚠ BREAKING CHANGES
+
+* change input 'aws-codeartifact-maven' semantics
+
+### Features
+
+* change input 'aws-codeartifact-maven' semantics ([faff998](https://github.com/agilecustoms/release/commit/faff9981d6eed8b1fc50aa1972dbd4a18f159871))
+* support mvnw ([234fb46](https://github.com/agilecustoms/release/commit/234fb46763e4f3f2fe9a48407f54b4108e98e2ad))
+* update-version-in-manifest ([cd2a9fb](https://github.com/agilecustoms/release/commit/cd2a9fba5fba3b55298ad734b4ca72d31e5e6bca))
+
+### Bug Fixes
+
+* use version of 'setup-maven-codeartifact' with fixed aws-login logic ([589567c](https://github.com/agilecustoms/release/commit/589567c3b65197575be473349e0b97b8f4b448dc))
+
+### Documentation
+
+* use actions/cache@v5 in examples ([255e75e](https://github.com/agilecustoms/release/commit/255e75e8c205150c12bb9fd4ff575ef781bc968c))
+
+### Miscellaneous
+
+* bump publish-s3 version (update deps) ([1bed3a5](https://github.com/agilecustoms/release/commit/1bed3a5c9181453dca9bef348d95daaa3e6d5573))
+* remove 'set +e' bcz it is default behavior ([3b455ad](https://github.com/agilecustoms/release/commit/3b455ade5cdf02347f3621db05ffb24e3a133608))
+* update dependencies ([4075d68](https://github.com/agilecustoms/release/commit/4075d686bf125cdb1f91f97844e358b355c45952))
+* use latest setup-maven-codeartifact with removed 'mvn -v' command ([f6621d8](https://github.com/agilecustoms/release/commit/f6621d87fd04ad0c277646c956e6d20ee00e58ca))
+* use most recent setup-maven-codeartifact with improved logging ([f0cde60](https://github.com/agilecustoms/release/commit/f0cde60889c59f161ba80ec808f3350667e43939))
+* use ubuntu-slim ([703a47d](https://github.com/agilecustoms/release/commit/703a47d863151fb5ae6b09aaabb53b531ce28434))
+
+
 ## [2.1.0](https://github.com/agilecustoms/release/compare/v2.0.2...v2.1.0) (2025-11-04)
 
 ### Features
