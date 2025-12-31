@@ -24,7 +24,7 @@ jobs:
     steps:
       # ...
       - name: Release
-        uses: agilecustoms/release@v2
+        uses: agilecustoms/release@v3
         with:
           floating-tags: false
 ```
@@ -43,7 +43,7 @@ jobs:
     steps:
       # ...
       - name: Release
-        uses: agilecustoms/release@v2
+        uses: agilecustoms/release@v3
 ```
 
 ## Node.js GitHub Action
@@ -84,7 +84,7 @@ jobs:
         # after this we have changes in file dist/index.js
 
       - name: Release
-        uses: agilecustoms/release@v2
+        uses: agilecustoms/release@v3
 ```
 
 When a developer merges a PR, the Release workflow is triggered:

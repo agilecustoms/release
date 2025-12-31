@@ -21,7 +21,7 @@ inputs:
     description: 'CodeArtifact repository name, e.g., `maven`'
     required: false
   aws-codeartifact-maven:
-    description: 'If true, then publish maven artifacts to AWS CodeArtifact'
+    description: 'Two possible values: build and publish. publish - publish maven artifacts to AWS CodeArtifact, build - just access CodeArtifact to update version in pom.xml'
     required: false
   aws-ecr:
     description: 'If true, then push docker image to ECR'
@@ -52,8 +52,19 @@ inputs:
     description: 'When the next version to be released is 1.2.4, then also release 1, 1.2, and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
+  java-cache:
+    description: 'Enabled by default, specify empty string to disable caching'
+    required: false
+    default: 'maven'
+  java-cache-dependency-path:
+    description: 'see https://github.com/actions/setup-java "cache-dependency-path"'
+    required: false
+  java-distribution:
+    description: 'Java distribution, use Temurin as it is pre-cached in ubuntu-latest'
+    required: false
+    default: 'temurin'
   java-version:
-    description: 'Java version to use with aws-codeartifact-maven'
+    description: 'Java version to use'
     required: false
     default: '21'
   node-version:
@@ -94,6 +105,10 @@ inputs:
   tag-format:
     description: 'By default, the tag (version) has format `v1.0.0`. Use `${version}` to remove `v` prefix'
     required: false
+  update-version-in-manifest:
+    description: 'Update version in language-specific manifest files (e.g., pom.xml, package.json, pyproject.toml)'
+    required: false
+    default: 'true'
   version:
     description: 'Explicit version to use instead of auto-generation'
     required: false
@@ -157,16 +172,16 @@ runs:
           echo "aws_s3=true" >> $GITHUB_OUTPUT
         fi
         
-        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
+        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ -n "${{ inputs.aws-codeartifact-maven }}" ]; then
           if [ -z "${{ inputs.aws-account }}" ] || [ -z "${{ inputs.aws-region }}" ] || [ -z "${{ inputs.aws-role }}" ]; then
             echo "Error: aws-account, aws-region, and aws-role must all be provided" >&2
             exit 1
           fi
         fi
 
-        if [ "${{ inputs.aws-codeartifact-maven }}" = "true" ]; then
+        if [ -n "${{ inputs.aws-codeartifact-maven }}" ]; then
           if [ -z "${{ inputs.aws-codeartifact-domain }}" ]; then
-            echo "Error: aws-codeartifact-domain must be provided when aws-codeartifact-maven is true" >&2
+            echo "Error: aws-codeartifact-domain must be provided when aws-codeartifact-maven is set" >&2
             exit 1
           fi
         fi
@@ -178,8 +193,8 @@ runs:
 
 ## Phase 2 - Release generation
 
-    # by default (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }} see misc/.git-config for example
-    # alternatively user may want to use an explicit PAT, then need to configure git to use it.
+    # By default, (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }} see misc/.git-config for example
+    # Alternatively user may want to use an explicit PAT, then need to configure git to use it
     # Besides 'git push', the release_gen _probes_ git push, that's why it is in front of release_gen
     - name: Git authorization
       if: env.GH_TOKEN
@@ -201,7 +216,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v3.1.3
+      uses: agilecustoms/release-gen@v3.2.0
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -253,7 +268,16 @@ runs:
 
     - name: Setup Java
       if: hashFiles('pom.xml') && inputs.dev-release != 'true'
-      uses: agilecustoms/setup-maven-codeartifact@v2.0.1
+      uses: actions/setup-java@v5
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.java-distribution }}
+        cache: ${{ inputs.java-cache }}
+        cache-dependency-path: ${{ inputs.java-cache-dependency-path }}
+
+    - name: Setup Maven CodeArtifact
+      if: inputs.aws-codeartifact-maven
+      uses: agilecustoms/setup-maven-codeartifact@v2.1.1
       with:
         aws-account: ${{ inputs.aws-account }}
         aws-region: ${{ inputs.aws-region }}
@@ -261,14 +285,18 @@ runs:
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
         aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository || 'maven' }}
         aws-login: false # we already logged in AWS in a previous step
-        java-version: ${{ inputs.java-version }}
+        java-setup: false
 
     - name: Update version in pom.xml
-      if: hashFiles('pom.xml') && inputs.dev-release != 'true'
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('pom.xml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pom.xml
-        mvn --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
+        MVN=mvn
+        if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
+        "$MVN" --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
+    # maven first creates effective pom, which requires resolving parent dependencies,
+    # so unfortunately, even just to update versions in pom.xml, we need to have AWS CodeArtifact access :(
 
     - name: Setup Node
       if: hashFiles('package.json') && inputs.dev-release != 'true'
@@ -278,7 +306,7 @@ runs:
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update version in package.json
-      if: hashFiles('package.json') && inputs.dev-release != 'true'
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('package.json') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in package.json
@@ -291,7 +319,7 @@ runs:
         python-version: ${{ inputs.python-version }}
 
     - name: Update version in pyproject.toml
-      if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pyproject.toml
@@ -309,7 +337,7 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v2.0.3
+      uses: agilecustoms/publish-s3@v2.1.1
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
@@ -342,12 +370,13 @@ runs:
     # TODO: verify phase still run in build and release jobs
     # TODO: checkstyle and enforcer still run in both jobs
     - name: Publish maven to CodeArtifact
-      if: inputs.aws-codeartifact-maven && inputs.dev-release != 'true'
+      if: inputs.aws-codeartifact-maven == 'publish' && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish maven to CodeArtifact
-        set +e
-        output=$(mvn --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
+        MVN=mvn
+        if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
+        output=$($MVN --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
         error_code=$?
         echo "$output"
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
@@ -365,7 +394,6 @@ runs:
       shell: bash
       run: |
         # Publish in npmjs
-        set +e
         output=$(npm publish --access ${{ inputs.npm-visibility }} --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
         error_code=$?
         echo "$output"

@@ -30,12 +30,12 @@ jobs:
         uses: actions/download-artifact@v5
 
       - name: Release
-        uses: agilecustoms/release@v2
+        uses: agilecustoms/release@v3
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
           aws-role: 'ci/publisher'
-          aws-codeartifact-maven: true # tells action to publish in AWS CodeArtifact Maven repo
+          aws-codeartifact-maven: publish # tells action to publish in AWS CodeArtifact Maven repo
 ```
 
 Besides the release workflow, the next infrastructure pieces must be aligned:
