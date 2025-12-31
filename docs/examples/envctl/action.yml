@@ -14,7 +14,7 @@ runs:
         node-version: 22
 
     - name: Cache global npm
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.npm
         key: npm-global-${{ runner.os }}-envctl-cache-key-0.23.13

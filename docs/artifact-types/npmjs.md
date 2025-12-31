@@ -29,7 +29,7 @@ To make it faster, I use cache in `action.yml` file:
 
 ```yaml
 - name: Cache global npm
-  uses: actions/cache@v4
+  uses: actions/cache@v5
   with:
     path: ~/.npm
     key: npm-global-${{ runner.os }}-envctl-cache-key-0.23.13
