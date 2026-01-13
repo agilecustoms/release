@@ -216,7 +216,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v3.2.0
+      uses: agilecustoms/release-gen@v3.2.3
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -337,7 +337,7 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v2.1.1
+      uses: agilecustoms/publish-s3@v2.1.4
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
