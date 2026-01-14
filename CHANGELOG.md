@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/agilecustoms/release/compare/v3.0.0...v3.0.1) (2026-01-14)
+
+### Documentation
+
+* remove duplicate link ([c8f115b](https://github.com/agilecustoms/release/commit/c8f115bf34fd8de43cfe78989f86bd1426806c8e))
+
+
 ## [3.0.0](https://github.com/agilecustoms/release/compare/v2.1.0...v3.0.0) (2025-12-31)
 
 ### ⚠ BREAKING CHANGES
