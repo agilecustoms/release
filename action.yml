@@ -456,11 +456,14 @@ runs:
         fi
         
         if [ -n "${GH_TOKEN}" ]; then
-          echo 'Alex4'
+          # checkout@v6: remove includeIf sections (credentials stored in $RUNNER_TEMP file)
           git config --local --remove-section includeIf.gitdir:/home/runner/work/${{ steps.init.outputs.service }}/${{ steps.init.outputs.service }}/.git 2>/dev/null || true
           git config --local --remove-section includeIf.gitdir:/home/runner/work/${{ steps.init.outputs.service }}/${{ steps.init.outputs.service }}/.git/worktrees/* 2>/dev/null || true
           git config --local --remove-section includeIf.gitdir:/github/workspace/.git 2>/dev/null || true
           git config --local --remove-section includeIf.gitdir:/github/workspace/.git/worktrees/* 2>/dev/null || true
+          # checkout@v5: remove the injected auth header from .git/config
+          git config --local --unset-all http.https://github.com/.extraheader 2>/dev/null || true
+          # set the remote URL to use PAT token for authentication
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
         fi
         cat .git/config
