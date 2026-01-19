@@ -205,7 +205,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v3.3.0
+      uses: agilecustoms/release-gen@v3.3.1
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -457,8 +457,8 @@ runs:
         
         if [ -n "${GH_TOKEN}" ]; then
           echo 'Alex4'
-          git config --local --remove-section includeIf.gitdir:/home/runner/work/env-core/env-core/.git 2>/dev/null || true
-          git config --local --remove-section includeIf.gitdir:/home/runner/work/env-core/env-core/.git/worktrees/* 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/home/runner/work/${{ steps.init.outputs.service }}/${{ steps.init.outputs.service }}/.git 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/home/runner/work/${{ steps.init.outputs.service }}/${{ steps.init.outputs.service }}/.git/worktrees/* 2>/dev/null || true
           git config --local --remove-section includeIf.gitdir:/github/workspace/.git 2>/dev/null || true
           git config --local --remove-section includeIf.gitdir:/github/workspace/.git/worktrees/* 2>/dev/null || true
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
