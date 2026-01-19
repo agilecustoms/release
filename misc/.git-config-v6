@@ -1,0 +1,21 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = ***github.com/agilecustoms/env-core.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[gc]
+	auto = 0
+[includeIf "gitdir:/home/runner/work/env-core/env-core/.git"]
+	path = /home/runner/work/_temp/git-credentials-bd568a29-feb0-49e4-bfba-aef1addb2f91.config
+[includeIf "gitdir:/home/runner/work/env-core/env-core/.git/worktrees/*"]
+	path = /home/runner/work/_temp/git-credentials-bd568a29-feb0-49e4-bfba-aef1addb2f91.config
+[includeIf "gitdir:/github/workspace/.git"]
+	path = /github/runner_temp/git-credentials-bd568a29-feb0-49e4-bfba-aef1addb2f91.config
+[includeIf "gitdir:/github/workspace/.git/worktrees/*"]
+	path = /github/runner_temp/git-credentials-bd568a29-feb0-49e4-bfba-aef1addb2f91.config
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main

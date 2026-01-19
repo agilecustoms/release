@@ -455,12 +455,16 @@ runs:
           refs="$refs refs/notes/semantic-release"
         fi
         
-        # push changes along with tags atomically (use --force to overwrite old tags)
         if [ -n "${GH_TOKEN}" ]; then
           echo 'Alex4'
+          git config --local --remove-section 'includeIf "gitdir:/home/runner/work/env-core/env-core/.git"' 2>/dev/null || true
+          git config --local --remove-section 'includeIf "gitdir:/home/runner/work/env-core/env-core/.git/worktrees/*"' 2>/dev/null || true
+          git config --local --remove-section 'includeIf "gitdir:/github/workspace/.git"' 2>/dev/null || true
+          git config --local --remove-section 'includeIf "gitdir:/github/workspace/.git/worktrees/*"' 2>/dev/null || true
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
         fi
         cat .git/config
+        # push changes along with tags atomically (use --force to overwrite old tags)
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
 ## Phase 7 - GitHub Release
