@@ -460,6 +460,7 @@ runs:
           echo 'Alex4'
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
         fi
+        git remote -v
         git push --atomic origin ${{ github.ref_name }} $refs --force
 
 ## Phase 7 - GitHub Release
