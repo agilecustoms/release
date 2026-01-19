@@ -237,19 +237,6 @@ runs:
         echo "git_tags=$git_tags" >> $GITHUB_OUTPUT
         echo "tags=$tags" >> $GITHUB_OUTPUT
 
-    # If job permissions: contents: write, then
-    #  (checkout <  6) .git/config is pre-configured with a ${{ github.token }} see misc/.git-config for example
-    #  (checkout >= 6) credentials in a separate file under $RUNNER_TEMP
-    # Alternatively user may want to use an explicit PAT, then need to configure git to use it
-    # Besides 'git push', the release_gen _probes_ git push, that's why it is in front of release_gen
-    - name: Git authorization
-      if: env.GH_TOKEN
-      shell: bash
-      run: |
-        # Git authorization
-        creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
-        git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
-
 ## Phase 3 - Log in AWS
 
     - name: Log in AWS
@@ -417,9 +404,26 @@ runs:
 #        echo "intentional error" >&2
 #        exit 1
 
+    # This action does 'git push' at the end, so need write permission
+    # Option 1. job permissions: contents: write
+    #  (checkout@v <  6) .git/config is pre-configured with a ${{ github.token }} see misc/.git-config for example
+    #  (checkout@v >= 6) credentials in a separate file under $RUNNER_TEMP
+    # Option 2. use an explicit PAT passed as env variable 'GH_TOKEN' - need to apply it to make 'git push' work
+    # Note: release-gen action (uses semantic-release under the hood) also calls some git commands,
+    #       this step needs to be AFTER release-gen step, otherwise it reports 400 error: Duplicate header: "Authorization"
+#    - name: Git authorization
+#      if: env.GH_TOKEN
+#      shell: bash
+#      run: |
+#         Git authorization
+#        creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
+#        git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
+
     - name: Git push
       if: inputs.dev-release != 'true'
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ env.GH_TOKEN }}
       run: |
         # Git push
         # fix any permission issues from earlier steps (npm version can create files with root permissions)
