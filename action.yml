@@ -405,13 +405,13 @@ runs:
 #        exit 1
 
     # To run 'git push' you need write permission
-    # Option 1. job permissions: contents: write
+    # Option 1. job permissions: contents: write (not good for protected branches though)
     #  (checkout@v <  6) .git/config is pre-configured with a ${{ github.token }} see misc/.git-config for example
     #  (checkout@v >= 6) credentials in a separate file under $RUNNER_TEMP
-    # Option 2. use an explicit PAT passed as env variable 'GH_TOKEN' - need to apply it to make 'git push' work
-    #  but first need to undo checkout@v5/6 configs as they might "win"
+    # Option 2. use an explicit PAT passed as env variable 'GH_TOKEN'
+    #  => need to apply it to make 'git push' work, but first need to undo checkout@v5/6 configs as they might "win"
     # Note: release-gen action (semantic-release under the hood) also calls some git commands,
-    #  So this Git authorization patch must be either AFTER release-gen step, or retest     this step needs to be AFTER release-gen step, otherwise it reports 400 error: Duplicate header: "Authorization"
+    #  So this Git authorization patch must be either AFTER release-gen step, or retest release-gen if place BEFORE it
     - name: Git push
       if: inputs.dev-release != 'true'
       shell: bash
