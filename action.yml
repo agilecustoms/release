@@ -457,10 +457,10 @@ runs:
         
         if [ -n "${GH_TOKEN}" ]; then
           echo 'Alex4'
-          git config --local --remove-section 'includeIf "gitdir:/home/runner/work/env-core/env-core/.git"' 2>/dev/null || true
-          git config --local --remove-section 'includeIf "gitdir:/home/runner/work/env-core/env-core/.git/worktrees/*"' 2>/dev/null || true
-          git config --local --remove-section 'includeIf "gitdir:/github/workspace/.git"' 2>/dev/null || true
-          git config --local --remove-section 'includeIf "gitdir:/github/workspace/.git/worktrees/*"' 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/home/runner/work/env-core/env-core/.git 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/home/runner/work/env-core/env-core/.git/worktrees/* 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/github/workspace/.git 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/github/workspace/.git/worktrees/* 2>/dev/null || true
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
         fi
         cat .git/config
