@@ -198,13 +198,13 @@ runs:
     #  (checkout >= 6) credentials in a separate file under $RUNNER_TEMP
     # Alternatively user may want to use an explicit PAT, then need to configure git to use it
     # Besides 'git push', the release_gen _probes_ git push, that's why it is in front of release_gen
-#    - name: Git authorization
-#      if: env.GH_TOKEN
-#      shell: bash
-#      run: |
-#         Git authorization
-#        creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
-#        git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
+    - name: Git authorization
+      if: env.GH_TOKEN
+      shell: bash
+      run: |
+        # Git authorization
+        creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
+        git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
 
     # the default Node is still 20, while release-gen uses Node24.
     # Also, it dynamically installs some extra deps via spawning 'npm' process, and some of these dependencies require Node >= 22
