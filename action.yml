@@ -457,6 +457,7 @@ runs:
         
         # push changes along with tags atomically (use --force to overwrite old tags)
         if [ -n "${GH_TOKEN}" ]; then
+          echo 'Alex4'
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
         fi
         git push --atomic origin ${{ github.ref_name }} $refs --force
