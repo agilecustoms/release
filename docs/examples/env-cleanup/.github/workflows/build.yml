@@ -20,7 +20,7 @@ jobs:
       id-token: write # to request JWT from GitHub OIDC provider
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Java
         uses: agilecustoms/setup-maven-codeartifact@v1
@@ -37,6 +37,6 @@ jobs:
 
       - name: Upload artifacts
         if: ${{ inputs.artifacts }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: target/app.jar

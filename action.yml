@@ -193,21 +193,10 @@ runs:
 
 ## Phase 2 - Release generation
 
-    # By default, (job permissions: contents: write) .git/config already pre-configured with a ${{ github.token }} see misc/.git-config for example
-    # Alternatively user may want to use an explicit PAT, then need to configure git to use it
-    # Besides 'git push', the release_gen _probes_ git push, that's why it is in front of release_gen
-    - name: Git authorization
-      if: env.GH_TOKEN
-      shell: bash
-      run: |
-        # Git authorization
-        creds=$(echo -n "x-access-token:${GH_TOKEN}" | base64 -w 0)
-        git config http.https://github.com/.extraheader "AUTHORIZATION: basic $creds"
-
     # the default Node is still 20, while release-gen uses Node24.
     # Also, it dynamically installs some extra deps via spawning 'npm' process, and some of these dependencies require Node >= 22
     - name: Set up Node
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 24
 
@@ -216,7 +205,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v3.2.0
+      uses: agilecustoms/release-gen@v3.3.1
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -300,7 +289,7 @@ runs:
 
     - name: Setup Node
       if: hashFiles('package.json') && inputs.dev-release != 'true'
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
@@ -337,7 +326,7 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v2.1.1
+      uses: agilecustoms/publish-s3@v2.1.4
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
@@ -415,6 +404,14 @@ runs:
 #        echo "intentional error" >&2
 #        exit 1
 
+    # To run 'git push' you need write permission
+    # Option 1. job permissions: contents: write (not good for protected branches though)
+    #  (checkout@v <  6) .git/config is pre-configured with a ${{ github.token }} see misc/.git-config for example
+    #  (checkout@v >= 6) credentials in a separate file under $RUNNER_TEMP
+    # Option 2. use an explicit PAT passed as env variable 'GH_TOKEN'
+    #  => need to apply it to make 'git push' work, but first need to undo checkout@v5/6 configs as they might "win"
+    # Note: release-gen action (semantic-release under the hood) also calls some git commands,
+    #  So this Git authorization patch must be either AFTER release-gen step, or retest release-gen if place BEFORE it
     - name: Git push
       if: inputs.dev-release != 'true'
       shell: bash
@@ -451,6 +448,17 @@ runs:
           refs="$refs refs/notes/semantic-release"
         fi
         
+        if [ -n "${GH_TOKEN}" ]; then
+          # checkout@v6: remove includeIf sections (credentials stored in $RUNNER_TEMP file)
+          git config --local --remove-section includeIf.gitdir:/home/runner/work/${{ steps.init.outputs.service }}/${{ steps.init.outputs.service }}/.git 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/home/runner/work/${{ steps.init.outputs.service }}/${{ steps.init.outputs.service }}/.git/worktrees/* 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/github/workspace/.git 2>/dev/null || true
+          git config --local --remove-section includeIf.gitdir:/github/workspace/.git/worktrees/* 2>/dev/null || true
+          # checkout@v5: remove the injected auth header from .git/config
+          git config --local --unset-all http.https://github.com/.extraheader 2>/dev/null || true
+          # set the remote URL to use PAT token for authentication
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        fi
         # push changes along with tags atomically (use --force to overwrite old tags)
         git push --atomic origin ${{ github.ref_name }} $refs --force
 

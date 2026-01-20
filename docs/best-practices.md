@@ -58,7 +58,7 @@ jobs:
       id-token: write # not always required, only if at some step you assume AWS role via OIDC
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Setup tools
       # Install dependencies
@@ -68,7 +68,7 @@ jobs:
 
       - name: Upload artifacts
         if: inputs.artifacts # no point in uploading artifacts on every push in a feature branch
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with: # configure what to upload
 ```
 
@@ -100,10 +100,10 @@ jobs:
       id-token: write # not always required, only if at some step you assume AWS role via OIDC
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           path: # where to download artifact(s)
 

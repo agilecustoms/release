@@ -46,12 +46,12 @@ jobs:
     steps:
       # ...
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           path: dist
 
       - name: Release
-        uses: agilecustoms/release@main
+        uses: agilecustoms/release@v3
         with:
           pre-publish-script: sed -i -E "s/(envctl-cache-key-)[^\n]+/\1$version/" "action.yml"
         env:
