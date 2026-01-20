@@ -115,7 +115,7 @@ Configuration will be provided via `release-plugins` input in `agilecustoms/rele
 
 ```yaml
 - name: release
-  uses: agilecustoms/release@main
+  uses: agilecustoms/release@v3
   with:
     npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
     release-plugins: |

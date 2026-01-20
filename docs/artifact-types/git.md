@@ -78,7 +78,7 @@ jobs:
     steps:
       # ...
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           path: dist
         # after this we have changes in file dist/index.js

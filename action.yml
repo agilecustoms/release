@@ -196,7 +196,7 @@ runs:
     # the default Node is still 20, while release-gen uses Node24.
     # Also, it dynamically installs some extra deps via spawning 'npm' process, and some of these dependencies require Node >= 22
     - name: Set up Node
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: 24
 
@@ -289,7 +289,7 @@ runs:
 
     - name: Setup Node
       if: hashFiles('package.json') && inputs.dev-release != 'true'
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'

@@ -35,7 +35,7 @@ jobs:
     steps:
       # ...
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
 
       - name: Docker build
         run: docker build -t env-cleanup:latest
