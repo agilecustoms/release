@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/agilecustoms/release/compare/v3.0.1...v3.1.0) (2026-01-20)
+
+### Features
+
+* support actions/checkout@v6 ([#31](https://github.com/agilecustoms/release/issues/31)) ([41bdce1](https://github.com/agilecustoms/release/commit/41bdce1e31ae8a1e6d5bcdf6660a17a2f744d42b))
+
+
 ## [3.0.1](https://github.com/agilecustoms/release/compare/v3.0.0...v3.0.1) (2026-01-14)
 
 ### Documentation
