@@ -114,46 +114,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # required to push commit and tags
 ```
 
-## Conventional commits
-
-`agilecustoms/release` uses [semantic-release](https://github.com/semantic-release/semantic-release)
-for next version generation. semantic-release has several presets for different commit message conventions.
-Default preset is "angular", but in all my projects I use "conventionalcommits" preset in `.releaserc.json`:
-
-```json
-{
-  "branches": { ... },
-  "plugins": [
-    [
-      "@semantic-release/commit-analyzer",
-      {
-        "preset": "conventionalcommits",
-        "releaseRules": [ ... ]
-      }
-    ],
-    [
-      "@semantic-release/release-notes-generator",
-      {
-        "preset": "conventionalcommits",
-        "presetConfig": { ... }
-      }
-    ]
-  ]
-}
-```
-
-Non-default presets require additional npm dependency. This is why in many examples you may see 
-`npm-extra-deps` input, like [here](https://github.com/agilecustoms/terraform-aws-ci-builder/blob/main/.github/workflows/release.yml)
-
-```yaml
-- name: Release
-  uses: agilecustoms/release@v3
-  with:
-    npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
-``` 
-
-For more details see [Semantic commits](./features/semantic-commits.md) 
-
 ## Company-specific gha-release wrapper
 
 In many [examples](./examples) you may some inputs repeat, such as `aws-account`, `aws-region`, `aws-role`.

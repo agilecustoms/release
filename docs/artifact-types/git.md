@@ -3,8 +3,8 @@
 Now days many types of software is released just as source code with version tag: Terraform modules, GitHub Actions, Go modules, etc.
 This is the simplest scenario for `agilecustoms/release` as there is no need to publish any artifacts, just create a tag
 
-_Note: all examples use shared patterns: two workflows: Build and Release; parameter `npm-extra-deps` —
-covered in [Best practices](../best-practices.md); "release" GitHub environment — covered in [Authorization and security](../authorization.md)_
+_Note: all examples use shared patterns: two workflows: Build and Release — covered in [Best practices](../best-practices.md);
+"release" GitHub environment — covered in [Authorization and security](../authorization.md)_
 
 - [Terraform module](#terraform-module)
 - [Composite GitHub Action](#composite-github-action)

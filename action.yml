@@ -71,9 +71,6 @@ inputs:
     description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24 (latest at time of writing)'
     required: false
     default: '22'
-  npm-extra-deps:
-    description: 'Additional semantic-release npm dependencies, needed to use non-default commit analyzer preset'
-    required: false
   npm-visibility:
     description: 'Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private'
     required: false
@@ -205,12 +202,11 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v3.4.0
+      uses: agilecustoms/release-gen@v4.0.0
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
         floating_tags: ${{ inputs.floating-tags }}
-        npm_extra_deps: ${{ inputs.npm-extra-deps }}
         release_branches: ${{ inputs.release-branches }}
         release_channel: ${{ inputs.release-channel }}
         release_plugins: ${{ inputs.release-plugins }}
