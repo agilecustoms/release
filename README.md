@@ -167,3 +167,4 @@ This project is released under the [MIT License](./LICENSE)
 - https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
 - https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as a reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as a tag. Used it for almost 2 years until switched to semantic-release
+- https://github.com/googleapis/release-please-action - GH action to create release PRs based on conventional commits
