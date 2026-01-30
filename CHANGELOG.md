@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.1.1](https://github.com/agilecustoms/release/compare/v3.1.0...v3.1.1) (2026-01-30)
+
+### Documentation
+
+* add another competitor action in Acknowledgement list ([3f07784](https://github.com/agilecustoms/release/commit/3f07784c4831468403710bec63a6b15e072e4c03))
+
+### Miscellaneous
+
+* use release-gen version that doesn't print extra messages during npm install ([69d9950](https://github.com/agilecustoms/release/commit/69d9950e73144d32cfa0d07c4d2a370c66f3e901))
+
+
 ## [3.1.0](https://github.com/agilecustoms/release/compare/v3.0.1...v3.1.0) (2026-01-20)
 
 ### Features
