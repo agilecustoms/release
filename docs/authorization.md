@@ -48,7 +48,7 @@ jobs:
     steps:
       # ...
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # secret can have any name, use `GH_TOKEN` for consistency
 ```
@@ -117,7 +117,7 @@ jobs:
     steps:
       # ...
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
@@ -151,7 +151,7 @@ jobs:
           persist-credentials: false
 
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         with:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # your PAT 
 ```
@@ -163,7 +163,7 @@ You have a choice **how to pass this PAT**:
 Option 1 (recommended): pass PAT in `agilecustoms/release` env variable `GH_TOKEN`
 ```yaml
 - name: Release
-  uses: agilecustoms/release@v3
+  uses: agilecustoms/release@v4
   env:
      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
