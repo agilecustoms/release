@@ -29,6 +29,6 @@ jobs:
           path: s3
 
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         with:
           dev-release: true

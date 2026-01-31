@@ -5,9 +5,9 @@ This chapter describes the default mode — "conventional commits"
 
 "conventional commits" mode follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0) specification.
 It takes the latest [SemVer](https://semver.org) tag and analyzes commit messages to determine the next version following these rules:
-- commits with `feat!:` prefix ⇒ increment a major version
-- commits with `feat:` prefix ⇒ increment a minor version
-- commits with `fix:` or `perf:` prefix ⇒ increment a patch version
+- commit with `feat!:` prefix ⇒ increment a major version
+- commit with `feat:` prefix ⇒ increment a minor version
+- commit with `fix:` or `perf:` prefix ⇒ increment a patch version
 
 If a PR has no commit bumping a version, the `agilecustoms/release` action exit with error
 
@@ -36,7 +36,7 @@ Configuration will be provided via `release-plugins` input in `agilecustoms/rele
 
 ```yaml
 - name: release
-  uses: agilecustoms/release@v3
+  uses: agilecustoms/release@v4
   with:
     release-plugins: |
       [

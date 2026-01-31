@@ -41,7 +41,7 @@ jobs:
         run: docker build -t env-cleanup:latest
 
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
