@@ -1,6 +1,6 @@
 # Maintenance release
 
-_This document assumes you use [version generation](./version-generation.md) mode "semantic commits" or "version bump".
+_This document assumes you use [version generation](./version-generation.md) mode "conventional commits" or "version bump".
 "explicit version" does not provide any help with respect to maintenance versions, all you get is just [floating tags](./floating-tags.md)_
 
 Maintenance release is a release from a branch with a version range.
@@ -22,7 +22,7 @@ on:
 ## Example 1. Branch 1.x.x
 
 Imagine current development in `main` branch and previous version in `1.x.x` branch,
-and you use [semantic commits](./semantic-commits.md) or [version bump](./version-generation.md#version-bump)
+and you use [conventional commits](./conventional-commits.md) or [version bump](./version-generation.md#version-bump)
 
 You need to place a file `.releaserc.json` in the repo root with the following content:
 ```json

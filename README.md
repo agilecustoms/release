@@ -135,7 +135,7 @@ _There are no required inputs. The action only controls that the combination of 
 | tag-format                  | v${version}       | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                                                                                     |
 | update-version-in-manifest  | true              | Update version in language-specific manifest files (e.g., pom.xml, package.json, pyproject.toml)                                                                                                                                                        |
 | version                     |                   | [Explicit version](./docs/features/version-generation.md#explicit-version) to use instead of auto-generation                                                                                                                                            |
-| version-bump                |                   | Allows you to [bump a version](./docs/features/version-generation.md#version-bump) without semantic commits                                                                                                                                             |
+| version-bump                |                   | Allows you to [bump a version](./docs/features/version-generation.md#version-bump) without conventional commits                                                                                                                                         |
 
 ## Outputs
 
@@ -166,4 +166,4 @@ This project is released under the [MIT License](./LICENSE)
 - https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
 - https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as a reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as a tag. Used it for almost 2 years until switched to semantic-release
-- https://github.com/googleapis/release-please-action - GH action to create release PRs based on conventional commits
+- https://github.com/googleapis/release-please-action — GH action to create release PRs based on conventional commits
