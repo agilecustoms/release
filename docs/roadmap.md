@@ -2,7 +2,6 @@
 
 Next:
 - GitHub action to access terraform modules from corporate private GH repos
-- setup-maven-codeartifact support Maven 4
 - publish in Maven central
 - publish Python packages (pip and Twine) in CodeArtifact
 

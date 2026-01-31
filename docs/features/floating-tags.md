@@ -44,7 +44,7 @@ Rules:
 For all configuration options, see [configuration](../configuration.md)
 
 There are three [version generation](./version-generation.md) modes.
-Modes "semantic commits" and "version bump" take configuration from file `.releaserc.json`.
+Modes "conventional commits" and "version bump" take configuration from file `.releaserc.json`.
 You can configure a release channel there as `channel` property in `branches` section.
 For version generation mode "explicit version" use GH action input `release-channel`
 

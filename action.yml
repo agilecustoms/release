@@ -110,7 +110,7 @@ inputs:
     description: 'Explicit version to use instead of auto-generation'
     required: false
   version-bump:
-    description: 'Allows you to bump a version without semantic commits'
+    description: 'Allows you to bump a version without conventional commits'
     required: false
 
 runs:
@@ -202,7 +202,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v4.0.0
+      uses: agilecustoms/release-gen@v4.2.1
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
