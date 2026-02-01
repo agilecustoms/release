@@ -13,9 +13,9 @@
       {
         "preset": "conventionalcommits",
         "releaseRules": [
-          { "type": "perf", "release": false },
           { "type": "docs", "release": "patch" },
-          { "type": "misc", "release": "patch" }
+          { "type": "misc", "release": "patch" },
+          { "type": "perf", "release": false }
         ]
       }
     ],
@@ -26,16 +26,16 @@
         "presetConfig": {
           "types": [
             {
+              "type": "docs",
+              "section": "Documentation"
+            },
+            {
               "type": "feat",
               "section": "Features"
             },
             {
               "type": "fix",
               "section": "Bug Fixes"
-            },
-            {
-              "type": "docs",
-              "section": "Documentation"
             },
             {
               "type": "misc",
