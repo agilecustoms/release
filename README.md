@@ -2,6 +2,8 @@
 
 Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
 
+> **⚠️ Feb 1, 2026 — version 4 was released with breaking changes, see [Migration Guide](./docs/MIGRATION.md)**
+
 ![Cover](docs/images/cover.png)
 
 You can release **any combination** of software packages, binary files, docker images, and raw repo files
