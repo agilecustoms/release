@@ -1,6 +1,6 @@
 # Prerelease
 
-_This document assumes you use [version generation](./version-generation.md) mode "semantic commits" or "version bump".
+_This document assumes you use [version generation](./version-generation.md) mode "conventional commits" or "version bump".
 "explicit version" does not provide any help with respect to prerelease versions, all you get is just [floating tags](./floating-tags.md)_
 
 Prereleases allow to evolve a version `-alfa.1..N` → `-beta.1..N` → `-rc.1..N` while staying in the same branch!
@@ -26,16 +26,15 @@ Additionally, you can use property `channel` for [floating tags](./floating-tags
 
 **First commit** is very important — it defines a version you intend to release at the end.
 Most of the time prerelease is used to start work on a new major version,
-so the first commit in `next` branch should have `BREAKING CHANGE: ..` in message footer (for angular)
-or start from `feat!: ..` (for conventionalcommits)
+so the first commit in `next` branch should start from `feat!: ..`
 
 Assume you made branch `next` from `main` at version `1.2.3`
-- "semantic commits" mode with commit `BREAKING CHANGE:` will create version `2.0.0-next.1`
-- "semantic commits" mode with commit `feat: ..` will create version `1.3.0-next.1`
-- "semantic commits" mode with commit `fix: ..` will create version `1.2.4-next.1`
+- "conventional commits" mode with commit `feat!: ..` will create version `2.0.0-next.1`
+- "conventional commits" mode with commit `feat: ..` will create version `1.3.0-next.1`
+- "conventional commits" mode with commit `fix: ..` will create version `1.2.4-next.1`
 - "version bump" mode with `default-patch` will create version `1.2.4-next.0`
 - "version bump" mode with `default-minor` will create version `1.3.0-next.0`
-Note: if you use "version bump" mode and want a next major version, in the first commit you must follow "semantic commits" rules
+Note: if you use "version bump" mode and want a next major version, in the first commit you must follow "conventional commits" rules
 
 Next table shows behavior with first major commit and different combinations of `prerelease` and `channel`:
 
@@ -50,14 +49,14 @@ Next table shows behavior with first major commit and different combinations of 
 | `next` | 1.2.3   | alpha      | next    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | `2.0.0-alpha.2`, `next` | `next`  |
 | `next` | 1.2.3   | alpha      | beta    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.2`, `beta` | _same_                  | `next`  |
 
-**Subsequent commits**. No matter what semantic commit you make (`fix:`, `feat:` etc.) or "version bump" `default-patch`/`default-minor` you use,
+**Subsequent commits**. No matter what commit message you make (`fix:`, `feat:` etc.) or "version bump" `default-patch`/`default-minor` you use,
 the version will always be incremented `+1` in the prerelease sequence: `2.0.0-alpha.1` → `2.0.0-alpha.2`.
-In case of "semantic commits", the commit messages still matter: they're used to generate GitHub releases.
-Also, once you finally merge prerelease branch → main, then all semantic commits will be reflected in a `CHANGELOG.md` file
+In case of "conventional commits", the commit messages still matter: they're used to generate GitHub releases.
+Also, once you finally merge prerelease branch → main, then all conventional commits will be reflected in a `CHANGELOG.md` file
 
 **Merge to main**. Use merge commit. Do not use rebase because last commit in `next` has `[skip ci]` tag,
 so release workflow will not be triggered on `main`.
-Do not use squash because you will lose all semantic commits in the prerelease branch!
+Do not use squash because you will lose all conventional commits in the prerelease branch!
 
 ## Big example
 

@@ -8,7 +8,8 @@ Then I felt a lack of GH action to publish Maven packages in AWS CodeArtifact, s
 one to publish and one to resolve existing packages.
 In spring 2025 I started my second project, the number of services grew and so grew a volume of similar code in release pipelines.
 Then I combined all of them into a single action `agilecustoms/gha-release`.
-But then (summer 2025) I decided to make it public and extracted stuff not specific to AgileCustoms into a separate action `agilecustoms/release`
+But then (summer 2025) I decided to make it public and extracted stuff not specific to AgileCustoms into a separate action `agilecustoms/release`.
+Fall 2025 the first version of `agilecustoms/release-gen` was released
 
 ## Current state
 
@@ -19,7 +20,7 @@ Did I think about a plugin system? Yes, I did. Having every type of artifact as 
 The problem is that right now this GH action is a combination of other GH actions, my custom GH actions (composite and Node.js ones) and some shell scripts.
 Ideally (maybe in the future) rewrite the whole thing in TypeScript or Go and then allow plugins with clear programmatic API
 
-So far idea is to add new types of artifacts as new steps in `action.yml` file, even though it is a "monolithic" approach
+So far the idea is to add new types of artifacts as new steps in `action.yml` file, even though it is a "monolithic" approach
 
 ## Philosophy
 
@@ -38,5 +39,5 @@ Enterprise projects tend to use a simplified approach: no release notes, no chan
 
 Internally `semantic-release` uses `conventional-changelog`. At some point I thought about using `conventional-changelog` directly,
 but then I realized that `conventional-changlog` itself is a "Lego" - you need at least next 4 libraries:
-conventional-changelog-angular, conventional-commits-parser, conventional-changelog-filter, conventional-changelog-writer.
+conventional-changelog-conventionalcommits, conventional-commits-parser, conventional-changelog-filter, conventional-changelog-writer.
 So `semantic-release` does some heavy lifting to put them together

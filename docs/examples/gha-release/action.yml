@@ -82,7 +82,7 @@ runs:
   steps:
     - name: release
       id: release
-      uses: agilecustoms/release@v3
+      uses: agilecustoms/release@v4
       with:
         # company-specific defaults
         aws-account: 123456789012
@@ -90,7 +90,6 @@ runs:
         aws-region: us-east-1
         aws-role: ${{ inputs.dev-release == 'true' && 'ci/publisher-dev' || 'ci/publisher' }}
         aws-s3-bucket: mycompany-dist
-        npm-extra-deps: conventional-changelog-conventionalcommits@9.1.0
         # pass through inputs
         aws-codeartifact-maven: ${{ inputs.aws-codeartifact-maven }}
         aws-ecr: ${{ inputs.aws-ecr }}

@@ -2,27 +2,19 @@
 
 Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
 
+> **⚠️ Feb 1, 2026 — version 4 was released with breaking changes, see [Migration Guide](./docs/MIGRATION.md)**
+
 ![Cover](docs/images/cover.png)
 
 You can release **any combination** of software packages, binary files, docker images, and raw repo files
 
-This is especially useful in microservices where the releases are _binary_ + _IaC_ versioned via git tag
-
-The action comes with an **ecosystem**:
-- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
-- Terraform modules to provide AWS roles and policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
-- GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
-- documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
-- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
-- Release workflow [best practices](./docs/best-practices.md)
-- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
-  🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
+This is especially useful in microservices where the release is a _binary_ + _IaC_ versioned via git tag
 
 ## Features
 
 - automatic and manual [version generation](./docs/features/version-generation.md)
 - release notes generation and changelog update
-- [floating tags](./docs/features/floating-tags.md) — given, current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
+- [floating tags](./docs/features/floating-tags.md) — given the current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
 - [maintenance releases](./docs/features/maintenance-release.md) — made from branch like `1.x.x` (given `2.x.x` development is in `main`)
 - [prereleases](./docs/features/prerelease.md) — develop a next (often major, sometimes minor) version, typically made from a branch `next`
 - [dev-release](./docs/features/dev-release.md) — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
@@ -60,13 +52,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: release # has secret GH_TOKEN - a PAT with permission to bypass branch protection rule
     permissions:
-      contents: read     # to checkout code
+      contents: read     # to checkout the code
       id-token: write    # to assume AWS role via OIDC
     steps:
       # (example) package AWS Lambda code as a zip archive in ./s3 directory
         
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
@@ -99,6 +91,18 @@ The action will:
 - push tags `v1.3.0`, `v1.3`, `v1` and `latest` to the remote repository
 - create a GH Release tied to tag `v1.3.0`
 
+## Ecosystem
+
+The action comes with an **ecosystem**:
+- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
+- Terraform modules to provide AWS policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
+- GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
+- documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
+- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
+- Release workflow [best practices](./docs/best-practices.md)
+- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
+  🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
+
 ## Inputs
 
 _There are no required inputs. The action only controls that the combination of inputs is valid_
@@ -124,7 +128,6 @@ _There are no required inputs. The action only controls that the combination of 
 | java-distribution           | temurin           | Java distribution. Default is Temurin as it is pre-cached in ubuntu-latest                                                                                                                                                                              |
 | java-version                | 21                | Java version to use. [Example](./docs/artifact-types/aws-codeartifact-maven.md)                                                                                                                                                                         |
 | node-version                | 22                | Node.js version to publish npm packages. Default is 22 because it is the highest pre-cached in Ubuntu 24 (latest at time of writing)                                                                                                                    |
-| npm-extra-deps              |                   | Additional npm dependencies needed to use non-default commit analyzer preset, e.g., `conventional-changelog-conventionalcommits@9.1.0`. Use white space or new line to specify multiple deps (extremely rare)                                           |
 | npm-visibility              | public            | Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private (not tested yet). [Example](./docs/artifact-types/npmjs.md)                                                                         |
 | python-version              | 3.13              | Python version, so far only used to bump version in pyproject.toml                                                                                                                                                                                      |
 | pre-publish-script          |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variable `$version`. See example in [npmjs](./docs/artifact-types/npmjs.md) |
@@ -136,7 +139,7 @@ _There are no required inputs. The action only controls that the combination of 
 | tag-format                  | v${version}       | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                                                                                     |
 | update-version-in-manifest  | true              | Update version in language-specific manifest files (e.g., pom.xml, package.json, pyproject.toml)                                                                                                                                                        |
 | version                     |                   | [Explicit version](./docs/features/version-generation.md#explicit-version) to use instead of auto-generation                                                                                                                                            |
-| version-bump                |                   | Allows you to [bump a version](./docs/features/version-generation.md#version-bump) without semantic commits                                                                                                                                             |
+| version-bump                |                   | Allows you to [bump a version](./docs/features/version-generation.md#version-bump) without conventional commits                                                                                                                                         |
 
 ## Outputs
 
@@ -167,4 +170,4 @@ This project is released under the [MIT License](./LICENSE)
 - https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
 - https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as a reference on how to write my own GH action-adapter for semantic-release
 - https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as a tag. Used it for almost 2 years until switched to semantic-release
-- https://github.com/googleapis/release-please-action - GH action to create release PRs based on conventional commits
+- https://github.com/googleapis/release-please-action — GH action to create release PRs based on conventional commits

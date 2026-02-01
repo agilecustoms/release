@@ -23,7 +23,7 @@ The table below shows a comparison of different release types:
 | intention                   | use in production                             | beta testing                                  | dev testing              |
 | best use for                | software packages and deployable apps         | software packages and deployable apps         | deployable apps          |
 | adoption                    | widely                                        | widely                                        | popular in enterprise    |
-| version generation          | "semantic commits" or "version-bump"          | "semantic commits" or "version bump"          | version = branch name    |
+| version generation          | "conventional commits" or "version-bump"      | "conventional commits" or "version bump"      | version = branch name    |
 | auto deletion               | ❌️                                            | ❌️                                            | ✅                        |
 | number of developers        | many                                          | many                                          | typically one            |
 | release notes and changelog | ✅                                             | ✅                                             | ❌️                       |
@@ -57,7 +57,7 @@ jobs:
     steps:
       # ...
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
@@ -86,7 +86,7 @@ you must create a temporary release of A. This is a dev-release!
 
 ## Configuration
  
-`dev-release` mode takes precedence over normal release modes ("semantic commits", "version-bump" and "explicit version").
+`dev-release` mode takes precedence over normal release modes ("conventional commits", "version-bump" and "explicit version").
 When `dev-release` is set to `true` it ignores most of the parameters that are used for normal releases.
 These are only parameters respected by dev-release:
 `aws-account`, `aws-ecr`, `aws-region`, `aws-role`, `aws-s3-bucket`, `aws-s3-dir`, `dev-branch-prefix`

@@ -51,7 +51,7 @@ jobs:
           path: dist
 
       - name: Release
-        uses: agilecustoms/release@v3
+        uses: agilecustoms/release@v4
         with:
           pre-publish-script: sed -i -E "s/(envctl-cache-key-)[^\n]+/\1$version/" "action.yml"
         env:
