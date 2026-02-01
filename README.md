@@ -6,23 +6,13 @@ Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consisten
 
 You can release **any combination** of software packages, binary files, docker images, and raw repo files
 
-This is especially useful in microservices where the releases are _binary_ + _IaC_ versioned via git tag
-
-The action comes with an **ecosystem**:
-- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
-- Terraform modules to provide AWS roles and policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
-- GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
-- documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
-- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
-- Release workflow [best practices](./docs/best-practices.md)
-- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
-  🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
+This is especially useful in microservices where the release is a _binary_ + _IaC_ versioned via git tag
 
 ## Features
 
 - automatic and manual [version generation](./docs/features/version-generation.md)
 - release notes generation and changelog update
-- [floating tags](./docs/features/floating-tags.md) — given, current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
+- [floating tags](./docs/features/floating-tags.md) — given the current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
 - [maintenance releases](./docs/features/maintenance-release.md) — made from branch like `1.x.x` (given `2.x.x` development is in `main`)
 - [prereleases](./docs/features/prerelease.md) — develop a next (often major, sometimes minor) version, typically made from a branch `next`
 - [dev-release](./docs/features/dev-release.md) — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
@@ -60,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release # has secret GH_TOKEN - a PAT with permission to bypass branch protection rule
     permissions:
-      contents: read     # to checkout code
+      contents: read     # to checkout the code
       id-token: write    # to assume AWS role via OIDC
     steps:
       # (example) package AWS Lambda code as a zip archive in ./s3 directory
@@ -98,6 +88,18 @@ The action will:
 - update `CHANGELOG.md` with release notes
 - push tags `v1.3.0`, `v1.3`, `v1` and `latest` to the remote repository
 - create a GH Release tied to tag `v1.3.0`
+
+## Ecosystem
+
+The action comes with an **ecosystem**:
+- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
+- Terraform modules to provide AWS policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
+- GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
+- documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
+- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
+- Release workflow [best practices](./docs/best-practices.md)
+- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
+  🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
 
 ## Inputs
 
