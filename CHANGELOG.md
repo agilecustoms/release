@@ -1,5 +1,29 @@
 # Changelog
 
+## [4.0.0](https://github.com/agilecustoms/release/compare/v3.1.1...v4.0.0) (2026-02-01)
+
+### ⚠ BREAKING CHANGES
+
+* "conventionalcommits" is the only supported preset now. input `npm-extra-deps` is eliminated. See Migration Guide
+
+### Features
+
+* get rid of npm-extra-deps ([69e995e](https://github.com/agilecustoms/release/commit/69e995e0fb3e990f172357da3547d5a9b635708b))
+
+### Documentation
+
+* add migration guide ([0a12636](https://github.com/agilecustoms/release/commit/0a12636969e41b125f368e31d88b4cbd9212ee9b))
+* fix documentation to reflect conventional commits usage ([3da0c53](https://github.com/agilecustoms/release/commit/3da0c534c86fe7a36b0cae24eee1097871d3d755))
+* move ecosystem chapter lower in README.md ([ff803ac](https://github.com/agilecustoms/release/commit/ff803acf246298b7ae07dbf3e87e92aa6cc33393))
+* replace v3 with v4 in documentation ([cf33de7](https://github.com/agilecustoms/release/commit/cf33de7dcd48632e7fb21b454c39bcbd25f298c4))
+* update test coverage ([a1f63b4](https://github.com/agilecustoms/release/commit/a1f63b41c4f5a1e51b5ac3f6e690e8cd3a43c975))
+
+### Miscellaneous
+
+* update release-gen and publish-s3 patch versions ([47d22ad](https://github.com/agilecustoms/release/commit/47d22add4d9cb74bd39bbbad57f5134dae464b94))
+* use latest minor version for aws-actions/configure-aws-credentials ([fb7f898](https://github.com/agilecustoms/release/commit/fb7f89808ad7a3541acb95b3d46cff686e465112))
+
+
 ## [3.1.1](https://github.com/agilecustoms/release/compare/v3.1.0...v3.1.1) (2026-01-30)
 
 ### Documentation
