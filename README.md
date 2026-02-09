@@ -2,7 +2,7 @@
 
 Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
 
-> **⚠️ Feb 1, 2026 — version 4 was released with breaking changes, see [Migration Guide](./docs/MIGRATION.md)**
+> **⚠️ Feb 9, 2026 — version 5 was released to accommodate for breaking changes in NPM made back in Dec 9, 2025, see [Migration Guide](./docs/MIGRATION.md)**
 
 ![Cover](docs/images/cover.png)
 
@@ -58,7 +58,7 @@ jobs:
       # (example) package AWS Lambda code as a zip archive in ./s3 directory
         
       - name: Release
-        uses: agilecustoms/release@v4
+        uses: agilecustoms/release@v5
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
@@ -128,7 +128,8 @@ _There are no required inputs. The action only controls that the combination of 
 | java-distribution           | temurin           | Java distribution. Default is Temurin as it is pre-cached in ubuntu-latest                                                                                                                                                                              |
 | java-version                | 21                | Java version to use. [Example](./docs/artifact-types/aws-codeartifact-maven.md)                                                                                                                                                                         |
 | node-version                | 22                | Node.js version to publish npm packages. Default is 22 because it is the highest pre-cached in Ubuntu 24 (latest at time of writing)                                                                                                                    |
-| npm-visibility              | public            | Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private (not tested yet). [Example](./docs/artifact-types/npmjs.md)                                                                         |
+| npm-publish                 | false             | If true, then publish package to npmjs.com registry. [Example](./docs/artifact-types/npmjs.md)                                                                                                                                                          |
+| npm-visibility              | public            | Used together with input `npm-publish`. Specifies package visibility: public or private (not tested yet)                                                                                                                                                |
 | python-version              | 3.13              | Python version, so far only used to bump version in pyproject.toml                                                                                                                                                                                      |
 | pre-publish-script          |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variable `$version`. See example in [npmjs](./docs/artifact-types/npmjs.md) |
 | release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md)  |
@@ -152,7 +153,6 @@ _There are no required inputs. The action only controls that the combination of 
 | Name      | Description                                                                                                                                       |
 |-----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | GH_TOKEN  | Takes GH PAT with permission to bypass the branch and tags protection rules. See details in [Authorization and Security](./docs/authorization.md) |
-| NPM_TOKEN | If specified, publish npm package in npmjs repo. See [details](./docs/artifact-types/npmjs.md)                                                    |
 
 ## Misc
 

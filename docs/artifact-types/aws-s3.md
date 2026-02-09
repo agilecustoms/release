@@ -57,7 +57,7 @@ jobs:
       # next step recognize that `s3` directory exists and upload all files from it to S3
 
       - name: Release
-        uses: agilecustoms/release@v4
+        uses: agilecustoms/release@v5
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1

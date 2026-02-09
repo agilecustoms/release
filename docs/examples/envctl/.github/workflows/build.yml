@@ -45,9 +45,9 @@ jobs:
           path: dist
 
       - name: Release
-        uses: agilecustoms/release@v4
+        uses: agilecustoms/release@v5
         with:
+          npm-publish: true
           pre-publish-script: sed -i -E "s/(envctl-cache-key-)[^\n]+/\1$version/" "action.yml"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}

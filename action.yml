@@ -71,8 +71,12 @@ inputs:
     description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24 (latest at time of writing)'
     required: false
     default: '22'
+  npm-publish:
+    description: 'If true, then publish package to npmjs.com registry'
+    required: false
+    default: 'false'
   npm-visibility:
-    description: 'Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private'
+    description: 'Used together with input `npm-publish`. Specifies package visibility: public or private'
     required: false
     default: 'public'
   python-version:
@@ -136,7 +140,7 @@ runs:
         echo "Error: env variable GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npm visibility
-      if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
+      if : inputs.npm-publish == 'true' && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
       shell: bash
       run: |
         echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
@@ -190,8 +194,7 @@ runs:
 
 ## Phase 2 - Release generation
 
-    # the default Node is still 20, while release-gen uses Node24.
-    # Also, it dynamically installs some extra deps via spawning 'npm' process, and some of these dependencies require Node >= 22
+    # the default Node is still 20, while release-gen uses Node 24
     - name: Set up Node
       uses: actions/setup-node@v6
       with:
@@ -375,22 +378,36 @@ runs:
     # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: env.NPM_TOKEN && inputs.dev-release != 'true'
+      if: inputs.npm-publish == 'true' && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish in npmjs
-        output=$(npm publish --access ${{ inputs.npm-visibility }} --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
-        error_code=$?
-        echo "$output"
+        
+        # Node 22 comes with npm 10.x, OIDC requires >= 11.5.1
+        required_major=11
+        required_minor=5
+        current="$(npm --version)"
+        major="$(echo "$current" | cut -d. -f1)"
+        minor="$(echo "$current" | cut -d. -f2)"
+        if [ "$major" -lt "$required_major" ] || { [ "$major" -eq "$required_major" ] && [ "$minor" -lt "$required_minor" ]; }; then
+          echo "Upgrading npm from $current to >= 11.5.1 (OIDC required)"
+          npm i -g npm@latest
+        else
+          echo "npm $current is sufficient"
+        fi
+  
+        set +e
+        npm publish --access ${{ inputs.npm-visibility }} --tag '${{ steps.release_gen.outputs.channel }}' 2>&1 | tee /tmp/npm_publish.log
+        error_code=${PIPESTATUS[0]}
+        set -e
+        
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
-          if echo "$output" | grep -q "You cannot publish over the previously published versions"; then
+          if grep -q "You cannot publish over the previously published versions" /tmp/npm_publish.log; then
             echo "Ignore error 'version already exist' for run attempt ${{ github.run_attempt }}"
             exit 0
           fi
         fi
-        exit $error_code
-      env:
-        NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+        exit "$error_code"
 
 ## Phase 6 - Git push
 

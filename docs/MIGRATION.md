@@ -1,5 +1,11 @@
 # Migration Guide
 
+## v4 -> v5
+
+This release is to catch up with [npm changes in Dec 2025](https://github.blog/changelog/2025-12-09-npm-classic-tokens-revoked-session-based-auth-and-cli-token-management-now-available/).
+The env variable `NPM_TOKEN` is now gone. Instead, you would need to use boolean input `npm-publish`.
+And for actual authorization follow [Trusted publishing for npm packages](https://docs.npmjs.com/trusted-publishers)
+
 ## v3 -> v4
 
 In version v1..3 the default preset for version generation was "angular".

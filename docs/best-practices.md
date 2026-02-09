@@ -108,7 +108,7 @@ jobs:
           path: # where to download artifact(s)
 
       - name: Release
-        uses: agilecustoms/release@v4
+        uses: agilecustoms/release@v5
         with: # parameters specific to artifact type(s) being released 
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # required to push commit and tags
