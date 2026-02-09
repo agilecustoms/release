@@ -51,12 +51,12 @@ jobs:
           path: dist
 
       - name: Release
-        uses: agilecustoms/release@v4
+        uses: agilecustoms/release@v5
         with:
+          npm-publish: true
           pre-publish-script: sed -i -E "s/(envctl-cache-key-)[^\n]+/\1$version/" "action.yml"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # to push changes in GH repo
-          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }} # to publish in npmjs
 ```
 
 When a developer merges a PR, the Release workflow is triggered:
@@ -66,5 +66,5 @@ When a developer merges a PR, the Release workflow is triggered:
    1. generate the next version based on commit messages
    2. call `pre-publish-script` with this version to update cache key in `action.yml`
    3. update version in `package.json`
-   4. run `npm publish` to publish package in npmjs using `NPM_TOKEN`
+   4. run `npm publish` to publish package in npmjs
    5. push commit and tags to the remote repository

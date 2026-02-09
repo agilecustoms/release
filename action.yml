@@ -71,8 +71,12 @@ inputs:
     description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24 (latest at time of writing)'
     required: false
     default: '22'
+  npm-publish:
+    description: 'If true, then publish package to npmjs.com registry'
+    required: false
+    default: 'false'
   npm-visibility:
-    description: 'Used together with env variable `NPM_TOKEN` to publish npm package. Specifies package visibility: public or private'
+    description: 'Used together with input `npm-publish`. Specifies package visibility: public or private'
     required: false
     default: 'public'
   python-version:
@@ -136,7 +140,7 @@ runs:
         echo "Error: env variable GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npm visibility
-      if : env.NPM_TOKEN && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
+      if : inputs.npm-publish == 'true' && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
       shell: bash
       run: |
         echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
@@ -375,7 +379,7 @@ runs:
     # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
-      if: env.NPM_TOKEN && inputs.dev-release != 'true'
+      if: inputs.npm-publish == 'true' && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Publish in npmjs
@@ -390,8 +394,6 @@ runs:
           fi
         fi
         exit "$error_code"
-      env:
-        NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
 
 ## Phase 6 - Git push
 

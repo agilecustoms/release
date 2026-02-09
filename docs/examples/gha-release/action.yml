@@ -82,7 +82,7 @@ runs:
   steps:
     - name: release
       id: release
-      uses: agilecustoms/release@v4
+      uses: agilecustoms/release@v5
       with:
         # company-specific defaults
         aws-account: 123456789012
