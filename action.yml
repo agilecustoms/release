@@ -383,11 +383,22 @@ runs:
       shell: bash
       run: |
         # Publish in npmjs
-        npm --version
+        
+        # Node 22 comes with 10.x npm, while for OIDC authorization we need at least 11.5.1, so upgrade npm if needed
+        required="11.5.1"
+        current="$(npm --version)"
+        if node -e "process.exit(require('semver').lt('$current', '$required') ? 0 : 1)"; then
+          echo "Upgrading npm from $current to >= $required"
+          npm i -g npm@latest
+        else
+          echo "npm $current is sufficient"
+        fi
+  
         set +e
         npm publish --access ${{ inputs.npm-visibility }} --tag '${{ steps.release_gen.outputs.channel }}' 2>&1 | tee /tmp/npm_publish.log
         error_code=${PIPESTATUS[0]}
         set -e
+        
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
           if grep -q "You cannot publish over the previously published versions" /tmp/npm_publish.log; then
             echo "Ignore error 'version already exist' for run attempt ${{ github.run_attempt }}"
