@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/agilecustoms/release/compare/v4.0.0...v5.0.0) (2026-02-09)
+
+### ⚠ BREAKING CHANGES
+
+* introduce input npm-publish instead of env variable NPM_TOKEN
+
+### Features
+
+* use OIDC for NPM authorization ([b65598e](https://github.com/agilecustoms/release/commit/b65598e8eeb6997db1d6918f6b2b98cd26b8d872)), closes [#34](https://github.com/agilecustoms/release/issues/34)
+
+
 ## [4.0.0](https://github.com/agilecustoms/release/compare/v3.1.1...v4.0.0) (2026-02-01)
 
 ### ⚠ BREAKING CHANGES
