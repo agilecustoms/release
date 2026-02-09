@@ -194,8 +194,7 @@ runs:
 
 ## Phase 2 - Release generation
 
-    # the default Node is still 20, while release-gen uses Node24.
-    # Also, it dynamically installs some extra deps via spawning 'npm' process, and some of these dependencies require Node >= 22
+    # the default Node is still 20, while release-gen uses Node 24
     - name: Set up Node
       uses: actions/setup-node@v6
       with:
