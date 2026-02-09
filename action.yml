@@ -379,16 +379,17 @@ runs:
       shell: bash
       run: |
         # Publish in npmjs
-        output=$(npm publish --access ${{ inputs.npm-visibility }} --tag ${{ steps.release_gen.outputs.channel }} 2>&1)
-        error_code=$?
-        echo "$output"
+        set +e
+        npm publish --access '${{ inputs.npm-visibility }}' --tag '${{ steps.release_gen.outputs.channel }}' 2>&1 | tee /tmp/npm_publish.log
+        error_code=${PIPESTATUS[0]}
+        set -e
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
-          if echo "$output" | grep -q "You cannot publish over the previously published versions"; then
+          if grep -q "You cannot publish over the previously published versions" /tmp/npm_publish.log; then
             echo "Ignore error 'version already exist' for run attempt ${{ github.run_attempt }}"
             exit 0
           fi
         fi
-        exit $error_code
+        exit "$error_code"
       env:
         NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
 
