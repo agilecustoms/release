@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/agilecustoms/release/compare/v5.0.0...v5.1.0) (2026-02-09)
+
+### Features
+
+* remove node-version input ([#35](https://github.com/agilecustoms/release/issues/35)) ([a4bf7cc](https://github.com/agilecustoms/release/commit/a4bf7cc9aa90a27b05639aa6636b10269ec9118b))
+
+
 ## [5.0.0](https://github.com/agilecustoms/release/compare/v4.0.0...v5.0.0) (2026-02-09)
 
 ### ⚠ BREAKING CHANGES
