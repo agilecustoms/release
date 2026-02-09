@@ -14,9 +14,6 @@ inputs:
   floating-tags:
     required: false
     default: 'true'
-  node-version:
-    required: false
-    default: '22'
   pre-publish-script:
     required: false
   release-channel:
@@ -96,7 +93,6 @@ runs:
         dev-branch-prefix: ${{ inputs.dev-branch-prefix }}
         dev-release: ${{ inputs.dev-release }}
         floating-tags: ${{ inputs.floating-tags }}
-        node-version: ${{ inputs.node-version }}
         pre-publish-script: ${{ inputs.pre-publish-script }}
         release-channel: ${{ inputs.release-channel }}
         release-gh: ${{ inputs.release-gh }}
