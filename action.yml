@@ -384,11 +384,14 @@ runs:
       run: |
         # Publish in npmjs
         
-        # Node 22 comes with 10.x npm, while for OIDC authorization we need at least 11.5.1, so upgrade npm if needed
-        required="11.5.1"
+        # Node 22 comes with npm 10.x, OIDC requires >= 11.5.1
+        required_major=11
+        required_minor=5
         current="$(npm --version)"
-        if node -e "process.exit(require('semver').lt('$current', '$required') ? 0 : 1)"; then
-          echo "Upgrading npm from $current to >= $required"
+        major="$(echo "$current" | cut -d. -f1)"
+        minor="$(echo "$current" | cut -d. -f2)"
+        if [ "$major" -lt "$required_major" ] || { [ "$major" -eq "$required_major" ] && [ "$minor" -lt "$required_minor" ]; }; then
+          echo "Upgrading npm from $current to >= 11.5.1 (OIDC required)"
           npm i -g npm@latest
         else
           echo "npm $current is sufficient"
