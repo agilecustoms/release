@@ -19,7 +19,7 @@ GitHub repository is private but published as public NPM package `@agilecustoms/
 │   ├── ...
 │   └── index.ts
 ├── action.yml
-├── package.json
+├── package.json    <-- field "files" references to "dist"
 └── tsconfig.json
 ```
 
@@ -42,6 +42,9 @@ jobs:
   # ...
   Release:
     needs: Build
+    permissions:
+      contents: read
+      id-token: write # for OIDC auth to npmjs, see https://docs.npmjs.com/trusted-publishers
     # ...
     steps:
       # ...
