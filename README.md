@@ -2,7 +2,7 @@
 
 Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
 
-> **⚠️ Feb 1, 2026 — version 4 was released with breaking changes, see [Migration Guide](./docs/MIGRATION.md)**
+> **⚠️ Feb 9, 2026 — version 5 was released to accommodate for breaking changes in NPM made back in Dec 9, 2025, see [Migration Guide](./docs/MIGRATION.md)**
 
 ![Cover](docs/images/cover.png)
 
