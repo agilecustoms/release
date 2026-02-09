@@ -17,6 +17,6 @@ jobs:
           persist-credentials: false
 
       - name: Release
-        uses: agilecustoms/release@v4
+        uses: agilecustoms/release@v5
         env:
           GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}

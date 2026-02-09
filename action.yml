@@ -67,10 +67,6 @@ inputs:
     description: 'Java version to use'
     required: false
     default: '21'
-  node-version:
-    description: 'Node.js version to publish npm packages, default is 22 because it is highest pre-cached in Ubuntu 24 (latest at time of writing)'
-    required: false
-    default: '22'
   npm-publish:
     description: 'If true, then publish package to npmjs.com registry'
     required: false
@@ -194,7 +190,7 @@ runs:
 
 ## Phase 2 - Release generation
 
-    # the default Node is still 20, while release-gen uses Node 24
+    # the default Node is still 20, while release-gen uses Node 24 (can downgrade to 22 if needed)
     - name: Set up Node
       uses: actions/setup-node@v6
       with:
@@ -286,13 +282,6 @@ runs:
     # maven first creates effective pom, which requires resolving parent dependencies,
     # so unfortunately, even just to update versions in pom.xml, we need to have AWS CodeArtifact access :(
 
-    - name: Setup Node
-      if: hashFiles('package.json') && inputs.dev-release != 'true'
-      uses: actions/setup-node@v6
-      with:
-        node-version: ${{ inputs.node-version }}
-        registry-url: 'https://registry.npmjs.org'
-
     - name: Update version in package.json
       if: inputs.update-version-in-manifest == 'true' && hashFiles('package.json') && inputs.dev-release != 'true'
       shell: bash
@@ -381,21 +370,7 @@ runs:
       if: inputs.npm-publish == 'true' && inputs.dev-release != 'true'
       shell: bash
       run: |
-        # Publish in npmjs
-        
-        # Node 22 comes with npm 10.x, OIDC requires >= 11.5.1
-        required_major=11
-        required_minor=5
-        current="$(npm --version)"
-        major="$(echo "$current" | cut -d. -f1)"
-        minor="$(echo "$current" | cut -d. -f2)"
-        if [ "$major" -lt "$required_major" ] || { [ "$major" -eq "$required_major" ] && [ "$minor" -lt "$required_minor" ]; }; then
-          echo "Upgrading npm from $current to >= 11.5.1 (OIDC required)"
-          npm i -g npm@latest
-        else
-          echo "npm $current is sufficient"
-        fi
-  
+        # Publish in npmjs  
         set +e
         npm publish --access ${{ inputs.npm-visibility }} --tag '${{ steps.release_gen.outputs.channel }}' 2>&1 | tee /tmp/npm_publish.log
         error_code=${PIPESTATUS[0]}
