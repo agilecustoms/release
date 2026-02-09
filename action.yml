@@ -383,6 +383,7 @@ runs:
       shell: bash
       run: |
         # Publish in npmjs
+        npm --version
         set +e
         npm publish --access ${{ inputs.npm-visibility }} --tag '${{ steps.release_gen.outputs.channel }}' 2>&1 | tee /tmp/npm_publish.log
         error_code=${PIPESTATUS[0]}
