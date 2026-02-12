@@ -131,17 +131,16 @@ It also uses OIDC to assume an IAM role and access CodeArtifact in read-only mod
 
 ## dev-release
 
-ECR supports [dev-release](../features/dev-release.md): Docker image gets published with tag equal to branch name
-(branch name `feature/login` becomes ECR tag `feature-login`).
-`agilecustoms/release` action enforces branch name prefix (configured via `dev-branch-prefix`, default is `feature/`).
-On the other hand, the ECR supports lifecycle rules by tag prefix.
-So if you apply both — you can be sure that all self-service artifacts are removed automatically in a few days!
+`agilecustoms/release` supports ECR [dev-release](../features/dev-release.md):
+Docker image gets published with tag equal to branch name (branch name `feature/login` becomes ECR tag `feature-login`).
 
-There is one important gotcha: you can't re-run dev-release for immutable ECR repo:
-- immutable ECR repo prevents pushing image for an existing tag
-- tag can be deleted, but IAM doesn't allow to configure permissions selectively for tag prefix,
-  so if you allow deleting tags — it is a risk that a developer can remove some non-dev tag
-- if you make ECR repo mutable — it is a risk that a developer can override a non-dev tag
+ECR has two great features:
+- immutable repo with exclusions
+- support lifecycle rules by tag prefix
 
-So if you need to re-run dev-release shortly (before old tag expired), the workaround is just to create a new branch:
-`feature/login` -> `feature/login-2` and run dev-release from it
+`agilecustoms/release` action enforces branch name prefix (configured via `dev-branch-prefix`, default is `feature/`)
+
+Combine all together:
+- you can allow your dev team to make dev-releases from `feature/` branches
+- developers can re-run dev-release workflow on the same branch if needed, because ECR repo is immutable with exclusion for `feature-*` tags
+- corresponding images will be automatically removed thanks to lifecycle rules by tag prefix, so you don't worry about overspending on ECR storage

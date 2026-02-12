@@ -34,7 +34,7 @@ The table below shows a comparison of different release types:
 Dev release allows publishing artifacts temporarily for testing purposes:
 you push your changes to the feature branch, the branch name becomes this dev-release version:
 - SemVer is _not_ generated
-- no automated pushes, so no need for PAT
+- no automated git pushes, so no need for PAT
 - no git tags created, files in branch addressable by branch name
 - `/` gets replaced with `-`, so branch `feature/login` gives version `feature-login`
 - parameter `dev-branch-prefix` (default value is `feature/`) enforces branch naming for dev releases.
@@ -113,6 +113,10 @@ Artifact types that support dev-release:
 
 ## Security
 
+_Note: here we assume you use a centralized AWS account for storing artifacts: files in S3, images in ECR
+and (less popular) software packages in CodeArtifact. Lets call such account a Distribution or "Dist" account.
+You create and store an artifact once (in the Dist account) and then deploy/use in any workload (dev, test, prod) account_
+
 Dev-release mode brings self-service capabilities but also brings security risks
 
 _You can't guarantee dev-release security if anybody can assume your 'ci/publisher' role.
@@ -120,7 +124,7 @@ Or if anybody can use powerful GH PAT to make arbitrary Git changes and then run
 In this section we assume you already have a secure GitHub setup and AWS authorization, see [Authorization and security](../authorization.md)_
 
 Now lets focus on risks coming specifically from dev-release. Developers may try to use dev-release workflow to:
-1. _Create_ unverified artifact that looks like normal
+1. _Create_ an unverified artifact that looks like normal
 2. _Update_ (override) existing production artifact
 3. _Delete_ production artifact
 
@@ -155,7 +159,7 @@ For `ci/publisher` role you might think you need to trust only protected branche
 But in GitHub if a workflow uses an environment — it takes precedence in OIDC token,
 so on AWS side instead of "trust main branch" you would need to configure "trust release environment" type of trust policy.
 See [terraform-aws-ci-publisher](https://github.com/agilecustoms/terraform-aws-ci-publisher) for trust policy examples.
-See [GitHub Authorization](../authorization.md#github-authorization-and-security) why environment is needed in the first place
+See [GitHub Authorization](../authorization.md#github-authorization-and-security) why GH "environment" is needed in the first place
 
 ## Risk analysis
 
@@ -179,7 +183,7 @@ What can a malicious developer do?
 
 ### S3 Risks
 
-Feature branch name is used as suffix for dev-release artifacts, so `ci/publisher-dev` can only put objects at path `mycompany-dist/*/feature*`
+Feature branch name is used as suffix for dev-release artifacts, so `ci/publisher-dev` can only put objects at path `mycompany-dist/*/feature*`.
 Imagine a software product which release consists of multiple files like this:
 ```
 <bucket>/myservice/v1.2.3/
