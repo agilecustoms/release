@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.1](https://github.com/agilecustoms/release/compare/v5.1.0...v5.1.1) (2026-02-12)
+
+### Documentation
+
+* improve documentation regarding ECR dev-release ([b6e712e](https://github.com/agilecustoms/release/commit/b6e712e87ae89d119a515996fb1d9f58e3605104))
+
+
 ## [5.1.0](https://github.com/agilecustoms/release/compare/v5.0.0...v5.1.0) (2026-02-09)
 
 ### Features
