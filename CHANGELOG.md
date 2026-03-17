@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.0](https://github.com/agilecustoms/release/compare/v5.1.1...v5.2.0) (2026-03-17)
+
+### Features
+
+* upgrade dependencies to support Node 24 ([5aa6621](https://github.com/agilecustoms/release/commit/5aa6621c97998e8c244c14afd4b8869fa9637621))
+
+
 ## [5.1.1](https://github.com/agilecustoms/release/compare/v5.1.0...v5.1.1) (2026-02-12)
 
 ### Documentation
