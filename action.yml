@@ -201,7 +201,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v4.2.2
+      uses: agilecustoms/release-gen@v4.2.6
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -237,7 +237,7 @@ runs:
     - name: Log in AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
       id: login-aws
-      uses: aws-actions/configure-aws-credentials@v5
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
@@ -261,7 +261,7 @@ runs:
 
     - name: Setup Maven CodeArtifact
       if: inputs.aws-codeartifact-maven
-      uses: agilecustoms/setup-maven-codeartifact@v2.1.1
+      uses: agilecustoms/setup-maven-codeartifact@v2.2.0
       with:
         aws-account: ${{ inputs.aws-account }}
         aws-region: ${{ inputs.aws-region }}
@@ -314,7 +314,7 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v2.1.7
+      uses: agilecustoms/publish-s3@v2.1.11
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
