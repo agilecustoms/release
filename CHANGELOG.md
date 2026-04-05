@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.1](https://github.com/agilecustoms/release/compare/v5.2.0...v5.2.1) (2026-04-05)
+
+### Miscellaneous
+
+* upgrade internal actions to use TypeScript 6 ([dbc00f3](https://github.com/agilecustoms/release/commit/dbc00f314c9925d15abf179744b807314e24d015))
+
+
 ## [5.2.0](https://github.com/agilecustoms/release/compare/v5.1.1...v5.2.0) (2026-03-17)
 
 ### Features
