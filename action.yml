@@ -301,7 +301,7 @@ runs:
       shell: bash
       run: |
         # Update version in pyproject.toml
-        pip install poetry --quitet
+        pip install poetry --quiet
         poetry version ${{ steps.version.outputs.version }}
 
     - name: Pre-publish script
