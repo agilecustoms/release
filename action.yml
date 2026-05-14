@@ -422,10 +422,9 @@ runs:
           echo "No changes to commit."
         fi
         
-        git tag -d ${{ steps.version.outputs.git_tags }} 2>/dev/null || true
-        
         tags="${{ steps.version.outputs.git_tags }}"
         for tag in $tags; do
+          git tag -d "$tag" 2>/dev/null || true
           git tag "$tag"
         done
         
