@@ -20,6 +20,7 @@ inputs:
   aws-codeartifact-repository:
     description: 'CodeArtifact repository name, e.g., `maven`'
     required: false
+    default: 'maven'
   aws-codeartifact-maven:
     description: 'Two possible values: build and publish. publish - publish maven artifacts to AWS CodeArtifact, build - just access CodeArtifact to update version in pom.xml'
     required: false
@@ -136,7 +137,7 @@ runs:
         echo "Error: env variable GH_TOKEN is required to create GH release, you can pass $ {{ github.token }} or PAT" >&2; exit 1
 
     - name: Validate npm visibility
-      if : inputs.npm-publish == 'true' && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
+      if: inputs.npm-publish == 'true' && ! (inputs.npm-visibility == 'public' || inputs.npm-visibility == 'private')
       shell: bash
       run: |
         echo "Error: npm-visibility must be either 'public' or 'private'" >&2; exit 1
@@ -267,7 +268,7 @@ runs:
         aws-region: ${{ inputs.aws-region }}
         aws-role: ${{ inputs.aws-role }}
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
-        aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository || 'maven' }}
+        aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
         aws-login: false # we already logged in AWS in a previous step
         java-setup: false
 
