@@ -355,8 +355,10 @@ runs:
         # Publish maven to CodeArtifact
         MVN=mvn
         if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
+        set +e
         output=$($MVN --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
         error_code=$?
+        set -e
         echo "$output"
         if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
           if echo "$output" | grep -q "status code: 409"; then
