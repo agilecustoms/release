@@ -241,8 +241,8 @@ runs:
       uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-region: ${{ inputs.aws-region }}
-        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
         output-credentials: true
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/${{ inputs.aws-role }}
 
     - name: Log in Amazon ECR
       if: inputs.aws-ecr
@@ -265,11 +265,11 @@ runs:
       uses: agilecustoms/setup-maven-codeartifact@v2.3.0
       with:
         aws-account: ${{ inputs.aws-account }}
-        aws-region: ${{ inputs.aws-region }}
-        aws-role: ${{ inputs.aws-role }}
         aws-codeartifact-domain: ${{ inputs.aws-codeartifact-domain }}
         aws-codeartifact-repository: ${{ inputs.aws-codeartifact-repository }}
         aws-login: false # we already logged in AWS in a previous step
+        aws-region: ${{ inputs.aws-region }}
+        aws-role: ${{ inputs.aws-role }}
         java-setup: false
 
     - name: Update version in pom.xml
