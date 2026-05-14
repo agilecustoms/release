@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.2.2](https://github.com/agilecustoms/release/compare/v5.2.1...v5.2.2) (2026-05-14)
+
+### Bug Fixes
+
+* maven deploy error handling ([4b2c714](https://github.com/agilecustoms/release/commit/4b2c714fe543303e8c65186813f055ebc45501c6))
+
+### Miscellaneous
+
+* more consistent work with git tags ([7fd7f45](https://github.com/agilecustoms/release/commit/7fd7f459764498451812356f635bdde97f85db32))
+* pass aws-region as parameter in publish-s3, previously it was inferred from env variables set by login aws action ([b31b5ba](https://github.com/agilecustoms/release/commit/b31b5ba0fdd6a4f251174a197230ae80fec1a929))
+* reorder inputs in alphabetic order ([1412a98](https://github.com/agilecustoms/release/commit/1412a989b8fd89e0106f3544d1303780a9a5bb11))
+* set aws-codeartifact-repository default to maven ([2466872](https://github.com/agilecustoms/release/commit/2466872dcea203765a413a6a73d10e8ce21a8dc4))
+* use latest release-gen ([3947cad](https://github.com/agilecustoms/release/commit/3947cad08f84d9bfbb7d754fb79023883486ffc8))
+* use pip install instead of pipx install. that should make poetry installation ~5 seconds faster ([133a2ca](https://github.com/agilecustoms/release/commit/133a2ca92deffa5863bf89c26415e567dd717caa))
+* use setup-maven-codeartifact which checks that repository is not empty ([d8a3adf](https://github.com/agilecustoms/release/commit/d8a3adf9d72dee8fea023b8e3933c7fd9181f7b7))
+
+
 ## [5.2.1](https://github.com/agilecustoms/release/compare/v5.2.0...v5.2.1) (2026-04-05)
 
 ### Miscellaneous
