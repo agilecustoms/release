@@ -315,15 +315,16 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v2.1.13
+      uses: agilecustoms/publish-s3@v2.2.0
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
-        secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
-        session-token: ${{ steps.login-aws.outputs.aws-session-token }}
+        aws-region: ${{ inputs.aws-region }}
         bucket: ${{ inputs.aws-s3-bucket }}
         bucket-dir: ${{ inputs.aws-s3-dir }}
-        versions: ${{ steps.version.outputs.tags }}
         dev-release: ${{ inputs.dev-release }}
+        secret-access-key: ${{ steps.login-aws.outputs.aws-secret-access-key }}
+        session-token: ${{ steps.login-aws.outputs.aws-session-token }}
+        versions: ${{ steps.version.outputs.tags }}
 
     - name: Push Docker image in ECR
       if: inputs.aws-ecr
