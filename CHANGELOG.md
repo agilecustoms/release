@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.3](https://github.com/agilecustoms/release/compare/v5.2.2...v5.2.3) (2026-05-29)
+
+### Miscellaneous
+
+* update dependencies ([597c1c1](https://github.com/agilecustoms/release/commit/597c1c109c080eb532211177135af1c464f9d7f6))
+
+
 ## [5.2.2](https://github.com/agilecustoms/release/compare/v5.2.1...v5.2.2) (2026-05-14)
 
 ### Bug Fixes
