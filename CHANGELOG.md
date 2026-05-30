@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.0](https://github.com/agilecustoms/release/compare/v5.2.3...v5.3.0) (2026-05-30)
+
+### Features
+
+* support uv (python package manager) ([c27f68b](https://github.com/agilecustoms/release/commit/c27f68b67bd7dd5fedb4ab775789d0f64598c03d))
+
+
 ## [5.2.3](https://github.com/agilecustoms/release/compare/v5.2.2...v5.2.3) (2026-05-29)
 
 ### Miscellaneous
