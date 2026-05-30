@@ -301,6 +301,7 @@ runs:
       if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
       uses: astral-sh/setup-uv@v8.1.0 # no floating tags :(
 
+    # sadly but 'uv lock' downloads python bcz system one (installed in Ubuntu) != .python-version
     - name: Update version in uv.lock
       if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
       shell: bash
@@ -308,17 +309,12 @@ runs:
         # Update version in uv.lock
         uv lock
 
-    - name: Setup Python
-      if: inputs.update-version-in-manifest == 'true' && hashFiles('poetry.lock') && inputs.dev-release != 'true'
-      uses: actions/setup-python@v6
-      with:
-        python-version: ${{ inputs.python-version }}
-
+    # this step relies on Python that goes with Ubuntu, might be a bit older than specified in inputs, but it is ok
     - name: Update version in poetry.lock
       if: inputs.update-version-in-manifest == 'true' && hashFiles('poetry.lock') && inputs.dev-release != 'true'
       shell: bash
       run: |
-        # Update version in uv.lock
+        # Update version in poetry.lock
         pip install poetry --quiet
         poetry version ${{ steps.version.outputs.version }}
 
