@@ -77,7 +77,7 @@ inputs:
     required: false
     default: 'public'
   python-version:
-    description: 'Python version, so far only used to bump version in pyproject.toml'
+    description: 'Python version. Not in use right now'
     required: false
     default: '3.13'
   pre-publish-script:
