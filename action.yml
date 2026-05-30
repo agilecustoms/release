@@ -290,18 +290,37 @@ runs:
         # Update version in package.json
         npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
-    - name: Setup Python
-      if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
-      uses: actions/setup-python@v6
-      with:
-        python-version: ${{ inputs.python-version }}
-
     - name: Update version in pyproject.toml
       if: inputs.update-version-in-manifest == 'true' && hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pyproject.toml
         sed -i 's/^version[[:space:]]*=[[:space:]]*".*"/version = "${{ steps.version.outputs.version }}"/' pyproject.toml
+
+    - name: Install uv
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
+      uses: astral-sh/setup-uv@v8.1.0 # no floating tags :(
+
+    - name: Update version in uv.lock
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
+      shell: bash
+      run: |
+        # Update version in uv.lock
+        uv lock
+
+    - name: Setup Python
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('poetry.lock') && inputs.dev-release != 'true'
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Update version in poetry.lock
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('poetry.lock') && inputs.dev-release != 'true'
+      shell: bash
+      run: |
+        # Update version in uv.lock
+        pip install poetry --quiet
+        poetry version ${{ steps.version.outputs.version }}
 
     - name: Pre-publish script
       if: inputs.pre-publish-script && inputs.dev-release != 'true'
