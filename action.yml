@@ -301,8 +301,7 @@ runs:
       shell: bash
       run: |
         # Update version in pyproject.toml
-        pip install poetry --quiet
-        poetry version ${{ steps.version.outputs.version }}
+        sed -i 's/^version[[:space:]]*=[[:space:]]*".*"/version = "${{ steps.version.outputs.version }}"/' pyproject.toml
 
     - name: Pre-publish script
       if: inputs.pre-publish-script && inputs.dev-release != 'true'
