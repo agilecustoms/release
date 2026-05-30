@@ -77,7 +77,7 @@ inputs:
     required: false
     default: 'public'
   python-version:
-    description: 'Python version, so far only used to bump version in pyproject.toml'
+    description: 'Python version. Not in use right now'
     required: false
     default: '3.13'
   pre-publish-script:
@@ -202,7 +202,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v4.2.11
+      uses: agilecustoms/release-gen@v4.2.12
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -290,19 +290,25 @@ runs:
         # Update version in package.json
         npm version ${{ steps.version.outputs.version }} --no-git-tag-version
 
-    - name: Setup Python
-      if: hashFiles('pyproject.toml') && inputs.dev-release != 'true'
-      uses: actions/setup-python@v6
-      with:
-        python-version: ${{ inputs.python-version }}
-
     - name: Update version in pyproject.toml
       if: inputs.update-version-in-manifest == 'true' && hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pyproject.toml
-        pip install poetry --quiet
-        poetry version ${{ steps.version.outputs.version }}
+        sed -i 's/^version[[:space:]]*=[[:space:]]*".*"/version = "${{ steps.version.outputs.version }}"/' pyproject.toml
+
+    - name: Install uv
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
+      uses: astral-sh/setup-uv@v8.1.0 # no floating tags :(
+
+    # sadly but 'uv lock' downloads python bcz system one (installed in Ubuntu) != .python-version
+    # note: Poetry doesn't track app version in its poetry.lock file, so no need to update
+    - name: Update version in uv.lock
+      if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
+      shell: bash
+      run: |
+        # Update version in uv.lock
+        uv lock
 
     - name: Pre-publish script
       if: inputs.pre-publish-script && inputs.dev-release != 'true'

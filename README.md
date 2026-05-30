@@ -2,8 +2,6 @@
 
 Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
 
-> **⚠️ Feb 9, 2026 — version 5 was released to accommodate for breaking changes in NPM made back in Dec 9, 2025, see [Migration Guide](./docs/MIGRATION.md)**
-
 ![Cover](docs/images/cover.png)
 
 You can release **any combination** of software packages, binary files, docker images, and raw repo files
@@ -129,7 +127,7 @@ _There are no required inputs. The action only controls that the combination of 
 | java-version                | 21                | Java version to use. [Example](./docs/artifact-types/aws-codeartifact-maven.md)                                                                                                                                                                         |
 | npm-publish                 | false             | If true, then publish package to npmjs.com registry. [Example](./docs/artifact-types/npmjs.md)                                                                                                                                                          |
 | npm-visibility              | public            | Used together with input `npm-publish`. Specifies package visibility: public or private (not tested yet)                                                                                                                                                |
-| python-version              | 3.13              | Python version, so far only used to bump version in pyproject.toml                                                                                                                                                                                      |
+| python-version              | 3.13              | Python version. Not in use right now                                                                                                                                                                                                                    |
 | pre-publish-script          |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variable `$version`. See example in [npmjs](./docs/artifact-types/npmjs.md) |
 | release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md)  |
 | release-channel             |                   | Repeat `.releaserc.json` `channel` behavior when `version` is set explicitly. See [floating-tags](./docs/features/floating-tags.md) for details                                                                                                         |

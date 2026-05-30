@@ -32,10 +32,10 @@ Example: [env-api](../examples/env-api) — it is from the AgileCustoms reposito
 │   └── app.zip      <-- created in Build workflow
 ├── infrastructure/  <-- terraform code
 ├── src/             <-- python code
-└── pyproject.toml   <-- poetry configuration file
+└── pyproject.toml   <-- uv/poetry configuration file
 ```
 
-Here Poetry is used to manage dependencies. You can use any other tool,
+Here uv is used to manage dependencies. You can use any other tool,
 main part is that in the Build workflow you create a zip file with your code and all dependencies
 
 ```yaml

@@ -32,7 +32,8 @@ This is an internal document describing feature/test coverage
 | dev-release of S3 w/ disabled suffix enforcement | tt-web              | 1.0.0       |                                                                       |
 | node version                                     | tt-auth             | 4.0.0       |                                                                       |
 | npm public                                       | envctl              | 3.1.0       |                                                                       |
-| python poetry version update                     | env-api             | 4.0.0       |                                                                       |
+| python pyproject version update                  | env-api             | 5.3.0       | pyproject is used by poetry and uv                                    |
+| python uv.lock update                            | env-api             | 5.3.0       |                                                                       |
 
 ## Security
 
