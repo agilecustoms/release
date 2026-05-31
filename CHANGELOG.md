@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.1](https://github.com/agilecustoms/release/compare/v5.3.0...v5.3.1) (2026-05-31)
+
+### Documentation
+
+* update supported artifact types ([3942065](https://github.com/agilecustoms/release/commit/394206503686f154f885261f996f0c144e331363))
+
+
 ## [5.3.0](https://github.com/agilecustoms/release/compare/v5.2.3...v5.3.0) (2026-05-30)
 
 ### Features
