@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.4.0](https://github.com/agilecustoms/release/compare/v5.3.1...v5.4.0) (2026-10-09)
+
+### Documentation
+
+* update GitHub actions versions in examples ([12745e0](https://github.com/agilecustoms/release/commit/12745e08af49ea99367a5a9de70b4f6cc8ed155b))
+
+### Features
+
+* never force-push the release branch, force only tags and notes ([7b4e29a](https://github.com/agilecustoms/release/commit/7b4e29a2bdb38fe682c1979ded338b417d8bb0c9))
+
+### Miscellaneous
+
+* update GitHub actions to latest versions ([2abab18](https://github.com/agilecustoms/release/commit/2abab18d1a7301ff5bf20e07f3d3edd3c89ec7df))
+* use latest release-gen and publish-s3 ([586544f](https://github.com/agilecustoms/release/commit/586544f412a5e393efec03e5e4c4625e2b245027))
+
+
 ## [5.3.1](https://github.com/agilecustoms/release/compare/v5.3.0...v5.3.1) (2026-05-31)
 
 ### Documentation
