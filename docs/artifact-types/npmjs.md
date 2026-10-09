@@ -29,7 +29,7 @@ To make it faster, I use cache in `action.yml` file:
 
 ```yaml
 - name: Cache global npm
-  uses: actions/cache@v5
+  uses: actions/cache@v6
   with:
     path: ~/.npm
     key: npm-global-${{ runner.os }}-envctl-cache-key-0.23.13
@@ -49,7 +49,7 @@ jobs:
     steps:
       # ...
       - name: Download artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: dist
 

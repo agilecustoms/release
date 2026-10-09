@@ -202,7 +202,7 @@ runs:
     - name: Release generation
       id: release_gen
       if: inputs.dev-release != 'true'
-      uses: agilecustoms/release-gen@v4.2.12
+      uses: agilecustoms/release-gen@v4.2.15
       with:
         changelog_file: ${{ inputs.changelog-file }}
         changelog_title: ${{ inputs.changelog-title }}
@@ -321,7 +321,7 @@ runs:
 
     - name: Publish to S3
       if: steps.init.outputs.aws_s3
-      uses: agilecustoms/publish-s3@v2.2.1
+      uses: agilecustoms/publish-s3@v2.2.4
       with:
         access-key-id: ${{ steps.login-aws.outputs.aws-access-key-id }}
         aws-region: ${{ inputs.aws-region }}
@@ -437,12 +437,13 @@ runs:
           git tag "$tag"
         done
         
-        # turn "v1.2.3 v1.2 v1 channel" into "refs/tags/v1.2.3 refs/tags/v1.2 refs/tags/v1 refs/tags/channel"
-        refs=$(echo "${{ steps.version.outputs.git_tags }}" |  sed 's/[^ ]\+/refs\/tags\/&/g')
+        # turn "v1.2.3 v1.2 v1 channel" into "+refs/tags/v1.2.3 +refs/tags/v1.2 +refs/tags/v1 +refs/tags/channel"
+        # leading '+' forces update of individual ref - needed for floating tags (v1.2, v1, channel) that move on each release
+        refs=$(echo "${{ steps.version.outputs.git_tags }}" |  sed 's/[^ ]\+/+refs\/tags\/&/g')
         
         if [ -z "${{ inputs.version }}" ] && [ "${{ steps.release_gen.outputs.prerelease }}" = "true" ]; then
           git notes --ref semantic-release add -f -m '{"channels":["${{ steps.release_gen.outputs.channel }}"]}'
-          refs="$refs refs/notes/semantic-release"
+          refs="$refs +refs/notes/semantic-release"
         fi
         
         if [ -n "${GH_TOKEN}" ]; then
@@ -456,8 +457,10 @@ runs:
           # set the remote URL to use PAT token for authentication
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
         fi
-        # push changes along with tags atomically (use --force to overwrite old tags)
-        git push --atomic origin ${{ github.ref_name }} $refs --force
+        # push changes along with tags atomically
+        # branch is NOT force-pushed: if someone pushed to the branch while release was running, push fails (and no tags pushed)
+        # instead of silently overwriting their commits. Tags and notes are forced individually via '+' prefix (see above)
+        git push --atomic origin ${{ github.ref_name }} $refs
 
 ## Phase 7 - GitHub Release
 

@@ -27,7 +27,7 @@ jobs:
     steps:
       # ...
       - name: Download artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
 
       - name: Release
         uses: agilecustoms/release@v5
