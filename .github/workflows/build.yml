@@ -307,31 +307,7 @@ jobs:
           git -C "$ORIGIN" diff --quiet v1.1.0 "$BRANCH" -- CHANGELOG.md
 
 
-      # pre-publish-script can only change tracked files: release commit stages modified files only (git add -u)
-      - name: Test 6. Setup fix commit with tracked version.txt
-        run: |
-          echo '0.0.0' > version.txt
-          git add version.txt
-          git commit -q -m "fix: add version.txt"
-          git push -q origin "$BRANCH"
-
-      - name: Test 6. Should run pre-publish-script with $version
-        id: test6
-        uses: ./action
-        with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
-          pre-publish-script: echo "$version" > version.txt
-
-      - name: Test 6. Verify version.txt is updated in release commit
-        run: |
-          set -x
-          [[ "$(git -C "$ORIGIN" show "$BRANCH:version.txt")" == "v1.1.2" ]]
-          [[ "$(git -C "$ORIGIN" rev-parse v1.1.2)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
-
-
-      - name: Test 7. Setup fix commit
+      - name: Test 6. Setup fix commit
         run: |
           echo 'fix' > fix3.txt
           git add fix3.txt
@@ -339,8 +315,8 @@ jobs:
           git push -q origin "$BRANCH"
 
       # explicit version is used as tag as is (tag-format is not applied)
-      - name: Test 7. Should use explicit version if passed
-        id: test7
+      - name: Test 6. Should use explicit version if passed
+        id: test6
         uses: ./action
         with:
           release-gh: false
@@ -348,47 +324,15 @@ jobs:
           summary: ''
           version: v3.0.0
 
-      - name: Test 7. Verify v3.0.0 is released
+      - name: Test 6. Verify v3.0.0 is released
         env:
-          VERSION: ${{ steps.test7.outputs.version }}
+          VERSION: ${{ steps.test6.outputs.version }}
         run: |
           set -x
           [[ "$VERSION" == "v3.0.0" ]]
           [[ "$(git -C "$ORIGIN" rev-parse v3.0.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
           [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "3.0.0" ]]
 
-
-      # someone pushed to the branch while this release was running:
-      # release-gen still generates a version, but 'git push --atomic' must reject both the release commit and tags
-      - name: Test 8. Setup commit in origin that is not in local branch
-        run: |
-          git clone -q "file://$(realpath "$ORIGIN")" ../other
-          git -C ../other -c user.name=Other -c user.email=other@example.com commit -q --allow-empty -m "fix: concurrent fix"
-          git -C ../other push -q origin "$BRANCH"
-          echo 'fix' > fix4.txt
-          git add fix4.txt
-          git commit -q -m "fix: local fix"
-
-      - name: Test 8. Should fail if origin branch has commits that are not in local branch
-        id: test8
-        continue-on-error: true
-        uses: ./action
-        with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
-
-      - name: Test 8. Verify it failed
-        if: steps.test8.outcome != 'failure'
-        run: |
-          echo "Expected failure, got ${{ steps.test8.outcome }}"
-          exit 1
-
-      - name: Test 8. Verify nothing is pushed
-        run: |
-          set -x
-          [[ "$(git -C "$ORIGIN" log -1 --format=%s "$BRANCH")" == "fix: concurrent fix" ]]
-          [[ -z "$(git -C "$ORIGIN" tag -l 'v3.0.1')" ]]
 
   # Same as 'E2E-Versioning', but with all manifest files and tag-format without 'v'
   # (version from tag goes into manifests as is, so Maven and Python projects use tags w/o 'v')
@@ -459,9 +403,93 @@ jobs:
           git -C "$ORIGIN" show "$BRANCH:pom.xml" | grep -q '<version>1.0.0</version>'
           git -C "$ORIGIN" show "$BRANCH:pyproject.toml" | grep -q '^version = "1.0.0"$'
 
+  # Release commit and push (not version generation):
+  # - pre-publish-script changes go into the release commit
+  # - release commit and tags are pushed atomically
+  E2E-Release-Commit:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: ${{ github.ref_name }}
+      ORIGIN: ${{ github.workspace }}/../origin.git
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          path: action
+          persist-credentials: false
+
+      - name: Setup sandbox repo
+        run: |
+          git init -q --bare -b "$BRANCH" "$ORIGIN"
+          git init -q -b "$BRANCH"
+          echo 'action/' >> .git/info/exclude
+          git config user.name "Test User"
+          git config user.email "test@example.com"
+          git remote add origin "file://$(realpath "$ORIGIN")"
+          echo '{ "name": "sandbox", "version": "0.0.0" }' > package.json
+          git add package.json
+          git commit -q -m "chore: init"
+
+
+      # release commit stages only changes in tracked files (git add -u): to include a new file, pre-publish-script must 'git add' it
+      - name: Test 1. Setup fix commit with tracked version.txt
+        run: |
+          echo '0.0.0' > version.txt
+          git add version.txt
+          git commit -q -m "fix: add version.txt"
+          git push -q origin "$BRANCH"
+
+      - name: Test 1. Should run pre-publish-script with $version
+        id: test1
+        uses: ./action
+        with:
+          release-gh: false
+          release-branches: '["${{ github.ref_name }}"]'
+          summary: ''
+          pre-publish-script: echo "$version" > version.txt
+
+      - name: Test 1. Verify version.txt is updated in release commit
+        run: |
+          set -x
+          [[ "$(git -C "$ORIGIN" show "$BRANCH:version.txt")" == "v1.0.0" ]]
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
+
+
+      # someone pushed to the branch while this release was running:
+      # release-gen still generates a version, but 'git push --atomic' must reject both the release commit and tags
+      - name: Test 2. Setup commit in origin that is not in local branch
+        run: |
+          git clone -q "file://$(realpath "$ORIGIN")" ../other
+          git -C ../other -c user.name=Other -c user.email=other@example.com commit -q --allow-empty -m "fix: concurrent fix"
+          git -C ../other push -q origin "$BRANCH"
+          echo 'fix' > fix4.txt
+          git add fix4.txt
+          git commit -q -m "fix: local fix"
+
+      - name: Test 2. Should fail if origin branch has commits that are not in local branch
+        id: test2
+        continue-on-error: true
+        uses: ./action
+        with:
+          release-gh: false
+          release-branches: '["${{ github.ref_name }}"]'
+          summary: ''
+
+      - name: Test 2. Verify it failed
+        if: steps.test2.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test2.outcome }}"
+          exit 1
+
+      - name: Test 2. Verify nothing is pushed
+        run: |
+          set -x
+          [[ "$(git -C "$ORIGIN" log -1 --format=%s "$BRANCH")" == "fix: concurrent fix" ]]
+          [[ -z "$(git -C "$ORIGIN" tag -l 'v1.0.1')" ]]
+
   Release:
     if: github.ref == 'refs/heads/main'
-    needs: [ Input-Validation, E2E-Versioning, E2E-Manifests ]
+    needs: [ Input-Validation, E2E-Versioning, E2E-Manifests, E2E-Release-Commit ]
     runs-on: ubuntu-slim
     environment: release
     steps:
