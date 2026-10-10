@@ -1,13 +1,14 @@
-name: Test
+name: Build
 
 on:
   push:
     branches: [ '**' ] # not on tags: 'E2E-*' jobs need a branch (GITHUB_REF) to release from
 
-# Safety: the action can't push anything to this repo:
-# job token is read-only and checkout doesn't persist credentials. No secrets are used, so tests also run in forks
+# Safety: tests can't push anything to this repo:
+# job token is read-only and checkout doesn't persist credentials. No secrets are used in tests, so they also run in forks
 # - 'Input-Validation' tests must fail on input validation, before anything is released
 # - 'E2E-*' tests release into a local sandbox repo (origin is a local bare repo), never to GitHub
+# Only 'Release' job (main branch, after all tests pass) uses a secret: PAT to push the release commit and tags
 permissions:
   contents: read
 
@@ -457,3 +458,20 @@ jobs:
           [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "1.0.0" ]]
           git -C "$ORIGIN" show "$BRANCH:pom.xml" | grep -q '<version>1.0.0</version>'
           git -C "$ORIGIN" show "$BRANCH:pyproject.toml" | grep -q '^version = "1.0.0"$'
+
+  Release:
+    if: github.ref == 'refs/heads/main'
+    needs: [ Input-Validation, E2E-Versioning, E2E-Manifests ]
+    runs-on: ubuntu-slim
+    environment: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # released with the previous published version, not with the code being tested
+      - name: Release
+        uses: agilecustoms/release@v5
+        env:
+          GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}
