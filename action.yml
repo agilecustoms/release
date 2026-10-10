@@ -477,12 +477,14 @@ runs:
     - name: Summary
       if: inputs.summary && inputs.dev-release != 'true'
       shell: bash
+      # pass via env (not ${{ }} in script) and replace placeholder literally (no eval),
+      # so summary text is never executed as shell code
+      env:
+        SUMMARY: ${{ inputs.summary }}
+        VERSION: ${{ steps.version.outputs.version }}
       run: |
         # Summary
-        version="${{ steps.version.outputs.version }}"
-        summary="${{ inputs.summary }}"
-        summary=$(eval echo "\"$summary\"")
-        echo "$summary" >> $GITHUB_STEP_SUMMARY
+        echo "${SUMMARY//'${version}'/$VERSION}" >> "$GITHUB_STEP_SUMMARY"
 
 outputs:
   version:
