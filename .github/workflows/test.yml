@@ -1,0 +1,136 @@
+name: Test
+
+on:
+  push:
+
+# Safety: every test below must fail on input validation, before anything is released.
+# If validation regresses and the action goes further, it still can't push anything:
+# job token is read-only and checkout doesn't persist credentials. No secrets are used, so tests also run in forks
+permissions:
+  contents: read
+
+jobs:
+  Validation:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+
+      - name: Test 1. Should fail if GH_TOKEN is not passed and release-gh is true
+        id: test1
+        continue-on-error: true
+        uses: ./
+
+      - name: Test 1. Verify it failed
+        if: steps.test1.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test1.outcome }}"
+          exit 1
+
+
+      - name: Test 2. Should fail if npm-visibility is neither public nor private
+        id: test2
+        continue-on-error: true
+        uses: ./
+        with:
+          release-gh: false
+          npm-publish: true
+          npm-visibility: internal
+
+      - name: Test 2. Verify it failed
+        if: steps.test2.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test2.outcome }}"
+          exit 1
+
+
+      - name: Test 3. Should fail if version is passed together with dev-release
+        id: test3
+        continue-on-error: true
+        uses: ./
+        with:
+          dev-release: true
+          dev-branch-prefix: ''
+          version: 1.2.3
+
+      - name: Test 3. Verify it failed
+        if: steps.test3.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test3.outcome }}"
+          exit 1
+
+
+      # prefix that no branch has, so the test works on any branch
+      - name: Test 4. Should fail if dev-release branch doesn't start with dev-branch-prefix
+        id: test4
+        continue-on-error: true
+        uses: ./
+        with:
+          dev-release: true
+          dev-branch-prefix: no-such-prefix/
+
+      - name: Test 4. Verify it failed
+        if: steps.test4.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test4.outcome }}"
+          exit 1
+
+
+      - name: Test 5. Should fail if aws-codeartifact-maven is set without aws-codeartifact-domain
+        id: test5
+        continue-on-error: true
+        uses: ./
+        with:
+          release-gh: false
+          aws-account: '123456789012'
+          aws-region: us-east-1
+          aws-role: ci/publisher
+          aws-codeartifact-maven: publish
+
+      - name: Test 5. Verify it failed
+        if: steps.test5.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test5.outcome }}"
+          exit 1
+
+
+      # s3/ directory means "publish to S3"
+      - name: Test 6. Setup s3/ directory
+        run: mkdir -p s3
+
+      - name: Test 6. Should fail if s3/ exists but aws-account, aws-region and aws-role are not passed
+        id: test6
+        continue-on-error: true
+        uses: ./
+        with:
+          release-gh: false
+          aws-s3-bucket: some-bucket
+
+      - name: Test 6. Verify it failed
+        if: steps.test6.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test6.outcome }}"
+          exit 1
+
+
+      - name: Test 7. Setup s3/ directory
+        run: mkdir -p s3
+
+      - name: Test 7. Should fail if s3/ exists but aws-s3-bucket is not passed
+        id: test7
+        continue-on-error: true
+        uses: ./
+        with:
+          release-gh: false
+          aws-account: '123456789012'
+          aws-region: us-east-1
+          aws-role: ci/publisher
+
+      - name: Test 7. Verify it failed
+        if: steps.test7.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test7.outcome }}"
+          exit 1
