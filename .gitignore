@@ -1,6 +1,11 @@
-# IDEA
-.idea
-
 # System files
 .DS_Store
 Thumbs.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Temp files
+.tmp
