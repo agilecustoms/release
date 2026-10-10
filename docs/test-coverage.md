@@ -2,22 +2,19 @@
 
 This is an internal document describing feature/test coverage
 
+Features covered by tests in [build.yml](../.github/workflows/build.yml) (jobs `Input-Validation` and `E2E-*`) are not listed here.
+This document only lists features that are tested by real releases in other repos
+
 ## Versioning features
 
 | feature                                                         | tested in             | last tested | notes |
 |-----------------------------------------------------------------|-----------------------|-------------|-------|
-| `changelog-file`: (none)                                        | gha-release           | 4.0.0       |       |
-| conventional commits defaults                                   | gha-healthcheck       | 4.0.0       |       |
 | custom summary w/ ${version}                                    | env-cleanup           | 1.0.0       |       |
 | `dev-release` true                                              | tt-web                | 1.0.0       |       |
-| explicit version w/ release-channel                             | env-cleanup           | 1.0.0       |       |
-| `floating-tags` false                                           | terraform-github-repo | 2.0.0       |       |
+| `release-channel` w/ explicit version                           | env-cleanup           | 1.0.0       |       |
 | maintenance release                                             | java-parent           | 3.0.0       |       |
-| `pre-publish-script`                                            | envctl                | 4.0.0       |       |
 | prerelease w/ custom suffix and channel                         | release               | 1.0.0       |       |
 | prerelease w/ `version-bump: default-patch` and `channel: beta` | db-evolution-runner   | 1.0.0       |       |
-| `release-gh` false                                              | gha-release           | 4.0.0       |       |
-| `tag-format`                                                    | gha-healthcheck       | 4.0.0       |       |
 | version-bump: `default-minor` + release-channel                 | gha-release           | 4.0.0       |       |
 | version-bump: `default-patch`                                   | db-evolution-runner   | 4.0.0       |       |
 
@@ -30,9 +27,7 @@ This is an internal document describing feature/test coverage
 | dev-release "skip" npm publish                   | envctl              | 1.0.0       |                                                                       |
 | dev-release in ECR                               | envctl              | 1.0.0       | attempt to overwrite existing image, attempt to delete existing image |
 | dev-release of S3 w/ disabled suffix enforcement | tt-web              | 1.0.0       |                                                                       |
-| node version                                     | tt-auth             | 4.0.0       |                                                                       |
 | npm public                                       | envctl              | 3.1.0       |                                                                       |
-| python pyproject version update                  | env-api             | 5.3.0       | pyproject is used by poetry and uv                                    |
 | python uv.lock update                            | env-api             | 5.3.0       |                                                                       |
 
 ## Security
