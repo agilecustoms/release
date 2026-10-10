@@ -128,7 +128,7 @@ _There are no required inputs. The action only controls that the combination of 
 | npm-publish                 | false             | If true, then publish package to npmjs.com registry. [Example](./docs/artifact-types/npmjs.md)                                                                                                                                                          |
 | npm-visibility              | public            | Used together with input `npm-publish`. Specifies package visibility: public or private (not tested yet)                                                                                                                                                |
 | python-version              | 3.13              | Python version. Not in use right now                                                                                                                                                                                                                    |
-| pre-publish-script          |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variable `$version`. See example in [npmjs](./docs/artifact-types/npmjs.md) |
+| pre-publish-script          |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variables `$version` (git tag, e.g. `v1.2.3`) and `$version_number` (e.g. `1.2.3`). Script changes in tracked files go into the release commit; to include a new file, `git add` it in the script. See example in [npmjs](./docs/artifact-types/npmjs.md) |
 | release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md)  |
 | release-channel             |                   | Repeat `.releaserc.json` `channel` behavior when `version` is set explicitly. See [floating-tags](./docs/features/floating-tags.md) for details                                                                                                         |
 | release-gh                  | true              | If true, then create a GitHub release                                                                                                                                                                                                                   |
@@ -141,9 +141,10 @@ _There are no required inputs. The action only controls that the combination of 
 
 ## Outputs
 
-| Name              | Description                                                  |
-|-------------------|--------------------------------------------------------------|
-| version           | Version that was generated (or provided via `version` input) |
+| Name           | Description                                                                                                                    |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------|
+| version        | Version that was generated (or provided via `version` input), same as git tag, e.g. `v1.2.3`                                   |
+| version-number | Version without `tag-format` prefix/suffix, e.g. `1.2.3`. This is the version written in pom.xml, package.json, pyproject.toml |
 
 ## Environment variables
 
