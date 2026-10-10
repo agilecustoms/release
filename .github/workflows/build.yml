@@ -455,9 +455,59 @@ jobs:
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
 
 
+      - name: Test 2. Setup fix commit
+        run: |
+          echo 'fix' > fix2.txt
+          git add fix2.txt
+          git commit -q -m "fix: second fix"
+          git push -q origin "$BRANCH"
+
+      - name: Test 2. Should include new file in release commit if pre-publish-script adds it to git
+        id: test2
+        uses: ./action
+        with:
+          release-gh: false
+          release-branches: '["${{ github.ref_name }}"]'
+          summary: ''
+          pre-publish-script: echo "$version" > build-info.txt && git add build-info.txt
+
+      - name: Test 2. Verify build-info.txt is in release commit
+        run: |
+          set -x
+          [[ "$(git -C "$ORIGIN" show "$BRANCH:build-info.txt")" == "v1.0.1" ]]
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.1)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
+
+
+      - name: Test 3. Setup fix commit
+        run: |
+          echo 'fix' > fix3.txt
+          git add fix3.txt
+          git commit -q -m "fix: third fix"
+          git push -q origin "$BRANCH"
+
+      - name: Test 3. Should not include new file in release commit if pre-publish-script doesn't add it to git
+        id: test3
+        uses: ./action
+        with:
+          release-gh: false
+          release-branches: '["${{ github.ref_name }}"]'
+          summary: ''
+          pre-publish-script: echo "$version" > not-added.txt
+
+      - name: Test 3. Verify v1.0.2 is released without not-added.txt
+        run: |
+          set -x
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.2)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
+          [[ "$(cat not-added.txt)" == "v1.0.2" ]] # script did run
+          if git -C "$ORIGIN" cat-file -e "$BRANCH:not-added.txt"; then
+            echo "not-added.txt must not be in release commit"
+            exit 1
+          fi
+
+
       # someone pushed to the branch while this release was running:
       # release-gen still generates a version, but 'git push --atomic' must reject both the release commit and tags
-      - name: Test 2. Setup commit in origin that is not in local branch
+      - name: Test 4. Setup commit in origin that is not in local branch
         run: |
           git clone -q "file://$(realpath "$ORIGIN")" ../other
           git -C ../other -c user.name=Other -c user.email=other@example.com commit -q --allow-empty -m "fix: concurrent fix"
@@ -466,8 +516,8 @@ jobs:
           git add fix4.txt
           git commit -q -m "fix: local fix"
 
-      - name: Test 2. Should fail if origin branch has commits that are not in local branch
-        id: test2
+      - name: Test 4. Should fail if origin branch has commits that are not in local branch
+        id: test4
         continue-on-error: true
         uses: ./action
         with:
@@ -475,17 +525,17 @@ jobs:
           release-branches: '["${{ github.ref_name }}"]'
           summary: ''
 
-      - name: Test 2. Verify it failed
-        if: steps.test2.outcome != 'failure'
+      - name: Test 4. Verify it failed
+        if: steps.test4.outcome != 'failure'
         run: |
-          echo "Expected failure, got ${{ steps.test2.outcome }}"
+          echo "Expected failure, got ${{ steps.test4.outcome }}"
           exit 1
 
-      - name: Test 2. Verify nothing is pushed
+      - name: Test 4. Verify nothing is pushed
         run: |
           set -x
           [[ "$(git -C "$ORIGIN" log -1 --format=%s "$BRANCH")" == "fix: concurrent fix" ]]
-          [[ -z "$(git -C "$ORIGIN" tag -l 'v1.0.1')" ]]
+          [[ -z "$(git -C "$ORIGIN" tag -l 'v1.0.3')" ]]
 
   Release:
     if: github.ref == 'refs/heads/main'
