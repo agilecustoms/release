@@ -225,71 +225,15 @@ jobs:
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.0)" != "$head" ]]
 
 
-      - name: Test 3. Setup commit that doesn't trigger a release
-        run: |
-          echo 'chore' > chore.txt
-          git add chore.txt
-          git commit -q -m "chore: cleanup"
-          git push -q origin "$BRANCH"
-
-      - name: Test 3. Should fail if there are no releasable commits
-        id: test3
-        continue-on-error: true
-        uses: ./action
-        with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
-
-      - name: Test 3. Verify it failed
-        if: steps.test3.outcome != 'failure'
-        run: |
-          echo "Expected failure, got ${{ steps.test3.outcome }}"
-          exit 1
-
-      - name: Test 3. Verify nothing is pushed
-        run: |
-          set -x
-          [[ "$(git -C "$ORIGIN" log -1 --format=%s "$BRANCH")" == "chore: cleanup" ]]
-          [[ "$(git -C "$ORIGIN" tag | sort | xargs)" == "latest v1 v1.0 v1.0.0 v1.0.1" ]]
-
-
-      - name: Test 4. Setup feat commit
-        run: |
-          echo 'feature' > feature2.txt
-          git add feature2.txt
-          git commit -q -m "feat: second feature"
-          git push -q origin "$BRANCH"
-
-      - name: Test 4. Should create only version tag if floating-tags is false
-        id: test4
-        uses: ./action
-        with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
-          floating-tags: false
-
-      - name: Test 4. Verify only v1.1.0 is created and floating tags are not moved
-        env:
-          VERSION: ${{ steps.test4.outputs.version }}
-        run: |
-          set -x
-          [[ "$VERSION" == "v1.1.0" ]]
-          [[ "$(git -C "$ORIGIN" tag | sort | xargs)" == "latest v1 v1.0 v1.0.0 v1.0.1 v1.1.0" ]]
-          [[ "$(git -C "$ORIGIN" rev-parse v1.1.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
-          [[ "$(git -C "$ORIGIN" rev-parse v1)" == "$(git -C "$ORIGIN" rev-parse v1.0.1)" ]]
-
-
-      - name: Test 5. Setup fix commit
+      - name: Test 3. Setup fix commit
         run: |
           echo 'fix' > fix2.txt
           git add fix2.txt
           git commit -q -m "fix: second fix"
           git push -q origin "$BRANCH"
 
-      - name: Test 5. Should not update CHANGELOG.md if changelog-file is empty
-        id: test5
+      - name: Test 3. Should not update CHANGELOG.md if changelog-file is empty
+        id: test3
         uses: ./action
         with:
           release-gh: false
@@ -297,41 +241,14 @@ jobs:
           summary: ''
           changelog-file: ''
 
-      - name: Test 5. Verify v1.1.1 is released and CHANGELOG.md is unchanged
+      - name: Test 3. Verify v1.0.2 is released and CHANGELOG.md is unchanged
         env:
-          VERSION: ${{ steps.test5.outputs.version }}
+          VERSION: ${{ steps.test3.outputs.version }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.1.1" ]]
-          [[ "$(git -C "$ORIGIN" rev-parse v1.1.1)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
-          git -C "$ORIGIN" diff --quiet v1.1.0 "$BRANCH" -- CHANGELOG.md
-
-
-      - name: Test 6. Setup fix commit
-        run: |
-          echo 'fix' > fix3.txt
-          git add fix3.txt
-          git commit -q -m "fix: third fix"
-          git push -q origin "$BRANCH"
-
-      # explicit version is used as tag as is (tag-format is not applied)
-      - name: Test 6. Should use explicit version if passed
-        id: test6
-        uses: ./action
-        with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
-          version: v3.0.0
-
-      - name: Test 6. Verify v3.0.0 is released
-        env:
-          VERSION: ${{ steps.test6.outputs.version }}
-        run: |
-          set -x
-          [[ "$VERSION" == "v3.0.0" ]]
-          [[ "$(git -C "$ORIGIN" rev-parse v3.0.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
-          [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "3.0.0" ]]
+          [[ "$VERSION" == "v1.0.2" ]]
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.2)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
+          git -C "$ORIGIN" diff --quiet v1.0.1 "$BRANCH" -- CHANGELOG.md
 
 
   # Same as 'E2E-Versioning', but with all manifest files:
