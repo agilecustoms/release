@@ -217,6 +217,8 @@ runs:
     - name: Finalize version and tags
       id: version
       shell: bash
+      env:
+        TAG_FORMAT: ${{ inputs.tag-format }}
       run: |
         # Finalize version and tags
         if [ "${{ inputs.dev-release }}" = "true" ]; then
@@ -229,7 +231,16 @@ runs:
           tags="${{ steps.release_gen.outputs.tags }}"
         fi
         
+        # version is a tag (e.g. 'v1.2.3'), but manifests (pom.xml, package.json, pyproject.toml) need a bare version '1.2.3',
+        # so strip what tag-format adds around '${version}' (default tag-format is 'v${version}')
+        tag_format="${TAG_FORMAT:-v\${version\}}"
+        prefix="${tag_format%%'${version}'*}"
+        suffix="${tag_format#*'${version}'}"
+        version_number="${version#"$prefix"}"
+        version_number="${version_number%"$suffix"}"
+
         echo "version=$version" >> $GITHUB_OUTPUT
+        echo "version_number=$version_number" >> $GITHUB_OUTPUT
         echo "git_tags=$git_tags" >> $GITHUB_OUTPUT
         echo "tags=$tags" >> $GITHUB_OUTPUT
 
@@ -279,7 +290,7 @@ runs:
         # Update version in pom.xml
         MVN=mvn
         if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
-        "$MVN" --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version }} -DoldVersion=* -DgroupId=* -DartifactId=*
+        "$MVN" --no-transfer-progress versions:set -DnewVersion=${{ steps.version.outputs.version_number }} -DoldVersion=* -DgroupId=* -DartifactId=*
     # maven first creates effective pom, which requires resolving parent dependencies,
     # so unfortunately, even just to update versions in pom.xml, we need to have AWS CodeArtifact access :(
 
@@ -288,14 +299,14 @@ runs:
       shell: bash
       run: |
         # Update version in package.json
-        npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+        npm version ${{ steps.version.outputs.version_number }} --no-git-tag-version
 
     - name: Update version in pyproject.toml
       if: inputs.update-version-in-manifest == 'true' && hashFiles('pyproject.toml') && inputs.dev-release != 'true'
       shell: bash
       run: |
         # Update version in pyproject.toml
-        sed -i 's/^version[[:space:]]*=[[:space:]]*".*"/version = "${{ steps.version.outputs.version }}"/' pyproject.toml
+        sed -i 's/^version[[:space:]]*=[[:space:]]*".*"/version = "${{ steps.version.outputs.version_number }}"/' pyproject.toml
 
     - name: Install uv
       if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
@@ -315,7 +326,7 @@ runs:
       shell: bash
       run: |
         # Pre-publish script
-        version=${{ steps.version.outputs.version }} && ${{ inputs.pre-publish-script }}
+        version=${{ steps.version.outputs.version }} && version_number=${{ steps.version.outputs.version_number }} && ${{ inputs.pre-publish-script }}
 
 ## Phase 5 - Publish artifacts
 
@@ -488,5 +499,8 @@ runs:
 
 outputs:
   version:
-    description: "Newly released version"
+    description: "Newly released version (same as git tag, e.g. 'v1.2.3')"
     value: ${{ steps.version.outputs.version }}
+  version-number:
+    description: "Newly released version without tag-format prefix/suffix (e.g. '1.2.3'), same as written in manifests"
+    value: ${{ steps.version.outputs.version_number }}
