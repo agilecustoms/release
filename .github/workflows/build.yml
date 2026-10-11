@@ -251,7 +251,28 @@ jobs:
           git -C "$ORIGIN" diff --quiet v1.0.1 "$BRANCH" -- CHANGELOG.md
 
 
-  # Same as 'E2E-Versioning', but with all manifest files:
+      # dev-release doesn't generate a version and doesn't push to git, it only publishes artifacts (none here)
+      - name: Test 4. Should use branch name as version and push nothing if dev-release is true
+        id: test4
+        uses: ./action
+        with:
+          dev-release: true
+          dev-branch-prefix: '' # run on any branch
+          npm-publish: true # would fail w/o npm credentials if not skipped for dev-release
+          # GH_TOKEN is not needed even though release-gh is true (default)
+
+      - name: Test 4. Verify version and nothing is pushed or changed
+        env:
+          VERSION: ${{ steps.test4.outputs.version }}
+        run: |
+          set -x
+          [[ "$VERSION" == "${BRANCH//\//-}" ]] # feature/abc -> feature-abc
+          [[ "$(git -C "$ORIGIN" tag | sort | xargs)" == "latest v1 v1.0 v1.0.0 v1.0.1 v1.0.2" ]]
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.2)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
+          git diff --quiet # package.json is not updated
+
+
+  # Same as 'E2E-Versioning', but with all manifest files (package.json, pom.xml, pyproject.toml, uv.lock):
   # tag-format prefix/suffix (e.g. 'v' in 'v1.0.0') is stripped, manifests get a bare version '1.0.0'
   E2E-Manifests:
     runs-on: ubuntu-latest
@@ -265,7 +286,7 @@ jobs:
           path: action
           persist-credentials: false
 
-      - name: Setup sandbox repo with package.json, pom.xml and pyproject.toml
+      - name: Setup sandbox repo with package.json, pom.xml, pyproject.toml and uv.lock
         run: |
           git init -q --bare -b "$BRANCH" "$ORIGIN"
           git init -q -b "$BRANCH"
@@ -288,8 +309,19 @@ jobs:
           [project]
           name = "sandbox"
           version = "0.0.0"
+          requires-python = ">=3.9"
           TOML
-          git add package.json pom.xml pyproject.toml
+          cat > uv.lock <<'LOCK'
+          version = 1
+          revision = 3
+          requires-python = ">=3.9"
+
+          [[package]]
+          name = "sandbox"
+          version = "0.0.0"
+          source = { virtual = "." }
+          LOCK
+          git add package.json pom.xml pyproject.toml uv.lock
           git commit -q -m "chore: init"
 
 
@@ -300,7 +332,7 @@ jobs:
           git commit -q -m "feat: first feature"
           git push -q origin "$BRANCH"
 
-      - name: Test 1. Should update version in package.json, pom.xml and pyproject.toml without 'v' of default tag-format
+      - name: Test 1. Should update version in package.json, pom.xml, pyproject.toml and uv.lock without 'v' of default tag-format
         id: test1
         uses: ./action
         with:
@@ -320,6 +352,7 @@ jobs:
           [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "1.0.0" ]]
           git -C "$ORIGIN" show "$BRANCH:pom.xml" | grep -q '<version>1.0.0</version>'
           git -C "$ORIGIN" show "$BRANCH:pyproject.toml" | grep -q '^version = "1.0.0"$'
+          git -C "$ORIGIN" show "$BRANCH:uv.lock" | grep -A1 '^name = "sandbox"$' | grep -q '^version = "1.0.0"$'
 
 
       - name: Test 2. Setup fix commit
@@ -352,6 +385,118 @@ jobs:
           [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "2.0.0" ]]
           git -C "$ORIGIN" show "$BRANCH:pom.xml" | grep -q '<version>2.0.0</version>'
           git -C "$ORIGIN" show "$BRANCH:pyproject.toml" | grep -q '^version = "2.0.0"$'
+          git -C "$ORIGIN" show "$BRANCH:uv.lock" | grep -A1 '^name = "sandbox"$' | grep -q '^version = "2.0.0"$'
+
+  # Prerelease branch: version gets a prerelease suffix (v1.0.0-alpha.1),
+  # and the channel is saved in git notes, so the next prerelease continues the sequence (alpha.2, alpha.3)
+  # - semantic-release requires at least one regular release branch, so the sandbox also has 'e2e-main' branch
+  E2E-Prerelease:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: ${{ github.ref_name }}
+      ORIGIN: ${{ github.workspace }}/../origin.git
+      RELEASE_BRANCHES: '["e2e-main", {"name": "${{ github.ref_name }}", "prerelease": "alpha", "channel": "beta"}]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          path: action
+          persist-credentials: false
+
+      - name: Setup sandbox repo with 'e2e-main' release branch
+        run: |
+          git init -q --bare -b "$BRANCH" "$ORIGIN"
+          git init -q -b "$BRANCH"
+          echo 'action/' >> .git/info/exclude
+          git config user.name "Test User"
+          git config user.email "test@example.com"
+          git remote add origin "file://$(realpath "$ORIGIN")"
+          echo '{ "name": "sandbox", "version": "0.0.0" }' > package.json
+          git add package.json
+          git commit -q -m "chore: init"
+          git push -q origin "HEAD:e2e-main"
+
+
+      - name: Test 1. Setup feat commit
+        run: |
+          echo 'feature' > feature.txt
+          git add feature.txt
+          git commit -q -m "feat: first feature"
+          git push -q origin "$BRANCH"
+
+      - name: Test 1. Should release prerelease with custom suffix and channel
+        id: test1
+        uses: ./action
+        with:
+          release-gh: false
+          release-branches: ${{ env.RELEASE_BRANCHES }}
+          summary: ''
+
+      - name: Test 1. Verify version, tags, git notes and package.json
+        env:
+          VERSION: ${{ steps.test1.outputs.version }}
+        run: |
+          set -x
+          [[ "$VERSION" == "v1.0.0-alpha.1" ]]
+          [[ "$(git -C "$ORIGIN" tag | sort | xargs)" == "beta v1.0.0-alpha.1" ]]
+          head=$(git -C "$ORIGIN" rev-parse "$BRANCH")
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.0-alpha.1)" == "$head" ]]
+          [[ "$(git -C "$ORIGIN" rev-parse beta)" == "$head" ]]
+          git -C "$ORIGIN" notes --ref semantic-release show "$head" | grep -q '"beta"'
+          [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "1.0.0-alpha.1" ]]
+
+
+      # delete local git notes to simulate a fresh checkout: the channel must come from git notes pushed to origin
+      - name: Test 2. Setup fix commit and delete local git notes
+        run: |
+          git update-ref -d refs/notes/semantic-release
+          echo 'fix' > fix.txt
+          git add fix.txt
+          git commit -q -m "fix: first fix"
+          git push -q origin "$BRANCH"
+
+      - name: Test 2. Should continue prerelease sequence
+        id: test2
+        uses: ./action
+        with:
+          release-gh: false
+          release-branches: ${{ env.RELEASE_BRANCHES }}
+          summary: ''
+
+      - name: Test 2. Verify version and channel tag is moved
+        env:
+          VERSION: ${{ steps.test2.outputs.version }}
+        run: |
+          set -x
+          [[ "$VERSION" == "v1.0.0-alpha.2" ]]
+          head=$(git -C "$ORIGIN" rev-parse "$BRANCH")
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.0-alpha.2)" == "$head" ]]
+          [[ "$(git -C "$ORIGIN" rev-parse beta)" == "$head" ]]
+
+
+      - name: Test 3. Setup commit without conventional commit type
+        run: |
+          echo 'docs' > README.md
+          git add README.md
+          git commit -q -m "update readme"
+          git push -q origin "$BRANCH"
+
+      - name: Test 3. Should bump prerelease if version-bump is default-patch
+        id: test3
+        uses: ./action
+        with:
+          release-gh: false
+          release-branches: ${{ env.RELEASE_BRANCHES }}
+          summary: ''
+          version-bump: default-patch
+
+      - name: Test 3. Verify version
+        env:
+          VERSION: ${{ steps.test3.outputs.version }}
+        run: |
+          set -x
+          [[ "$VERSION" == "v1.0.0-alpha.3" ]]
+          [[ "$(git -C "$ORIGIN" rev-parse v1.0.0-alpha.3)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
 
   # Release commit and push (not version generation):
   # - pre-publish-script changes go into the release commit
@@ -489,7 +634,7 @@ jobs:
 
   Release:
     if: github.ref == 'refs/heads/main'
-    needs: [ Input-Validation, E2E-Versioning, E2E-Manifests, E2E-Release-Commit ]
+    needs: [ Input-Validation, E2E-Versioning, E2E-Manifests, E2E-Prerelease, E2E-Release-Commit ]
     runs-on: ubuntu-slim
     environment: release
     steps:
