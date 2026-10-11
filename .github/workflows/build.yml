@@ -186,9 +186,11 @@ jobs:
       - name: Test 1. Verify version, tags, release commit, CHANGELOG.md and package.json
         env:
           VERSION: ${{ steps.test1.outputs.version }}
+          GIT_TAG: ${{ steps.test1.outputs.git-tag }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.0.0" ]]
+          [[ "$VERSION" == "1.0.0" ]]
+          [[ "$GIT_TAG" == "v1.0.0" ]]
           [[ "$(git -C "$ORIGIN" tag | sort | xargs)" == "latest v1 v1.0 v1.0.0" ]]
           [[ "$(git -C "$ORIGIN" log -1 --format=%s "$BRANCH")" == "Release version v1.0.0 [skip ci]" ]]
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
@@ -217,7 +219,7 @@ jobs:
           VERSION: ${{ steps.test2.outputs.version }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.0.1" ]]
+          [[ "$VERSION" == "1.0.1" ]]
           head=$(git -C "$ORIGIN" rev-parse "$BRANCH")
           for tag in v1.0.1 v1.0 v1 latest; do
             [[ "$(git -C "$ORIGIN" rev-parse "$tag")" == "$head" ]]
@@ -246,7 +248,7 @@ jobs:
           VERSION: ${{ steps.test3.outputs.version }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.0.2" ]]
+          [[ "$VERSION" == "1.0.2" ]]
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.2)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
           git -C "$ORIGIN" diff --quiet v1.0.1 "$BRANCH" -- CHANGELOG.md
 
@@ -273,7 +275,7 @@ jobs:
 
 
   # Same as 'E2E-Versioning', but with all manifest files (package.json, pom.xml, pyproject.toml, uv.lock):
-  # tag-format prefix/suffix (e.g. 'v' in 'v1.0.0') is stripped, manifests get a bare version '1.0.0'
+  # tag-format (e.g. 'v' in 'v1.0.0') applies only to git tags, manifests get a bare version '1.0.0'
   E2E-Manifests:
     runs-on: ubuntu-latest
     env:
@@ -343,11 +345,11 @@ jobs:
       - name: Test 1. Verify tags, outputs and versions in manifests
         env:
           VERSION: ${{ steps.test1.outputs.version }}
-          VERSION_NUMBER: ${{ steps.test1.outputs.version-number }}
+          GIT_TAG: ${{ steps.test1.outputs.git-tag }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.0.0" ]]
-          [[ "$VERSION_NUMBER" == "1.0.0" ]]
+          [[ "$VERSION" == "1.0.0" ]]
+          [[ "$GIT_TAG" == "v1.0.0" ]]
           [[ "$(git -C "$ORIGIN" tag | sort | xargs)" == "latest v1 v1.0 v1.0.0" ]]
           [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "1.0.0" ]]
           git -C "$ORIGIN" show "$BRANCH:pom.xml" | grep -q '<version>1.0.0</version>'
@@ -362,8 +364,8 @@ jobs:
           git commit -q -m "fix: first fix"
           git push -q origin "$BRANCH"
 
-      # explicit version is a tag, so it includes tag-format prefix
-      - name: Test 2. Should strip custom tag-format prefix from explicit version in manifests
+      # explicit version is bare, tag-format applies only to the git tag
+      - name: Test 2. Should apply custom tag-format to explicit version only in git tag
         id: test2
         uses: ./action
         with:
@@ -371,16 +373,16 @@ jobs:
           release-branches: '["${{ github.ref_name }}"]'
           summary: ''
           tag-format: 'release-${version}'
-          version: release-2.0.0
+          version: 2.0.0
 
       - name: Test 2. Verify outputs and versions in manifests
         env:
           VERSION: ${{ steps.test2.outputs.version }}
-          VERSION_NUMBER: ${{ steps.test2.outputs.version-number }}
+          GIT_TAG: ${{ steps.test2.outputs.git-tag }}
         run: |
           set -x
-          [[ "$VERSION" == "release-2.0.0" ]]
-          [[ "$VERSION_NUMBER" == "2.0.0" ]]
+          [[ "$VERSION" == "2.0.0" ]]
+          [[ "$GIT_TAG" == "release-2.0.0" ]]
           [[ "$(git -C "$ORIGIN" rev-parse release-2.0.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
           [[ "$(git -C "$ORIGIN" show "$BRANCH:package.json" | jq -r .version)" == "2.0.0" ]]
           git -C "$ORIGIN" show "$BRANCH:pom.xml" | grep -q '<version>2.0.0</version>'
@@ -437,7 +439,7 @@ jobs:
           VERSION: ${{ steps.test1.outputs.version }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.0.0-alpha.1" ]]
+          [[ "$VERSION" == "1.0.0-alpha.1" ]]
           [[ "$(git -C "$ORIGIN" tag | sort | xargs)" == "beta v1.0.0-alpha.1" ]]
           head=$(git -C "$ORIGIN" rev-parse "$BRANCH")
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.0-alpha.1)" == "$head" ]]
@@ -468,7 +470,7 @@ jobs:
           VERSION: ${{ steps.test2.outputs.version }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.0.0-alpha.2" ]]
+          [[ "$VERSION" == "1.0.0-alpha.2" ]]
           head=$(git -C "$ORIGIN" rev-parse "$BRANCH")
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.0-alpha.2)" == "$head" ]]
           [[ "$(git -C "$ORIGIN" rev-parse beta)" == "$head" ]]
@@ -495,7 +497,7 @@ jobs:
           VERSION: ${{ steps.test3.outputs.version }}
         run: |
           set -x
-          [[ "$VERSION" == "v1.0.0-alpha.3" ]]
+          [[ "$VERSION" == "1.0.0-alpha.3" ]]
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.0-alpha.3)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
 
   # Release commit and push (not version generation):
@@ -534,7 +536,7 @@ jobs:
           git commit -q -m "fix: add version.txt"
           git push -q origin "$BRANCH"
 
-      - name: Test 1. Should run pre-publish-script with $version
+      - name: Test 1. Should run pre-publish-script with $version (bare)
         id: test1
         uses: ./action
         with:
@@ -546,7 +548,7 @@ jobs:
       - name: Test 1. Verify version.txt is updated in release commit
         run: |
           set -x
-          [[ "$(git -C "$ORIGIN" show "$BRANCH:version.txt")" == "v1.0.0" ]]
+          [[ "$(git -C "$ORIGIN" show "$BRANCH:version.txt")" == "1.0.0" ]]
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.0)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
 
 
@@ -564,12 +566,12 @@ jobs:
           release-gh: false
           release-branches: '["${{ github.ref_name }}"]'
           summary: ''
-          pre-publish-script: echo "$version" > build-info.txt && git add build-info.txt
+          pre-publish-script: echo "$git_tag" > build-info.txt && git add build-info.txt
 
       - name: Test 2. Verify build-info.txt is in release commit
         run: |
           set -x
-          [[ "$(git -C "$ORIGIN" show "$BRANCH:build-info.txt")" == "v1.0.1" ]]
+          [[ "$(git -C "$ORIGIN" show "$BRANCH:build-info.txt")" == "v1.0.1" ]] # $git_tag
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.1)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
 
 
@@ -593,7 +595,7 @@ jobs:
         run: |
           set -x
           [[ "$(git -C "$ORIGIN" rev-parse v1.0.2)" == "$(git -C "$ORIGIN" rev-parse "$BRANCH")" ]]
-          [[ "$(cat not-added.txt)" == "v1.0.2" ]] # script did run
+          [[ "$(cat not-added.txt)" == "1.0.2" ]] # script did run
           if git -C "$ORIGIN" cat-file -e "$BRANCH:not-added.txt"; then
             echo "not-added.txt must not be in release commit"
             exit 1

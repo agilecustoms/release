@@ -53,15 +53,16 @@ This can be helpful in the following cases:
 - it is possible to do prerelease and maintenance releases in "explicit version",
 but `agilecustoms/release` action does not provide any assistance/guardrails
 
-The table below shows how floating tags and release channel work in "explicit version" mode:
+The table below shows how floating tags and release channel work in "explicit version" mode
+(default `tag-format` `v${version}` applies only to git tags; a leading `v` in explicit version is ignored, see the last row):
 
-| branch  | version | floating tags | channel |   | git tags                      | Docker tags and S3 dirs     | npm tag |
-|---------|---------|---------------|---------|---|-------------------------------|-----------------------------|---------|
-| `main`  | 1.2.4   | _false_       |         | ⇒ | `1.2.4`                       | _same_                      | latest  |
-| `main`  | 1.3.0   | _false_       | _false_ | ⇒ | `1.3.0`                       | _same_                      | main    |
-| `main`  | 2.0.0   | _false_       | main    | ⇒ | `2.0.0`                       | _same_                      | main    |
-| `main`  | 2.1     | _false_       | release | ⇒ | `2.1`                         | _same_                      | release |
-| `main`  | 1.2.4   | _true_        |         | ⇒ | `1.2.4`, `1.2`, `1`, `latest` | _same_                      | latest  |
-| `main`  | 1.3.0   | _true_        | _false_ | ⇒ | `1.3.0`, `1.3`, `1`           | _same_                      | main    |
-| `main`  | 2.0.0   | _true_        | main    | ⇒ | `2.0.0`, `2.0`, `2`           | `2.0.0`, `2.0`, `2`, `main` | main    |
-| `main`  | v2.1    | _true_        | release | ⇒ | `v2.1`, `v2`, `release`       | _same_                      | release |
+| branch | version | floating tags | channel |   | git tags                         | Docker tags and S3 dirs       | npm tag |
+|--------|---------|---------------|---------|---|----------------------------------|-------------------------------|---------|
+| `main` | 1.2.4   | _false_       |         | ⇒ | `v1.2.4`                         | `1.2.4`                       | latest  |
+| `main` | 1.3.0   | _false_       | _false_ | ⇒ | `v1.3.0`                         | `1.3.0`                       | main    |
+| `main` | 2.0.0   | _false_       | main    | ⇒ | `v2.0.0`                         | `2.0.0`                       | main    |
+| `main` | 2.1     | _false_       | release | ⇒ | `v2.1`                           | `2.1`                         | release |
+| `main` | 1.2.4   | _true_        |         | ⇒ | `v1.2.4`, `v1.2`, `v1`, `latest` | `1.2.4`, `1.2`, `1`, `latest` | latest  |
+| `main` | 1.3.0   | _true_        | _false_ | ⇒ | `v1.3.0`, `v1.3`, `v1`           | `1.3.0`, `1.3`, `1`           | main    |
+| `main` | 2.0.0   | _true_        | main    | ⇒ | `v2.0.0`, `v2.0`, `v2`           | `2.0.0`, `2.0`, `2`, `main`   | main    |
+| `main` | v2.1    | _true_        | release | ⇒ | `v2.1`, `v2`, `release`          | `2.1`, `2`, `release`         | release |
