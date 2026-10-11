@@ -1,5 +1,30 @@
 # Changelog
 
+## [5.5.0](https://github.com/agilecustoms/release/compare/v5.4.0...v5.5.0) (2026-10-11)
+
+### Features
+
+* strip tag-format prefix from version in manifests, add version-number output ([979a755](https://github.com/agilecustoms/release/commit/979a755d38cc8786db8b5ab42c34b69e71068fc0))
+
+### Bug Fixes
+
+* do not execute summary as shell code ([f579407](https://github.com/agilecustoms/release/commit/f579407037413baa97e8bc47274846f2f7157bce))
+
+### Miscellaneous
+
+* add E2E release tests ([8497521](https://github.com/agilecustoms/release/commit/84975213c84cf1c0ad4827540cd668ac88c86957))
+* add E2E tests for dev-release, prerelease and uv.lock ([8fb8085](https://github.com/agilecustoms/release/commit/8fb80853b3f0bdc8eb2d654d2370f33d5c4481d2))
+* add input validation tests ([6828bcc](https://github.com/agilecustoms/release/commit/6828bcc3c78127fa519b8f0758d2d6509edab704))
+* add Release job after all tests, rename workflow to Build ([44454a0](https://github.com/agilecustoms/release/commit/44454a0218bbddd661b63458369d3112cfd571c0))
+* add sandbox release test ([1686486](https://github.com/agilecustoms/release/commit/16864865c576d549afbf305fa71b5e2ded948b01))
+* keep in test-coverage.md only features not covered by E2E tests ([3d7909e](https://github.com/agilecustoms/release/commit/3d7909e7318568854623e4fbcd380103167c45bc))
+* move release commit tests into separate job ([3f03377](https://github.com/agilecustoms/release/commit/3f033777419246c0892cbd247a7b4ab098cf1c93))
+* release after all tests pass ([ab69765](https://github.com/agilecustoms/release/commit/ab69765417fc048116c78f6730604d0e74452f7d))
+* remove E2E tests duplicating release-gen integration tests ([2e08732](https://github.com/agilecustoms/release/commit/2e087324b930d8d90b6a57cd5d728e7e2d9a1ff7))
+* test new files created by pre-publish-script ([5f3dd59](https://github.com/agilecustoms/release/commit/5f3dd59588eb2339a400635499b475db0d2b7161))
+* unify .gitignore sections [skip ci] ([a61dc36](https://github.com/agilecustoms/release/commit/a61dc36107990f8071605069b0a49f690247ce48))
+
+
 ## [5.4.0](https://github.com/agilecustoms/release/compare/v5.3.1...v5.4.0) (2026-10-09)
 
 ### Documentation
