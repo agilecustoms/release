@@ -79,12 +79,12 @@ When a developer merges a PR, the Release workflow is triggered:
 ### IaC
 
 This is an example of a microservice that consists of an application (Python) code and IaC (Terraform in `infrastructure` directory).
-Upon release the `agilecustoms/release` generates a new version, and it is used as git tag and S3 prefix.
+Upon release the `agilecustoms/release` generates a new version `1.2.3`, it is used as S3 prefix, and git tag is `v1.2.3` (default `tag-format`).
 So your code and infrastructure are in sync! Now you can deploy infra and code like this:
 
 ```hcl
 module "env_api" {
-  source = "git::https://github.com/agilecustoms/env-api.git//infrastructure?ref=1.2.3"
+  source = "git::https://github.com/agilecustoms/env-api.git//infrastructure?ref=v1.2.3"
   aVersion = "1.2.3"
 }
 ```
@@ -154,12 +154,12 @@ When developer merges a PR, the Release workflow is triggered:
 ### IaC
 
 This is an example of a microservice that consists of an application (TypeScript) code and IaC (Terraform in `infrastructure` directory).
-Upon release the `agilecustoms/release` generates a new version, and it is used as git tag and S3 prefix.
+Upon release the `agilecustoms/release` generates a new version `1.2.3`, it is used as S3 prefix, and git tag is `v1.2.3` (default `tag-format`).
 So your code and infrastructure are in sync! Now you can deploy infra and code like this:
 
 ```hcl
 module "tt_web" {
-  source = "git::https://github.com/agilecustoms/tt-web.git//infrastructure?ref=1.2.3"
+  source = "git::https://github.com/agilecustoms/tt-web.git//infrastructure?ref=v1.2.3"
   aVersion = "1.2.3"
 }
 ```

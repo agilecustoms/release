@@ -83,8 +83,8 @@ Scenario:
 - build steps (omitted) produced a directory `./s3` with files (like a zip archive for AWS Lambda)
 
 The action will:
-- generate a new version `v1.3.0` (minor bump based on commit message prefix `feat:`)
-- upload files from `./s3` directory to S3 bucket `mycompany-dist` at path `/myapp/v1.3.0/`
+- generate a new version `1.3.0` (minor bump based on commit message prefix `feat:`)
+- upload files from `./s3` directory to S3 bucket `mycompany-dist` at path `/myapp/1.3.0/`
 - update `CHANGELOG.md` with release notes
 - push tags `v1.3.0`, `v1.3`, `v1` and `latest` to the remote repository
 - create a GH Release tied to tag `v1.3.0`
@@ -128,23 +128,23 @@ _There are no required inputs. The action only controls that the combination of 
 | npm-publish                 | false             | If true, then publish package to npmjs.com registry. [Example](./docs/artifact-types/npmjs.md)                                                                                                                                                          |
 | npm-visibility              | public            | Used together with input `npm-publish`. Specifies package visibility: public or private (not tested yet)                                                                                                                                                |
 | python-version              | 3.13              | Python version. Not in use right now                                                                                                                                                                                                                    |
-| pre-publish-script          |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variables `$version` (git tag, e.g. `v1.2.3`) and `$version_number` (e.g. `1.2.3`). Script changes in tracked files go into the release commit; to include a new file, `git add` it in the script. See example in [npmjs](./docs/artifact-types/npmjs.md) |
+| pre-publish-script          |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variables `$version` (e.g. `1.2.3`) and `$git_tag` (e.g. `v1.2.3`). Script changes in tracked files go into the release commit; to include a new file, `git add` it in the script. See example in [npmjs](./docs/artifact-types/npmjs.md) |
 | release-branches            | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md)  |
 | release-channel             |                   | Repeat `.releaserc.json` `channel` behavior when `version` is set explicitly. See [floating-tags](./docs/features/floating-tags.md) for details                                                                                                         |
 | release-gh                  | true              | If true, then create a GitHub release                                                                                                                                                                                                                   |
 | release-plugins             | (see description) | Semantic-release "plugins" configuration, see [details](./docs/configuration.md)                                                                                                                                                                        |
 | summary                     | (see description) | Text to print in step summary. Can use `${version}` placeholder. Default is `### Released ${version}`. Set to an empty string to omit summary generation                                                                                                |
-| tag-format                  | v${version}       | Default tag format is `v1.0.0` _(default is in code level, not input value)_. Use `${version}` to remove `v` prefix                                                                                                                                     |
+| tag-format                  | v${version}       | Git tag format, default git tag is `v1.0.0` _(default is in code level, not input value)_. Applies only to git tags: version in manifests, S3 path and Docker tag is always bare `1.0.0`. Use `${version}` to remove `v` prefix from git tags         |
 | update-version-in-manifest  | true              | Update version in language-specific manifest files (e.g., pom.xml, package.json, pyproject.toml)                                                                                                                                                        |
 | version                     |                   | [Explicit version](./docs/features/version-generation.md#explicit-version) to use instead of auto-generation                                                                                                                                            |
 | version-bump                |                   | Allows you to [bump a version](./docs/features/version-generation.md#version-bump) without conventional commits                                                                                                                                         |
 
 ## Outputs
 
-| Name           | Description                                                                                                                    |
-|----------------|--------------------------------------------------------------------------------------------------------------------------------|
-| version        | Version that was generated (or provided via `version` input), same as git tag, e.g. `v1.2.3`                                   |
-| version-number | Version without `tag-format` prefix/suffix, e.g. `1.2.3`. This is the version written in pom.xml, package.json, pyproject.toml |
+| Name    | Description                                                                                                                         |
+|---------|-------------------------------------------------------------------------------------------------------------------------------------|
+| git-tag | Git tag of the release: version with `tag-format` applied, e.g. `v1.2.3`                                                            |
+| version | Version that was generated (or provided via `version` input), bare, e.g. `1.2.3`. Same as in manifests, S3 path and Docker tag |
 
 ## Environment variables
 

@@ -103,5 +103,7 @@ runs:
         version-bump: ${{ inputs.version-bump }}
 
 outputs:
+  git-tag:
+    value: ${{ steps.release.outputs.git-tag }}
   version:
     value: ${{ steps.release.outputs.version }}

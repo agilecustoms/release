@@ -87,12 +87,12 @@ in `release-dev.yml` workflow and run it from a feature branch — GitHub will s
 ### Application code and IaC
 
 This is an example of a microservice that consists of an application (java in Docker) code and IaC (Terraform in `infrastructure` directory).
-Upon release the `agilecustoms/release` generates a new version, and it is used as git tag and ECR tag.
+Upon release the `agilecustoms/release` generates a new version `1.2.3`, it is used as ECR tag, and git tag is `v1.2.3` (default `tag-format`).
 So your code and infrastructure are in sync! Now you can deploy infra and code like this:
 
 ```hcl
 module "env_cleanup" {
-  source = "git::https://github.com/agilecustoms/env-cleanup.git//infrastructure?ref=1.2.3"
+  source = "git::https://github.com/agilecustoms/env-cleanup.git//infrastructure?ref=v1.2.3"
   aVersion = "1.2.3"
 }
 ```

@@ -186,7 +186,7 @@ What can a malicious developer do?
 Feature branch name is used as suffix for dev-release artifacts, so `ci/publisher-dev` can only put objects at path `mycompany-dist/*/feature*`.
 Imagine a software product which release consists of multiple files like this:
 ```
-<bucket>/myservice/v1.2.3/
+<bucket>/myservice/1.2.3/
 ├── feature/
 │   └── file      <-- vulnerable
 ├── other-dir/
@@ -194,12 +194,12 @@ Imagine a software product which release consists of multiple files like this:
 └── file          <-- secure
 ```
 In this case (again if no `CODEOWNERS`) a malicious developer can create a feature branch with a custom workflow
-where they assume `ci/publisher-dev` role and put objects into `s3://mycompany-dist/myservice/v1.2.3/feature/*`.
+where they assume `ci/publisher-dev` role and put objects into `s3://mycompany-dist/myservice/1.2.3/feature/*`.
 So the risks are:
 
-1. during a certain period of time a malicious file `s3://mycompany-dist/myservice/v1.2.3/feature/file`
+1. during a certain period of time a malicious file `s3://mycompany-dist/myservice/1.2.3/feature/file`
    is stored (and served!) among normal files
-2. malicious developer can put file `s3://mycompany-dist/myservice/v1.2.3/feature/file2`.
+2. malicious developer can put file `s3://mycompany-dist/myservice/1.2.3/feature/file2`.
    In this case it is not an override, it is a new file. Might not be a problem if no one use it, or might be a problem
    if your software does something with all files in `feature/` directory
 3. According to IAM policy, the file can be put only with tag `Release=false` and according to S3 lifecycle rule,
@@ -209,7 +209,7 @@ So the risks are:
 
 Typical ECR repository is immutable, so if you do not have `CODEOWNERS`, a malicious developer can create a feature branch
 with a custom workflow where they assume `ci/publisher-dev` role and put images into ECR repo
-with arbitrary tags (not starting from `feature-`), like `v2.0.0` or `v1.2.4` (which looks like a legit bug fix)
+with arbitrary tags (not starting from `feature-`), like `2.0.0` or `1.2.4` (which looks like a legit bug fix)
 
 How to protect against such a malicious version (besides `CODEOWNERS`)?
 In your deployment pipelines use git tags as a source of truth!

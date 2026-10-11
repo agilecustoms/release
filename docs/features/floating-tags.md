@@ -14,6 +14,9 @@ Consider git branches (from old to new):
 - `1.x.x` — maintenance branch for the previous version, currently at v _1.5.5_
 - `main` — main release branch, currently at v _2.2.2_
 
+Tables below show git tags without `tag-format` (as if it is `${version}`). With default `tag-format` `v${version}`
+git tags are prefixed (`v1.1.11`, `v1.1`), while Docker tags and S3 dirs are always bare (`1.1.11`, `1.1`)
+
 | branch  | version | channel |   | version        | git tags                       | Docker tags and S3 dirs      | npm tag |
 |---------|---------|---------|---|----------------|--------------------------------|------------------------------|---------|
 | `1.1.x` | 1.1.10  |         | ⇒ | _1.1.11_       | `1.1.11`, `1.1`                | _same_                       | 1.1.x   |
