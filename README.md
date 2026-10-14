@@ -56,7 +56,7 @@ jobs:
       # (example) package AWS Lambda code as a zip archive in ./s3 directory
         
       - name: Release
-        uses: agilecustoms/release@v5
+        uses: agilecustoms/release@v6
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1

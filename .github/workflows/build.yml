@@ -647,6 +647,6 @@ jobs:
 
       # released with the previous published version, not with the code being tested
       - name: Release
-        uses: agilecustoms/release@v5
+        uses: agilecustoms/release@v6
         env:
           GH_TOKEN: ${{ secrets.GH_PUBLIC_RELEASES_TOKEN }}

@@ -36,7 +36,7 @@ Configuration will be provided via `release-plugins` input in `agilecustoms/rele
 
 ```yaml
 - name: release
-  uses: agilecustoms/release@v5
+  uses: agilecustoms/release@v6
   with:
     release-plugins: |
       [
