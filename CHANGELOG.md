@@ -1,5 +1,28 @@
 # Changelog
 
+## [6.0.0](https://github.com/agilecustoms/release/compare/v5.5.0...v6.0.0) (2026-10-14)
+
+### ⚠ BREAKING CHANGES
+
+* - output 'version' is bare (was git tag 'v1.2.3', now '1.2.3'), new output 'git-tag' has the git tag
+- output 'version-number' is removed, use 'version'
+- pre-publish-script: $version is bare, $version_number is replaced by $git_tag
+- S3 dirs and Docker tags are bare (were 'v1.2.3', now '1.2.3')
+- explicit version input: tag-format is applied to git tags (version '1.2.3' -> git tag 'v1.2.3')
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+### Documentation
+
+* add v5 -> v6 migration guide ([7668d9b](https://github.com/agilecustoms/release/commit/7668d9ba889eccc86dac2fb7127feabdb96ddb90))
+* update cover image ([86a35c9](https://github.com/agilecustoms/release/commit/86a35c9849ba0b275d1b13cbca00176eddbcb708))
+* update roadmap ([d788f12](https://github.com/agilecustoms/release/commit/d788f127bd96e90f6b36b440011e52db903d6aed))
+
+### Features
+
+* version is bare semantic version, tag-format applies only to git tags ([1d2d7be](https://github.com/agilecustoms/release/commit/1d2d7be17206011f2241e957462a1b14748b0415))
+
+
 ## [5.5.0](https://github.com/agilecustoms/release/compare/v5.4.0...v5.5.0) (2026-10-11)
 
 ### Features
