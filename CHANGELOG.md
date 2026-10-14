@@ -4,7 +4,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* - output 'version' is bare (was git tag 'v1.2.3', now '1.2.3'), new output 'git-tag' has the git tag
+- output 'version' is bare (was git tag 'v1.2.3', now '1.2.3'), new output 'git-tag' has the git tag
 - output 'version-number' is removed, use 'version'
 - pre-publish-script: $version is bare, $version_number is replaced by $git_tag
 - S3 dirs and Docker tags are bare (were 'v1.2.3', now '1.2.3')
