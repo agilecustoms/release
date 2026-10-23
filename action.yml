@@ -437,7 +437,7 @@ runs:
         
         tags="${{ steps.version.outputs.git_tags }}"
         for tag in $tags; do
-          git tag -d "$tag" 2>/dev/null || true
+          git tag -d "$tag" >/dev/null 2>&1 || true
           git tag "$tag"
         done
         
@@ -464,7 +464,17 @@ runs:
         # push changes along with tags atomically
         # branch is NOT force-pushed: if someone pushed to the branch while release was running, push fails (and no tags pushed)
         # instead of silently overwriting their commits. Tags and notes are forced individually via '+' prefix (see above)
-        git push --atomic origin ${{ github.ref_name }} $refs
+        if ! git push --atomic origin ${{ github.ref_name }} $refs; then
+          # git's own hint ("use 'git pull' before pushing again") is misleading in CI, so explain the common case
+          if git fetch -q origin ${{ github.ref_name }} 2>/dev/null && [ -n "$(git rev-list HEAD..FETCH_HEAD)" ]; then
+            echo "::error title=Release aborted: '${{ github.ref_name }}' changed during release::Commits were pushed to '${{ github.ref_name }}' while this release was running, so nothing was pushed (no release commit, no tags). The workflow run for the newer commit should release everything together. If there is no such run (e.g. [skip ci]) or it fails - re-run that one or push again, re-running this run would fail the same way"
+            echo "Commits pushed to '${{ github.ref_name }}' during release:"
+            git log --format='  %h %s (%an, %cd)' --date=format:'%H:%M:%S' HEAD..FETCH_HEAD
+          else
+            echo "::error title=Release aborted: git push failed::Atomic push of '${{ github.ref_name }}' and tags ($refs) was rejected, nothing was pushed. See git output above"
+          fi
+          exit 1
+        fi
 
 ## Phase 7 - GitHub Release
 
