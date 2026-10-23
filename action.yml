@@ -356,8 +356,8 @@ runs:
     # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
     # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
     # it does repackage though! (this is for good, bcz pom versions changed)
-    # TODO: verify phase still run in build and release jobs
-    # TODO: checkstyle and enforcer still run in both jobs
+    # 'deploy' still runs all earlier phases (validate..verify), so skip checks that already ran in the build job:
+    # checkstyle and enforcer (validate), jacoco (no execution data anyway since tests are skipped)
     - name: Publish maven to CodeArtifact
       if: inputs.aws-codeartifact-maven == 'publish' && inputs.dev-release != 'true'
       shell: bash
@@ -366,7 +366,8 @@ runs:
         MVN=mvn
         if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
         set +e
-        output=$($MVN --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true 2>&1)
+        output=$($MVN --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true \
+          -Dcheckstyle.skip=true -Denforcer.skip=true -Djacoco.skip=true 2>&1)
         error_code=$?
         set -e
         echo "$output"
