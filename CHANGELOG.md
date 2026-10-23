@@ -1,5 +1,23 @@
 # Changelog
 
+## [6.1.0](https://github.com/agilecustoms/release/compare/v6.0.0...v6.1.0) (2026-10-23)
+
+### Documentation
+
+* small doc fix ([23858dd](https://github.com/agilecustoms/release/commit/23858ddeb15c0614b4e2e7cf6262eeb8fe9f560d))
+* use agilecustoms/release@v6 ([c94d83d](https://github.com/agilecustoms/release/commit/c94d83df73a0fa7b3b59b8db11d0f0df1b0828a7))
+
+### Features
+
+* explain rejected release push when branch changed during release ([73176ef](https://github.com/agilecustoms/release/commit/73176ef0967b8365000de867a4815e180164f594))
+* restore build job's maven cache in release job ([4353583](https://github.com/agilecustoms/release/commit/4353583144d480d1fa3f5d0b96dd6ec9d8d0d636))
+
+### Miscellaneous
+
+* stream maven deploy log ([a2169ed](https://github.com/agilecustoms/release/commit/a2169ed7c942ac43eef28eaae575415a425ea873))
+* use setup-maven-codeartifact v2.4.0 (working Maven Central URL) ([4d33b48](https://github.com/agilecustoms/release/commit/4d33b487abf625fa0c4733a93357bdac90e2f972))
+
+
 ## [6.0.0](https://github.com/agilecustoms/release/compare/v5.5.0...v6.0.0) (2026-10-14)
 
 ### ⚠ BREAKING CHANGES
