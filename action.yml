@@ -58,8 +58,12 @@ inputs:
     required: false
     default: 'maven'
   java-cache-dependency-path:
-    description: 'see https://github.com/actions/setup-java "cache-dependency-path"'
+    description: 'Files hashed into the Maven cache key, default **/pom.xml'
     required: false
+  java-cache-key:
+    description: 'Name of the Maven cache to restore (saved by the build job), see agilecustoms/gha-setup-java "java-cache-key"'
+    required: false
+    default: 'default'
   java-distribution:
     description: 'Java distribution, use Temurin as it is pre-cached in ubuntu-latest'
     required: false
@@ -261,8 +265,19 @@ runs:
       with:
         java-version: ${{ inputs.java-version }}
         distribution: ${{ inputs.java-distribution }}
-        cache: ${{ inputs.java-cache }}
-        cache-dependency-path: ${{ inputs.java-cache-dependency-path }}
+
+    # not setup-java's own cache: its key is an exact pom.xml hash with no fallback, and each release commit changes
+    # pom versions, so it always missed and saved a new cache nobody could use. Instead restore (read-only) the cache
+    # the build job saved for the same commit: key and paths must match agilecustoms/gha-setup-java exactly
+    - name: Restore maven cache
+      if: hashFiles('pom.xml') && inputs.dev-release != 'true' && inputs.java-cache == 'maven'
+      uses: actions/cache/restore@v6
+      with:
+        path: |
+          ~/.m2/repository
+          ~/.m2/wrapper
+        key: maven-${{ inputs.java-cache-key }}-${{ runner.os }}-${{ hashFiles(inputs.java-cache-dependency-path || '**/pom.xml') }}
+        restore-keys: maven-${{ inputs.java-cache-key }}-${{ runner.os }}-
 
     - name: Setup Maven CodeArtifact
       if: inputs.aws-codeartifact-maven
