@@ -13,6 +13,18 @@ permissions:
   contents: read
 
 jobs:
+  Lint:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # shellcheck is preinstalled in GH Ubuntu image
+      - name: Shellcheck
+        run: shellcheck scripts/*.sh
+
   Input-Validation:
     runs-on: ubuntu-slim
     steps:
@@ -636,7 +648,7 @@ jobs:
 
   Release:
     if: github.ref == 'refs/heads/main'
-    needs: [ Input-Validation, E2E-Versioning, E2E-Manifests, E2E-Prerelease, E2E-Release-Commit ]
+    needs: [ Lint, Input-Validation, E2E-Versioning, E2E-Manifests, E2E-Prerelease, E2E-Release-Commit ]
     runs-on: ubuntu-slim
     environment: release
     steps:

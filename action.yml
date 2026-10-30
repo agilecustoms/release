@@ -151,47 +151,18 @@ runs:
     - name: Init
       id: init
       shell: bash
-      run: |
-        # Init
-        # Validate version: explicit version cannot be used with dev-release=true
-        if [ -n "${{ inputs.version }}" ] && [ "${{ inputs.dev-release }}" = "true" ]; then
-          echo "Error: explicit version cannot be used with dev-release=true" >&2
-          exit 1
-        fi
-        # GITHUB_REPOSITORY has a format of 'company/service'
-        service=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $2}')
-        echo "service=$service" >> $GITHUB_OUTPUT
-        
-        if [ "${{ inputs.dev-release }}" = "true" ] && [ -n "${{ inputs.dev-branch-prefix }}" ]; then
-          branch="${GITHUB_REF#refs/heads/}"
-          if [[ "$branch" != "${{ inputs.dev-branch-prefix }}"* ]]; then
-            echo "Error: current branch '$branch' must start with '${{ inputs.dev-branch-prefix }}' when dev-release is true" >&2
-            exit 1
-          fi
-        fi
-        
-        if [ -d s3 ]; then
-          echo "aws_s3=true" >> $GITHUB_OUTPUT
-        fi
-        
-        if [ -d s3 ] || [ "${{ inputs.aws-ecr }}" = "true" ] || [ -n "${{ inputs.aws-codeartifact-maven }}" ]; then
-          if [ -z "${{ inputs.aws-account }}" ] || [ -z "${{ inputs.aws-region }}" ] || [ -z "${{ inputs.aws-role }}" ]; then
-            echo "Error: aws-account, aws-region, and aws-role must all be provided" >&2
-            exit 1
-          fi
-        fi
-
-        if [ -n "${{ inputs.aws-codeartifact-maven }}" ]; then
-          if [ -z "${{ inputs.aws-codeartifact-domain }}" ]; then
-            echo "Error: aws-codeartifact-domain must be provided when aws-codeartifact-maven is set" >&2
-            exit 1
-          fi
-        fi
-        
-        if [ -d s3 ] && [ -z "${{ inputs.aws-s3-bucket }}" ] ; then
-          echo "Error: aws-s3-bucket must be provided when using S3" >&2
-          exit 1
-        fi
+      env:
+        VERSION: ${{ inputs.version }}
+        DEV_RELEASE: ${{ inputs.dev-release }}
+        DEV_BRANCH_PREFIX: ${{ inputs.dev-branch-prefix }}
+        AWS_ACCOUNT: ${{ inputs.aws-account }}
+        AWS_REGION: ${{ inputs.aws-region }}
+        AWS_ROLE: ${{ inputs.aws-role }}
+        AWS_ECR: ${{ inputs.aws-ecr }}
+        AWS_CODEARTIFACT_MAVEN: ${{ inputs.aws-codeartifact-maven }}
+        AWS_CODEARTIFACT_DOMAIN: ${{ inputs.aws-codeartifact-domain }}
+        AWS_S3_BUCKET: ${{ inputs.aws-s3-bucket }}
+      run: bash "$GITHUB_ACTION_PATH/scripts/init.sh"
 
 ## Phase 2 - Release generation
 
@@ -221,25 +192,12 @@ runs:
     - name: Finalize version and tags
       id: version
       shell: bash
-      run: |
-        # Finalize version and tags
-        if [ "${{ inputs.dev-release }}" = "true" ]; then
-          version="$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" # refs/heads/feature/abc -> feature-abc
-          git_tags="$version"
-          tags="$version"
-        else
-          # version and tags are bare (1.2.3) - used in manifests, S3 path, Docker tag
-          # git_tags have tag-format applied (v1.2.3 v1.2 v1), first one is the git tag of this release
-          version="${{ steps.release_gen.outputs.version }}"
-          git_tags="${{ steps.release_gen.outputs.git_tags }}"
-          tags="${{ steps.release_gen.outputs.tags }}"
-        fi
-        git_tag="${git_tags%% *}"
-
-        echo "version=$version" >> $GITHUB_OUTPUT
-        echo "git_tag=$git_tag" >> $GITHUB_OUTPUT
-        echo "git_tags=$git_tags" >> $GITHUB_OUTPUT
-        echo "tags=$tags" >> $GITHUB_OUTPUT
+      env:
+        DEV_RELEASE: ${{ inputs.dev-release }}
+        GEN_VERSION: ${{ steps.release_gen.outputs.version }}
+        GEN_GIT_TAGS: ${{ steps.release_gen.outputs.git_tags }}
+        GEN_TAGS: ${{ steps.release_gen.outputs.tags }}
+      run: bash "$GITHUB_ACTION_PATH/scripts/version.sh"
 
 ## Phase 3 - Log in AWS
 
@@ -354,19 +312,12 @@ runs:
     - name: Push Docker image in ECR
       if: inputs.aws-ecr
       shell: bash
-      run: |
-        # Push Docker image in ECR
-        service="${{ steps.init.outputs.service }}"
-        ecr_image=${{ steps.login-ecr.outputs.registry }}/$service
-        tags=$(echo "${{ steps.version.outputs.tags }}" | sed 's/[^ ]\+/imageTag=&/g')
-        if [ "${{ inputs.dev-release }}" != "true" ]; then
-          AWS_PAGER="" aws ecr batch-delete-image --repository-name $service --image-ids $tags || true
-        fi
-        tags="${{ steps.version.outputs.tags }}"
-        for tag in $tags; do
-          docker tag $service $ecr_image:$tag
-        done
-        docker push --all-tags $ecr_image
+      env:
+        SERVICE: ${{ steps.init.outputs.service }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        TAGS: ${{ steps.version.outputs.tags }}
+        DEV_RELEASE: ${{ inputs.dev-release }}
+      run: bash "$GITHUB_ACTION_PATH/scripts/ecr-push.sh"
 
     # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
     # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
@@ -376,43 +327,17 @@ runs:
     - name: Publish maven to CodeArtifact
       if: inputs.aws-codeartifact-maven == 'publish' && inputs.dev-release != 'true'
       shell: bash
-      run: |
-        # Publish maven to CodeArtifact
-        MVN=mvn
-        if [[ -x ./mvnw ]]; then MVN=./mvnw; fi
-        set +e
-        # tee (not $(...)) to stream the log live, file is for the 409 check below
-        $MVN --no-transfer-progress deploy -Dmaven.main.skip=true -Dmaven.test.skip=true \
-          -Dcheckstyle.skip=true -Denforcer.skip=true -Djacoco.skip=true 2>&1 | tee /tmp/mvn_deploy.log
-        error_code=${PIPESTATUS[0]}
-        set -e
-        if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
-          if grep -q "status code: 409" /tmp/mvn_deploy.log; then
-            echo "Ignore error 'version already exist' for run attempt ${{ github.run_attempt }}"
-            exit 0
-          fi
-        fi
-        exit $error_code
+      run: bash "$GITHUB_ACTION_PATH/scripts/maven-publish.sh"
 
     # get namespace from package.json: "name": "@company/my-package", then find mapping namespace => npm repo in .npmrc file
     # since there is no .npmrc file, do publish in npmjs.com npm registry
     - name: Publish in npmjs
       if: inputs.npm-publish == 'true' && inputs.dev-release != 'true'
       shell: bash
-      run: |
-        # Publish in npmjs  
-        set +e
-        npm publish --access ${{ inputs.npm-visibility }} --tag '${{ steps.release_gen.outputs.channel }}' 2>&1 | tee /tmp/npm_publish.log
-        error_code=${PIPESTATUS[0]}
-        set -e
-        
-        if [ $error_code -ne 0 ] && [ "${{ github.run_attempt }}" != "1" ]; then
-          if grep -q "You cannot publish over the previously published versions" /tmp/npm_publish.log; then
-            echo "Ignore error 'version already exist' for run attempt ${{ github.run_attempt }}"
-            exit 0
-          fi
-        fi
-        exit "$error_code"
+      env:
+        NPM_VISIBILITY: ${{ inputs.npm-visibility }}
+        CHANNEL: ${{ steps.release_gen.outputs.channel }}
+      run: bash "$GITHUB_ACTION_PATH/scripts/npm-publish.sh"
 
 ## Phase 6 - Git push
 
