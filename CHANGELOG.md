@@ -1,5 +1,15 @@
 # Changelog
 
+## [6.1.1](https://github.com/agilecustoms/release/compare/v6.1.0...v6.1.1) (2026-11-01)
+
+### Miscellaneous
+
+* rename Lint job to Validate, add Test job that aggregates Input-Validation and E2E-* results (required check) [skip ci] ([3666cfa](https://github.com/agilecustoms/release/commit/3666cfa7913a6d1ad8a7d15b1dcdb79ea69ea9dc))
+* trigger release ([ca75bb8](https://github.com/agilecustoms/release/commit/ca75bb8fe2b3c0820e3395724678416ef084e3dc))
+* trigger release (previous merge had [skip ci]) ([6b89b6f](https://github.com/agilecustoms/release/commit/6b89b6f187c7b5dd2127255e84a6176d553ea1f8))
+* use setup-maven-codeartifact v2.5.0 ([6d38b8a](https://github.com/agilecustoms/release/commit/6d38b8ad475075e4cd4f34fccd2cd9b09be49e67))
+
+
 ## [6.1.0](https://github.com/agilecustoms/release/compare/v6.0.0...v6.1.0) (2026-10-23)
 
 ### Documentation
