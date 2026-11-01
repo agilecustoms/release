@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  Lint:
+  Validate:
     runs-on: ubuntu-slim
     steps:
       - name: Checkout
@@ -646,9 +646,23 @@ jobs:
           [[ "$(git -C "$ORIGIN" log -1 --format=%s "$BRANCH")" == "fix: concurrent fix" ]]
           [[ -z "$(git -C "$ORIGIN" tag -l 'v1.0.3')" ]]
 
+  # Required check for PR merge: one stable name instead of listing Input-Validation and every E2E-* job in infrastructure-core
+  # if: always() - otherwise when any of them fails this job is skipped, and GitHub treats skipped required check as passed
+  Test:
+    if: always()
+    needs: [ Input-Validation, E2E-Versioning, E2E-Manifests, E2E-Prerelease, E2E-Release-Commit ]
+    runs-on: ubuntu-slim
+    steps:
+      - name: Check results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          for result in $RESULTS; do [ "$result" = success ]; done
+
   Release:
     if: github.ref == 'refs/heads/main'
-    needs: [ Lint, Input-Validation, E2E-Versioning, E2E-Manifests, E2E-Prerelease, E2E-Release-Commit ]
+    needs: [ Validate, Test ]
     runs-on: ubuntu-slim
     environment: release
     steps:
