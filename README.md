@@ -1,6 +1,6 @@
 # About
 
-Release software artifacts in AWS (S3, ECR, CodeArtifact) and NPM with consistent versioning!
+Release software artifacts in AWS (S3, ECR, CodeArtifact), Google Artifact Registry and NPM with consistent versioning!
 
 ![Cover](docs/images/cover.png)
 
@@ -27,6 +27,7 @@ This is especially useful in microservices where the release is a _binary_ + _Ia
 | [AWS S3](./docs/artifact-types/aws-s3.md)                                 | ✅            | ✅          | ✅          | ✅           |
 | [AWS ECR](./docs/artifact-types/aws-ecr.md)                               | ✅            | ✅          | ✅          | ✅           |
 | [AWS CodeArtifact maven](./docs/artifact-types/aws-codeartifact-maven.md) | ❌️            | ⚠️          | ❌️          | N/A          |
+| [GCP Artifact Registry](./docs/artifact-types/gcp-artifact-registry.md)   | ✅            | ✅          | ⚠️          | ✅           |
 | [npmjs](./docs/artifact-types/npmjs.md)                                   | ✅            | ⚠️          | ❌️          | N/A          |
 
 _See the respective artifact type to learn about idempotency limitations ⚠️_
