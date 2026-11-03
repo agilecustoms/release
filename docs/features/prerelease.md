@@ -88,7 +88,9 @@ In the table below each row represents a commit in the `next` branch:
 
 Rules:
 - change of `prerelease` drops number back to 1, so `3.0.0-alpha.2` becomes `3.0.0-beta.1`
-- `channel` should **not** be changed in the middle of prerelease sequence
+- `channel` can be changed (or dropped) only together with `prerelease`, like at `beta` → `rc` step above.
+  Previous prerelease is looked up by both channel (stored in git notes) and `prerelease` suffix. If only channel changes,
+  previous `beta.N` is not found, so `beta.1` is generated again and the release fails (tag already exists)
 - explicit `channel` gives a floating tag
 
 Read more about prerelease branches in [semantic-release documentation](https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#pre-release-branches)

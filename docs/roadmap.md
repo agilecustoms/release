@@ -18,7 +18,7 @@ Next:
 
 Potential future features (not prioritized):
 - publish in AWS CodeArtifact: Yarn
-- publish in non-AWS repositories
+- publish in non-AWS repositories (Google Artifact Registry is already supported)
   - private npmjs repository
 - GitHub release
   - ability to specify a list of files to include release
