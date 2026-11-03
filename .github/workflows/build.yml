@@ -150,6 +150,25 @@ jobs:
           echo "Expected failure, got ${{ steps.test7.outcome }}"
           exit 1
 
+
+      # remove s3/ from tests 6, 7: otherwise test fails on missing aws-* inputs, not on the reason under test
+      - name: Test 8. Remove s3/ directory
+        run: rm -rf s3
+
+      - name: Test 8. Should fail if gcp-artifact-registry is set without gcp-service-account and gcp-workload-identity-provider
+        id: test8
+        continue-on-error: true
+        uses: ./
+        with:
+          release-gh: false
+          gcp-artifact-registry: us-east1-docker.pkg.dev/my-project/my-repo
+
+      - name: Test 8. Verify it failed
+        if: steps.test8.outcome != 'failure'
+        run: |
+          echo "Expected failure, got ${{ steps.test8.outcome }}"
+          exit 1
+
   # Real release (version generation, changelog, manifest update, commit, tags, push) into a local sandbox repo:
   # - the action is checked out into 'action/', workspace root becomes the sandbox repo
   #   (release-gen writes CHANGELOG.md relative to workspace root)
