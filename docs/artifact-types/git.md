@@ -1,6 +1,6 @@
 # No artifacts, just git tags
 
-Now days many types of software is released just as source code with version tag: Terraform modules, GitHub Actions, Go modules, etc.
+Nowadays many types of software are released just as source code with version tag: Terraform modules, GitHub Actions, Go modules, etc.
 This is the simplest scenario for `agilecustoms/release` as there is no need to publish any artifacts, just create a tag
 
 _Note: all examples use shared patterns: two workflows: Build and Release — covered in [Best practices](../best-practices.md);
@@ -13,9 +13,9 @@ _Note: all examples use shared patterns: two workflows: Build and Release — co
 
 ## Terraform module
 
-Example: [terraform-aws-ci-publisher](https://github.com/agilecustoms/terraform-aws-ci-builder)
+Example: [terraform-aws-ci-builder](https://github.com/agilecustoms/terraform-aws-ci-builder)
 
-[release.yml](https://github.com/agilecustoms/terraform-aws-ci-builder/blob/main/.github/workflows/release.yml)
+[build.yml](https://github.com/agilecustoms/terraform-aws-ci-builder/blob/main/.github/workflows/build.yml)
 ```yaml
 jobs:
   # ...
@@ -69,7 +69,7 @@ As of 2025 GitHub still doesn't natively support TypeScript, so transpilation is
 Plus it is better to combine all source code in one file and minimize for quicker downloads.
 This is all done by `ncc` compiler.
 
-[release.yml](https://github.com/agilecustoms/publish-s3/blob/main/.github/workflows/release.yml)
+[build.yml](https://github.com/agilecustoms/publish-s3/blob/main/.github/workflows/build.yml)
 ```yaml
 jobs:
   # ...
@@ -88,7 +88,7 @@ jobs:
 ```
 
 When a developer merges a PR, the Release workflow is triggered:
-1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#build-and-release)
 2. Build job compiles TypeScript files in a single `dist/index.js` file and uploads it as an artifact
 3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. commit `dist/index.js`

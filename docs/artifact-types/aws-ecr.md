@@ -38,7 +38,7 @@ jobs:
         uses: actions/download-artifact@v8
 
       - name: Docker build
-        run: docker build -t env-cleanup:latest
+        run: docker build -t env-cleanup:latest .
 
       - name: Release
         uses: agilecustoms/release@v6
@@ -117,7 +117,7 @@ see [build.yml](../examples/env-cleanup/.github/workflows/build.yml) workflow fi
 
 ```yaml
 - name: Setup Java
-  uses: agilecustoms/setup-maven-codeartifact@v1
+  uses: agilecustoms/setup-maven-codeartifact@v2
   with:
     aws-account: 123456789012
     aws-region: 'us-east-1'

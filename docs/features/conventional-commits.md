@@ -9,7 +9,7 @@ It takes the latest [SemVer](https://semver.org) tag and analyzes commit message
 - commit with `feat:` prefix ⇒ increment a minor version
 - commit with `fix:` or `perf:` prefix ⇒ increment a patch version
 
-If a PR has no commit bumping a version, the `agilecustoms/release` action exit with error
+If a PR has no commit bumping a version, the `agilecustoms/release` action exits with error
 
 Besides version bumping, conventional commits are reflected in GH Release and CHANGELOG.md
 
@@ -87,7 +87,7 @@ In this example:
 Use prefixes in commit messages as per [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/):
 ```text
 misc: minor improvements
-fix: buf fix
+fix: bug fix
 docs: test documentation
 ```
 
@@ -95,7 +95,7 @@ docs: test documentation
 
 **Conclusion**. Providing conventional commits behavior via GH action input looks bulky,
 but it is recommended if you have many repositories that need to follow the same release pattern.
-With `.relaserc.json` you'd need to copy and paste this file in all repos.
+With `.releaserc.json` you'd need to copy and paste this file in all repos.
 Recommendation is to create your own composite GH action — a wrapper for `agilecustoms/release`
 where you'll have all your conventional commits' rules and then use *your GH Action* in all projects,
 see [example](../examples/gha-release/action.yml)

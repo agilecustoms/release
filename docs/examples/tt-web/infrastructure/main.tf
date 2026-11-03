@@ -15,5 +15,5 @@ resource "aws_s3_object_copy" "files" {
   for_each = toset(data.aws_s3_objects.src.keys)
   source   = "${var.dist_bucket}/${each.key}"
   bucket   = aws_s3_bucket.web.id
-  key      = each.key
+  key      = trimprefix(each.key, "tt-web/${var.aVersion}/") # tt-web/1.2.3/index.html -> index.html
 }

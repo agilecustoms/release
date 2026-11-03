@@ -57,7 +57,7 @@ Besides the release workflow, the next infrastructure pieces must be aligned:
 Here `<id>` has format `{domain}-{repository}`, so replace `agilecustoms` with your company name.
 
 When a developer merges a PR, the Release workflow is triggered:
-1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#build-and-release)
 2. Build job compiles java code in `target/*.jar` files and uploads them as an artifact
 3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. generate the next version based on commit messages
@@ -79,7 +79,7 @@ See [build.yml](../examples/java-parent/.github/workflows/build.yml) workflow fi
 
 ```yaml
 - name: Setup Java
-  uses: agilecustoms/setup-maven-codeartifact@v1
+  uses: agilecustoms/setup-maven-codeartifact@v2
   with:
     aws-account: 123456789012
     aws-region: 'us-east-1'

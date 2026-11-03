@@ -9,11 +9,11 @@ Failures happen. What to do if a release action fails?
     1. generate a new version
     2. generate release notes (write in /tmp file)
     3. update CHANGELOG.md
-3. Login in AWS
+3. Login in AWS / Google Cloud
 4. Prepare
     1. update version in `package.json` (npm), `pom.xml` (maven), `pyproject.toml` (Python)
     2. run a custom script to update arbitrary files
-5. **Publish artifacts** (currently AWS S3/ECR/CodeArtifact, npm)
+5. **Publish artifacts** (currently AWS S3/ECR/CodeArtifact, Google Artifact Registry, npm)
 6. **Git push**
     1. commit changes from step 4
     2. add version tag, move floating tags

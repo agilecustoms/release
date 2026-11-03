@@ -3,6 +3,7 @@
 In this document we'll cover the following topics:
 - [GitHub Authorization and security](#github-authorization-and-security)
 - [AWS Authorization](#aws-authorization)
+- [Google Cloud Authorization](#google-cloud-authorization)
 - [dev-release security](#dev-release-security)
 - [Advanced](#advanced)
 
@@ -128,6 +129,13 @@ jobs:
 _Note: by default, a Job has permissions `contents: read`, since you need `id-token: write`, the default one is overridden,
 so if you need to read repository content, make sure to add `contents: read` explicitly_
 
+## Google Cloud Authorization
+
+Read this section if you release in Google Artifact Registry. Same idea as AWS: no long-lived keys (service account keys),
+GitHub OIDC token is exchanged for a short-lived token of a service account via Workload Identity Federation.
+See [Google Artifact Registry](./artifact-types/gcp-artifact-registry.md#authorization-workload-identity-federation) for Terraform example.
+As with AWS, the job needs `id-token: write` permission
+
 ## dev-release security
 
 `agilecustoms/release` has major feature [dev-release](./features/dev-release.md).
@@ -152,8 +160,8 @@ jobs:
 
       - name: Release
         uses: agilecustoms/release@v6
-        with:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }} # your PAT 
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # your PAT
 ```
 
 ### use PAT with actions/checkout
@@ -168,7 +176,7 @@ Option 1 (recommended): pass PAT in `agilecustoms/release` env variable `GH_TOKE
      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
 
-Option 2: pass PAT in `github/checkout` `token` parameter
+Option 2: pass PAT in `actions/checkout` `token` parameter
 ```yaml
 - name: Checkout
   uses: actions/checkout@v7

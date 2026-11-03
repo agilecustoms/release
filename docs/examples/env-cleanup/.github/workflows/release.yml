@@ -45,7 +45,7 @@ jobs:
           path: target
 
       - name: Docker build
-        run: docker build -t env-cleanup:latest
+        run: docker build -t env-cleanup:latest .
 
       - name: Release
         uses: agilecustoms/release@v6

@@ -1,7 +1,6 @@
 # Best practices
 
 - [Build and Release](#build-and-release)
-- [Conventional commits](#conventional-commits)
 - [Company-specific gha-release wrapper](#company-specific-gha-release-wrapper)
 
 ## Build and Release
@@ -55,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read # required for checkout
-      id-token: write # not always required, only if at some step you assume AWS role via OIDC
+      id-token: write # not always required, only if at some step you authenticate in AWS / Google Cloud via OIDC
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -97,7 +96,7 @@ jobs:
     environment: release # holds the `GH_TOKEN` secret, available only for `main` branch
     permissions:
       contents: read # required for checkout
-      id-token: write # not always required, only if at some step you assume AWS role via OIDC
+      id-token: write # not always required, only if at some step you authenticate in AWS / Google Cloud via OIDC
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -116,7 +115,7 @@ jobs:
 
 ## Company-specific gha-release wrapper
 
-In many [examples](./examples) you may some inputs repeat, such as `aws-account`, `aws-region`, `aws-role`.
+In many [examples](./examples) you may see some inputs repeated, such as `aws-account`, `aws-region`, `aws-role`.
 You can reduce code repetition by creating your own wrapper around `agilecustoms/release`.
 For this just create a new GH repo with single file `action.yml`, see example [gha-release](./examples/gha-release).
 Here you provide company-specific defaults, see comment `# company-specific defaults`.

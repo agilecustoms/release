@@ -31,4 +31,8 @@ jobs:
       - name: Release
         uses: agilecustoms/release@v6
         with:
+          aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-region: us-east-1
+          aws-role: 'ci/publisher-dev'
+          aws-s3-bucket: 'mycompany-dist'
           dev-release: true

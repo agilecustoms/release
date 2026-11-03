@@ -3,7 +3,7 @@
 _This document assumes you use [version generation](./version-generation.md) mode "conventional commits" or "version bump".
 "explicit version" does not provide any help with respect to prerelease versions, all you get is just [floating tags](./floating-tags.md)_
 
-Prereleases allow to evolve a version `-alfa.1..N` → `-beta.1..N` → `-rc.1..N` while staying in the same branch!
+Prereleases allow to evolve a version `-alpha.1..N` → `-beta.1..N` → `-rc.1..N` while staying in the same branch!
 
 **Branch**. First, create a branch. `next` is a recommended branch name because it is not tied to any specific suffix
 and allows to change it as your software gets more stable
@@ -32,8 +32,8 @@ Assume you made branch `next` from `main` at version `1.2.3`
 - "conventional commits" mode with commit `feat!: ..` will create version `2.0.0-next.1`
 - "conventional commits" mode with commit `feat: ..` will create version `1.3.0-next.1`
 - "conventional commits" mode with commit `fix: ..` will create version `1.2.4-next.1`
-- "version bump" mode with `default-patch` will create version `1.2.4-next.0`
-- "version bump" mode with `default-minor` will create version `1.3.0-next.0`
+- "version bump" mode with `default-patch` will create version `1.2.4-next.1`
+- "version bump" mode with `default-minor` will create version `1.3.0-next.1`
 Note: if you use "version bump" mode and want a next major version, in the first commit you must follow "conventional commits" rules
 
 Next table shows behavior with first major commit and different combinations of `prerelease` and `channel`:
@@ -42,12 +42,12 @@ Next table shows behavior with first major commit and different combinations of 
 |--------|---------|------------|---------|---|-----------------|-------------------------|-------------------------|---------|
 | `next` | 1.2.3   | _true_     |         | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
 | `next` | 1.2.3   | _true_     | _false_ | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
-| `next` | 1.2.3   | _true_     | next    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | `2.0.0-next.2`, `next`  | `next`  |
-| `next` | 1.2.3   | _true_     | beta    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`, `beta`  | _same_                  | `next`  |
-| `next` | 1.2.3   | alpha      |         | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | _same_                  | `next`  |
-| `next` | 1.2.3   | alpha      | _false_ | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | _same_                  | `next`  |
-| `next` | 1.2.3   | alpha      | next    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.2`         | `2.0.0-alpha.2`, `next` | `next`  |
-| `next` | 1.2.3   | alpha      | beta    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.2`, `beta` | _same_                  | `next`  |
+| `next` | 1.2.3   | _true_     | next    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | `2.0.0-next.1`, `next`  | `next`  |
+| `next` | 1.2.3   | _true_     | beta    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`, `beta`  | _same_                  | `beta`  |
+| `next` | 1.2.3   | alpha      |         | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | _same_                  | `next`  |
+| `next` | 1.2.3   | alpha      | _false_ | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | _same_                  | `next`  |
+| `next` | 1.2.3   | alpha      | next    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | `2.0.0-alpha.1`, `next` | `next`  |
+| `next` | 1.2.3   | alpha      | beta    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`, `beta` | _same_                  | `beta`  |
 
 **Subsequent commits**. No matter what commit message you make (`fix:`, `feat:` etc.) or "version bump" `default-patch`/`default-minor` you use,
 the version will always be incremented `+1` in the prerelease sequence: `2.0.0-alpha.1` → `2.0.0-alpha.2`.

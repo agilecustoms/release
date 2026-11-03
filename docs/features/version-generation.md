@@ -3,18 +3,18 @@
 There are three modes to generate the next version:
 
 1. [conventional commits](./conventional-commits.md) (default) — next version determined based on commit message prefixes
-such as `fix:`, `feat:`, `docs:`, `perf:`. This mode allows to use all features of this action (see table below)
+such as `feat!:`, `feat:`, `fix:`, `perf:`. This mode allows to use all features of this action (see table below)
 2. [version bump](#version-bump) — (when pass `version-bump` input) allows to bump a version w/o special commit messages, useful in enterprise 
-3. [explicit version](#explicit-version) — (when pass `verion` input) provide a new version as explicit input
+3. [explicit version](#explicit-version) — (when pass `version` input) provide a new version as explicit input
 
 | feature              | conventional commits | version bump | explicit version |
 |----------------------|----------------------|--------------|------------------|
-| update CHANGELOG.md  | ✅                    | ⚠️           | ❌️               |
-| GH release           | ✅                    | ⚠️           | ❌️               |
-| floating tags        | ✅                    | ✅            | ✅                |
-| release channel      | ✅                    | ✅            | ⚠️               |
-| prerelease           | ✅                    | ⚠️           | ⚠️               |
-| maintenance releases | ✅                    | ✅            | ⚠️               |
+| update CHANGELOG.md  | ✅                   | ⚠️           | ❌️               |
+| GH release           | ✅                   | ⚠️           | ❌️               |
+| floating tags        | ✅                   | ✅           | ✅               |
+| release channel      | ✅                   | ✅           | ⚠️               |
+| prerelease           | ✅                   | ⚠️           | ⚠️               |
+| maintenance releases | ✅                   | ✅           | ⚠️               |
 
 ## Version bump
 
