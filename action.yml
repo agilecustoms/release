@@ -53,11 +53,17 @@ inputs:
     description: 'When the next version to be released is 1.2.4, then also release 1, 1.2, and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
-  gcp-artifact-registry:
-    description: 'Google Artifact Registry Docker repository to push docker image to, e.g. `us-east1-docker.pkg.dev/my-project/my-repo`'
+  gcp-artifact-repository:
+    description: 'If set, then push docker image to this Google Artifact Registry Docker repository (name), e.g. `my-repo`'
+    required: false
+  gcp-project:
+    description: 'Google Cloud project to publish artifacts to'
+    required: false
+  gcp-region:
+    description: 'Google Cloud region of Artifact Registry repository, e.g. `us-east1`'
     required: false
   gcp-service-account:
-    description: 'Google Cloud service account to impersonate to publish, e.g. `ci-publisher@my-project.iam.gserviceaccount.com`'
+    description: 'Google Cloud service account (short name) in gcp-project to impersonate to publish, e.g. `ci-publisher`'
     required: false
   gcp-workload-identity-provider:
     description: 'Workload Identity Provider full name: `projects/{number}/locations/global/workloadIdentityPools/{pool}/providers/{id}`'
@@ -171,7 +177,9 @@ runs:
         AWS_CODEARTIFACT_MAVEN: ${{ inputs.aws-codeartifact-maven }}
         AWS_CODEARTIFACT_DOMAIN: ${{ inputs.aws-codeartifact-domain }}
         AWS_S3_BUCKET: ${{ inputs.aws-s3-bucket }}
-        GCP_ARTIFACT_REGISTRY: ${{ inputs.gcp-artifact-registry }}
+        GCP_ARTIFACT_REPOSITORY: ${{ inputs.gcp-artifact-repository }}
+        GCP_PROJECT: ${{ inputs.gcp-project }}
+        GCP_REGION: ${{ inputs.gcp-region }}
         GCP_SERVICE_ACCOUNT: ${{ inputs.gcp-service-account }}
         GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ inputs.gcp-workload-identity-provider }}
       run: bash "$GITHUB_ACTION_PATH/scripts/init.sh"
@@ -232,12 +240,12 @@ runs:
     # GitHub OIDC token -> Workload Identity Federation -> short-lived access token of the service account (no keys)
     # caller job needs 'permissions: id-token: write', same as for AWS
     - name: Log in Google Cloud
-      if: inputs.gcp-artifact-registry
+      if: inputs.gcp-artifact-repository
       id: login-gcp
       uses: google-github-actions/auth@v3
       with:
         workload_identity_provider: ${{ inputs.gcp-workload-identity-provider }}
-        service_account: ${{ inputs.gcp-service-account }}
+        service_account: ${{ steps.init.outputs.gcp_service_account }}
         token_format: access_token # for 'docker login', otherwise only gcloud and client libraries can use credentials
 
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
@@ -345,11 +353,11 @@ runs:
       run: bash "$GITHUB_ACTION_PATH/scripts/ecr-push.sh"
 
     - name: Push Docker image in Google Artifact Registry
-      if: inputs.gcp-artifact-registry
+      if: inputs.gcp-artifact-repository
       shell: bash
       env:
         SERVICE: ${{ steps.init.outputs.service }}
-        GCP_ARTIFACT_REGISTRY: ${{ inputs.gcp-artifact-registry }}
+        GCP_ARTIFACT_REGISTRY: ${{ steps.init.outputs.gcp_artifact_registry }}
         GCP_ACCESS_TOKEN: ${{ steps.login-gcp.outputs.access_token }}
         TAGS: ${{ steps.version.outputs.tags }}
       run: bash "$GITHUB_ACTION_PATH/scripts/gar-push.sh"

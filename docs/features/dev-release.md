@@ -90,7 +90,7 @@ you must create a temporary release of A. This is a dev-release!
 When `dev-release` is set to `true` it ignores most of the parameters that are used for normal releases.
 These are only parameters respected by dev-release:
 `aws-account`, `aws-ecr`, `aws-region`, `aws-role`, `aws-s3-bucket`, `aws-s3-dir`, `dev-branch-prefix`,
-`gcp-artifact-registry`, `gcp-service-account`, `gcp-workload-identity-provider`
+`gcp-artifact-repository`, `gcp-project`, `gcp-region`, `gcp-service-account`, `gcp-workload-identity-provider`
 
 There is no error if `dev-release` used with incompatible parameter (like `tag-format` or `floating-tags`).
 General principle: ignore unused parameters,
