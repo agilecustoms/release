@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Validate inputs, infer defaults
 # Inputs (env): VERSION, DEV_RELEASE, DEV_BRANCH_PREFIX, AWS_ACCOUNT, AWS_REGION, AWS_ROLE, AWS_ECR,
-#  AWS_CODEARTIFACT_MAVEN, AWS_CODEARTIFACT_DOMAIN, AWS_S3_BUCKET
+#  AWS_CODEARTIFACT_MAVEN, AWS_CODEARTIFACT_DOMAIN, AWS_S3_BUCKET,
+#  GCP_ARTIFACT_REGISTRY, GCP_SERVICE_ACCOUNT, GCP_WORKLOAD_IDENTITY_PROVIDER
 # Outputs: service, aws_s3 (only if s3/ directory exists)
 set -eo pipefail
 
@@ -41,4 +42,11 @@ fi
 if [ -d s3 ] && [ -z "$AWS_S3_BUCKET" ]; then
   echo "Error: aws-s3-bucket must be provided when using S3" >&2
   exit 1
+fi
+
+if [ -n "$GCP_ARTIFACT_REGISTRY" ]; then
+  if [ -z "$GCP_SERVICE_ACCOUNT" ] || [ -z "$GCP_WORKLOAD_IDENTITY_PROVIDER" ]; then
+    echo "Error: gcp-service-account and gcp-workload-identity-provider must be provided when gcp-artifact-registry is set" >&2
+    exit 1
+  fi
 fi

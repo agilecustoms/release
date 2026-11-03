@@ -53,6 +53,15 @@ inputs:
     description: 'When the next version to be released is 1.2.4, then also release 1, 1.2, and latest. Not desired for public terraform modules'
     required: false
     default: 'true'
+  gcp-artifact-registry:
+    description: 'Google Artifact Registry Docker repository to push docker image to, e.g. `us-east1-docker.pkg.dev/my-project/my-repo`'
+    required: false
+  gcp-service-account:
+    description: 'Google Cloud service account to impersonate to publish, e.g. `ci-publisher@my-project.iam.gserviceaccount.com`'
+    required: false
+  gcp-workload-identity-provider:
+    description: 'Workload Identity Provider full name: `projects/{number}/locations/global/workloadIdentityPools/{pool}/providers/{id}`'
+    required: false
   java-cache:
     description: 'Enabled by default, specify empty string to disable caching'
     required: false
@@ -162,6 +171,9 @@ runs:
         AWS_CODEARTIFACT_MAVEN: ${{ inputs.aws-codeartifact-maven }}
         AWS_CODEARTIFACT_DOMAIN: ${{ inputs.aws-codeartifact-domain }}
         AWS_S3_BUCKET: ${{ inputs.aws-s3-bucket }}
+        GCP_ARTIFACT_REGISTRY: ${{ inputs.gcp-artifact-registry }}
+        GCP_SERVICE_ACCOUNT: ${{ inputs.gcp-service-account }}
+        GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ inputs.gcp-workload-identity-provider }}
       run: bash "$GITHUB_ACTION_PATH/scripts/init.sh"
 
 ## Phase 2 - Release generation
@@ -199,7 +211,7 @@ runs:
         GEN_TAGS: ${{ steps.release_gen.outputs.tags }}
       run: bash "$GITHUB_ACTION_PATH/scripts/version.sh"
 
-## Phase 3 - Log in AWS
+## Phase 3.1 - Log in AWS
 
     - name: Log in AWS
       if: steps.init.outputs.aws_s3 || inputs.aws-ecr || inputs.aws-codeartifact-maven
@@ -214,6 +226,19 @@ runs:
       if: inputs.aws-ecr
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2 # outputs.registry = {acc_id}.dkr.ecr.{region}.amazonaws.com
+
+## Phase 3.2 - Log in Google Cloud
+
+    # GitHub OIDC token -> Workload Identity Federation -> short-lived access token of the service account (no keys)
+    # caller job needs 'permissions: id-token: write', same as for AWS
+    - name: Log in Google Cloud
+      if: inputs.gcp-artifact-registry
+      id: login-gcp
+      uses: google-github-actions/auth@v3
+      with:
+        workload_identity_provider: ${{ inputs.gcp-workload-identity-provider }}
+        service_account: ${{ inputs.gcp-service-account }}
+        token_format: access_token # for 'docker login', otherwise only gcloud and client libraries can use credentials
 
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
@@ -318,6 +343,16 @@ runs:
         TAGS: ${{ steps.version.outputs.tags }}
         DEV_RELEASE: ${{ inputs.dev-release }}
       run: bash "$GITHUB_ACTION_PATH/scripts/ecr-push.sh"
+
+    - name: Push Docker image in Google Artifact Registry
+      if: inputs.gcp-artifact-registry
+      shell: bash
+      env:
+        SERVICE: ${{ steps.init.outputs.service }}
+        GCP_ARTIFACT_REGISTRY: ${{ inputs.gcp-artifact-registry }}
+        GCP_ACCESS_TOKEN: ${{ steps.login-gcp.outputs.access_token }}
+        TAGS: ${{ steps.version.outputs.tags }}
+      run: bash "$GITHUB_ACTION_PATH/scripts/gar-push.sh"
 
     # maven.main.skip=true (from Maven 3.9.0) to skip main sources compilation
     # maven.test.skip=true skips tests compilation and running (-DskipTests just skips running)
