@@ -9,13 +9,13 @@ Private repos use it via wrapper `agilecustoms/gha-release`, which points to `ag
 
 ## Layout
 
-| Path                          | What                                                                                      |
-|-------------------------------|-------------------------------------------------------------------------------------------|
-| `action.yml`                  | the action: inputs and steps grouped by phases (validate, generate, login, publish, git push) |
-| `scripts/*.sh`                | multi-line steps; each script header lists its inputs (env) and outputs                   |
+| Path                          | What                                                                                           |
+|-------------------------------|------------------------------------------------------------------------------------------------|
+| `action.yml`                  | the action: inputs and steps grouped by phases (validate, generate, login, publish, git push)  |
+| `scripts/*.sh`                | multi-line steps; each script header lists its inputs (env) and outputs                        |
 | `.github/workflows/build.yml` | CI: `Validate` (shellcheck), `Input-Validation`, `E2E-*`, `Test` (gate), `Release` (main only) |
-| `README.md`                   | features, inputs/outputs tables                                                           |
-| `docs/`                       | artifact types, features, authorization; `docs/examples/`: trimmed copies of real repos |
+| `README.md`                   | features, inputs/outputs tables                                                                |
+| `docs/`                       | artifact types, features, authorization; `docs/examples/`: trimmed copies of real repos        |
 
 ## Branches and release
 
