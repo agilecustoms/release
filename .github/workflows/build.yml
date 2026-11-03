@@ -155,13 +155,13 @@ jobs:
       - name: Test 8. Remove s3/ directory
         run: rm -rf s3
 
-      - name: Test 8. Should fail if gcp-artifact-registry is set without gcp-service-account and gcp-workload-identity-provider
+      - name: Test 8. Should fail if gcp-artifact-repository is set without gcp-project, gcp-region, gcp-service-account and gcp-workload-identity-provider
         id: test8
         continue-on-error: true
         uses: ./
         with:
           release-gh: false
-          gcp-artifact-registry: us-east1-docker.pkg.dev/my-project/my-repo
+          gcp-artifact-repository: my-repo
 
       - name: Test 8. Verify it failed
         if: steps.test8.outcome != 'failure'

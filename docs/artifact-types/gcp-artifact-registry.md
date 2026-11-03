@@ -57,8 +57,10 @@ jobs:
       - name: Release
         uses: agilecustoms/release@v6
         with:
-          gcp-artifact-registry: us-east1-docker.pkg.dev/my-project/my-repo
-          gcp-service-account: ci-publisher@my-project.iam.gserviceaccount.com
+          gcp-artifact-repository: my-repo
+          gcp-project: my-project
+          gcp-region: us-east1
+          gcp-service-account: ci-publisher
           gcp-workload-identity-provider: projects/123456789012/locations/global/workloadIdentityPools/github/providers/github
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -67,7 +69,8 @@ jobs:
 Local image name must be equal to the repo name (`my-service` for repo `my-company/my-service`), same as for [ECR](./aws-ecr.md).
 `agilecustoms/release`:
 1. generates the next version based on commit messages
-2. logs in Google Cloud with [google-github-actions/auth](https://github.com/google-github-actions/auth) (no keys, see below)
+2. logs in Google Cloud with [google-github-actions/auth](https://github.com/google-github-actions/auth) as service account
+   `ci-publisher@my-project.iam.gserviceaccount.com` (no keys, see below)
 3. updates version in `pyproject.toml` and `uv.lock` (if present)
 4. pushes Docker image `us-east1-docker.pkg.dev/my-project/my-repo/my-service` with tags `1.2.3`, `1.2`, `1` and `latest`
 5. pushes git commit and tags to the remote repository
@@ -75,6 +78,8 @@ Local image name must be equal to the repo name (`my-service` for repo `my-compa
 ## Authorization: Workload Identity Federation
 
 Same idea as AWS OIDC: GitHub OIDC token is exchanged for a short-lived token of a service account, no long-lived keys.
+Input `gcp-service-account` is a short name, full one is `{gcp-service-account}@{gcp-project}.iam.gserviceaccount.com`
+(the AWS counterpart is input `aws-role`).
 Resources in Google Cloud (Terraform):
 
 ```hcl

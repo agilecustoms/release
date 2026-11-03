@@ -2,8 +2,8 @@
 # Validate inputs, infer defaults
 # Inputs (env): VERSION, DEV_RELEASE, DEV_BRANCH_PREFIX, AWS_ACCOUNT, AWS_REGION, AWS_ROLE, AWS_ECR,
 #  AWS_CODEARTIFACT_MAVEN, AWS_CODEARTIFACT_DOMAIN, AWS_S3_BUCKET,
-#  GCP_ARTIFACT_REGISTRY, GCP_SERVICE_ACCOUNT, GCP_WORKLOAD_IDENTITY_PROVIDER
-# Outputs: service, aws_s3 (only if s3/ directory exists)
+#  GCP_ARTIFACT_REPOSITORY, GCP_PROJECT, GCP_REGION, GCP_SERVICE_ACCOUNT, GCP_WORKLOAD_IDENTITY_PROVIDER
+# Outputs: service, aws_s3 (only if s3/ directory exists), gcp_artifact_registry and gcp_service_account (only if GCP_ARTIFACT_REPOSITORY)
 set -eo pipefail
 
 # Validate version: explicit version cannot be used with dev-release=true
@@ -44,9 +44,11 @@ if [ -d s3 ] && [ -z "$AWS_S3_BUCKET" ]; then
   exit 1
 fi
 
-if [ -n "$GCP_ARTIFACT_REGISTRY" ]; then
-  if [ -z "$GCP_SERVICE_ACCOUNT" ] || [ -z "$GCP_WORKLOAD_IDENTITY_PROVIDER" ]; then
-    echo "Error: gcp-service-account and gcp-workload-identity-provider must be provided when gcp-artifact-registry is set" >&2
+if [ -n "$GCP_ARTIFACT_REPOSITORY" ]; then
+  if [ -z "$GCP_PROJECT" ] || [ -z "$GCP_REGION" ] || [ -z "$GCP_SERVICE_ACCOUNT" ] || [ -z "$GCP_WORKLOAD_IDENTITY_PROVIDER" ]; then
+    echo "Error: gcp-project, gcp-region, gcp-service-account and gcp-workload-identity-provider must be provided when gcp-artifact-repository is set" >&2
     exit 1
   fi
+  echo "gcp_artifact_registry=$GCP_REGION-docker.pkg.dev/$GCP_PROJECT/$GCP_ARTIFACT_REPOSITORY" >> "$GITHUB_OUTPUT"
+  echo "gcp_service_account=$GCP_SERVICE_ACCOUNT@$GCP_PROJECT.iam.gserviceaccount.com" >> "$GITHUB_OUTPUT"
 fi
