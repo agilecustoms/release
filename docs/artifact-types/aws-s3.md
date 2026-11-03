@@ -62,18 +62,18 @@ jobs:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
           aws-region: us-east-1
           aws-role: 'ci/publisher'
-          aws-s3-bucket: 'agilecustoms-dist'
+          aws-s3-bucket: 'mycompany-dist'
 ```
 
 When a developer merges a PR, the Release workflow is triggered:
-1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
-2. Build job packages python code and dependencies in `dist/app.zip` file and uploads it as an artifact named `s3`
-3. Release job downloads the artifact, so you get `s3/app.zip`
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#build-and-release)
+2. Build job packages python code and dependencies in `dist/app.zip` file and uploads it as an artifact
+3. Release job downloads the artifact in directory `s3`, so you get `s3/app.zip`
 4. Release job calls `agilecustoms/release` action, then action:
    1. generate the next version based on commit messages
    2. authorize in AWS with role `ci/publisher`, see [Authorization and security](../authorization.md)
    3. update version in `pyproject.toml`
-   4. upload `s3/app.zip` to `agilecustoms-dist/env-api/{version}/app.zip`
+   4. upload `s3/app.zip` to `mycompany-dist/env-api/{version}/app.zip`
    5. push git commit and tags to the remote repository
 
 ### IaC
@@ -140,11 +140,11 @@ jobs:
 
 When developer merges a PR, the Release workflow is triggered:
 1. Release workflow calls Build workflow
-2. Build workflow uses `vite` to compile TypeScript in JavaScript and place final bundled code in `dist` directory, then Build workflow uploads `dist` directory as an artifact named `s3`
-3. Release workflow downloads the artifact, so you get `s3/{dist content}`
-4. Release workflow calls `mycompany/release-gha` action
-5. `mycompany/release-gha` calls `agilecustoms/release` passing lots of defaults: `aws-account`, `aws-region`, `aws-s3-bucket` and others
-6. `aguilecustoms/release` action then:
+2. Build workflow uses `vite` to compile TypeScript in JavaScript and place final bundled code in `dist` directory, then Build workflow uploads `dist` directory as an artifact
+3. Release workflow downloads the artifact in directory `s3`, so you get `s3/{dist content}`
+4. Release workflow calls `mycompany/gha-release` action
+5. `mycompany/gha-release` calls `agilecustoms/release` passing lots of defaults: `aws-account`, `aws-region`, `aws-s3-bucket` and others
+6. `agilecustoms/release` action then:
     1. generate next version based on commit messages
     2. authorize in AWS with role `ci/publisher`, see [Authorization and security](../authorization.md)
     3. update version in `package.json`
@@ -164,8 +164,8 @@ module "tt_web" {
 }
 ```
 
-Note file `infrastructure/main.tf` has variable `aVersion` which is datasource `aws_s3_objects` to access (download) files
-from dist S3 bucket and then upload them in static website using resource `aws_s3_object_copy`
+Note file `infrastructure/main.tf` has variable `aVersion` which is used in datasource `aws_s3_objects` to list files
+in dist S3 bucket and then copy them in static website bucket using resource `aws_s3_object_copy`
 
 ## Go lambda function
 

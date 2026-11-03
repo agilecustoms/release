@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Java
-        uses: agilecustoms/setup-maven-codeartifact@v1
+        uses: agilecustoms/setup-maven-codeartifact@v2
         with:
           aws-account: 123456789012
           aws-region: 'us-east-1'

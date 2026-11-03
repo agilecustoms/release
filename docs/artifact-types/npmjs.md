@@ -63,7 +63,7 @@ jobs:
 ```
 
 When a developer merges a PR, the Release workflow is triggered:
-1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#Build-and-Release)
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#build-and-release)
 2. Build job compiles TypeScript in JavaScript in directory `dist` and uploads entire `dist` as an artifact
 3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. generate the next version based on commit messages

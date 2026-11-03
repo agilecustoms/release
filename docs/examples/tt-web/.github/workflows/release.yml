@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
       - name: Checkout
@@ -32,6 +32,6 @@ jobs:
           path: s3
 
       - name: Release
-        uses: agilecustoms/gha-release@main
+        uses: mycompany/gha-release@main
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

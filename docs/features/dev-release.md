@@ -64,7 +64,7 @@ jobs:
           aws-role: 'ci/publisher-dev' # see "Security" section below
           aws-s3-bucket: 'mycompany-dist'
           dev-release: true
-          dev-release-prefix: 'feature/' # default
+          dev-branch-prefix: 'feature/' # default
 ```
 
 Complete examples:
@@ -89,7 +89,8 @@ you must create a temporary release of A. This is a dev-release!
 `dev-release` mode takes precedence over normal release modes ("conventional commits", "version-bump" and "explicit version").
 When `dev-release` is set to `true` it ignores most of the parameters that are used for normal releases.
 These are only parameters respected by dev-release:
-`aws-account`, `aws-ecr`, `aws-region`, `aws-role`, `aws-s3-bucket`, `aws-s3-dir`, `dev-branch-prefix`
+`aws-account`, `aws-ecr`, `aws-region`, `aws-role`, `aws-s3-bucket`, `aws-s3-dir`, `dev-branch-prefix`,
+`gcp-artifact-registry`, `gcp-service-account`, `gcp-workload-identity-provider`
 
 There is no error if `dev-release` used with incompatible parameter (like `tag-format` or `floating-tags`).
 General principle: ignore unused parameters,
@@ -108,7 +109,8 @@ So I (author) decided to not allow dev-release for CodeArtifact completely_
 
 Artifact types that support dev-release:
 [AWS S3](../artifact-types/aws-s3.md#dev-release),
-[AWS ECR](../artifact-types/aws-ecr.md#dev-release) and
+[AWS ECR](../artifact-types/aws-ecr.md#dev-release),
+[Google Artifact Registry](../artifact-types/gcp-artifact-registry.md#dev-release) (not tested yet) and
 [git](../artifact-types/git.md#dev-release) (just because you can create a feature branch)
 
 ## Security
@@ -144,11 +146,11 @@ Below is a breakdown of permissions needed:
 | Name              | publisher                              | publisher-dev                             |
 |-------------------|----------------------------------------|-------------------------------------------|
 | Role CodeArtifact | Allow PublishPackageVersion            |                                           |
-| S3 bucket policy  | delete "Release=false" in 7 days       | _same_                                    |
+| S3 lifecycle rule | delete "Release=false" in 30 days      | _same_                                    |
 | Role S3 Create    | Allow PutObject                        | Allow PutObject w/ tag Release=false      |
 | Role S3 Update    | Allow PutObject                        | Deny PutObjectTagging w/ tag Release=true |
 | Role S3 Delete    | Allow DeleteObject                     |                                           |
-| ECR repo policy   | delete "feature-" in 7 days            | _same_                                    |
+| ECR lifecycle     | delete "feature-" in 7 days            | _same_                                    |
 | Role ECR Create   | Allow PutImage                         | Allow PutImage                            |
 | Role ECR Update   | Allow PutImage, Allow BatchDeleteImage |                                           |
 | Role ECR Delete   | Allow BatchDeleteImage                 |                                           |
@@ -165,10 +167,10 @@ See [GitHub Authorization](../authorization.md#github-authorization-and-security
 
 With these permission policies the risk mitigation looks like this:
 
-| Name | create unverified | update  | delete   |
-|------|-------------------|---------|----------|
-| S3   | ⚠️ risk           | ⚠️ risk | ⚠️ risk  |
-| ECR  | ⚠️ risk           | ✅ safe  | ✅ safe   |
+| Name | create unverified | update  | delete  |
+|------|-------------------|---------|---------|
+| S3   | ⚠️ risk           | ⚠️ risk | ⚠️ risk |
+| ECR  | ⚠️ risk           | ✅ safe | ✅ safe |
 
 Why create unverified is marked as ⚠️? Because IAM policy itself can't 100% prevent creating unverified artifact.
 Assume you have a role `ci/publisher-dev` that allows to create artifacts in S3 and ECR,

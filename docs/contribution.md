@@ -1,6 +1,6 @@
 # Contribution guideline
 
-For any bugs, feel free to create an issue or raise a pull request wit fix
+For any bugs, feel free to create an issue or raise a pull request with fix
 
 ## semantic-release notes
 
