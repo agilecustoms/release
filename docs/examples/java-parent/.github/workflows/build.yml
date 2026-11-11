@@ -18,8 +18,8 @@ jobs:
         uses: agilecustoms/setup-maven-codeartifact@v2
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
-          aws-region: 'us-east-1'
           aws-codeartifact-domain: agilecustoms
+          aws-region: 'us-east-1'
 
       - name: Build
         run: mvn --no-transfer-progress verify
@@ -51,8 +51,8 @@ jobs:
         uses: agilecustoms/release@v6
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-codeartifact-maven: publish
           aws-region: us-east-1
           aws-role: 'ci/publisher'
-          aws-codeartifact-maven: publish
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

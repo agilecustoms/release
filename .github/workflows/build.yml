@@ -51,9 +51,9 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          release-gh: false
           npm-publish: true
           npm-visibility: internal
+          release-gh: false
 
       - name: Test 2. Verify it failed
         if: steps.test2.outcome != 'failure'
@@ -67,8 +67,8 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          dev-release: true
           dev-branch-prefix: ''
+          dev-release: true
           version: 1.2.3
 
       - name: Test 3. Verify it failed
@@ -84,8 +84,8 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          dev-release: true
           dev-branch-prefix: no-such-prefix/
+          dev-release: true
 
       - name: Test 4. Verify it failed
         if: steps.test4.outcome != 'failure'
@@ -99,11 +99,11 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          release-gh: false
           aws-account: '123456789012'
+          aws-codeartifact-maven: publish
           aws-region: us-east-1
           aws-role: ci/publisher
-          aws-codeartifact-maven: publish
+          release-gh: false
 
       - name: Test 5. Verify it failed
         if: steps.test5.outcome != 'failure'
@@ -121,8 +121,8 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          release-gh: false
           aws-s3-bucket: some-bucket
+          release-gh: false
 
       - name: Test 6. Verify it failed
         if: steps.test6.outcome != 'failure'
@@ -139,10 +139,10 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          release-gh: false
           aws-account: '123456789012'
           aws-region: us-east-1
           aws-role: ci/publisher
+          release-gh: false
 
       - name: Test 7. Verify it failed
         if: steps.test7.outcome != 'failure'
@@ -160,8 +160,8 @@ jobs:
         continue-on-error: true
         uses: ./
         with:
-          release-gh: false
           gcp-artifact-repository: my-repo
+          release-gh: false
 
       - name: Test 8. Verify it failed
         if: steps.test8.outcome != 'failure'
@@ -210,8 +210,8 @@ jobs:
         id: test1
         uses: ./action
         with:
-          release-gh: false
           release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
           summary: '' # do not print "Released v1.0.0" in this workflow's summary
 
       - name: Test 1. Verify version, tags, release commit, CHANGELOG.md and package.json
@@ -241,8 +241,8 @@ jobs:
         id: test2
         uses: ./action
         with:
-          release-gh: false
           release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
           summary: ''
 
       - name: Test 2. Verify version and floating tags
@@ -269,10 +269,10 @@ jobs:
         id: test3
         uses: ./action
         with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
           changelog-file: ''
+          release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
+          summary: ''
 
       - name: Test 3. Verify v1.0.2 is released and CHANGELOG.md is unchanged
         env:
@@ -289,8 +289,8 @@ jobs:
         id: test4
         uses: ./action
         with:
-          dev-release: true
           dev-branch-prefix: '' # run on any branch
+          dev-release: true
           npm-publish: true # would fail w/o npm credentials if not skipped for dev-release
           # GH_TOKEN is not needed even though release-gh is true (default)
 
@@ -369,8 +369,8 @@ jobs:
         id: test1
         uses: ./action
         with:
-          release-gh: false
           release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
           summary: ''
 
       - name: Test 1. Verify tags, outputs and versions in manifests
@@ -400,8 +400,8 @@ jobs:
         id: test2
         uses: ./action
         with:
-          release-gh: false
           release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
           summary: ''
           tag-format: 'release-${version}'
           version: 2.0.0
@@ -461,8 +461,8 @@ jobs:
         id: test1
         uses: ./action
         with:
-          release-gh: false
           release-branches: ${{ env.RELEASE_BRANCHES }}
+          release-gh: false
           summary: ''
 
       - name: Test 1. Verify version, tags, git notes and package.json
@@ -492,8 +492,8 @@ jobs:
         id: test2
         uses: ./action
         with:
-          release-gh: false
           release-branches: ${{ env.RELEASE_BRANCHES }}
+          release-gh: false
           summary: ''
 
       - name: Test 2. Verify version and channel tag is moved
@@ -518,8 +518,8 @@ jobs:
         id: test3
         uses: ./action
         with:
-          release-gh: false
           release-branches: ${{ env.RELEASE_BRANCHES }}
+          release-gh: false
           summary: ''
           version-bump: default-patch
 
@@ -571,10 +571,10 @@ jobs:
         id: test1
         uses: ./action
         with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
           pre-publish-script: echo "$version" > version.txt
+          release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
+          summary: ''
 
       - name: Test 1. Verify version.txt is updated in release commit
         run: |
@@ -594,10 +594,10 @@ jobs:
         id: test2
         uses: ./action
         with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
           pre-publish-script: echo "$git_tag" > build-info.txt && git add build-info.txt
+          release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
+          summary: ''
 
       - name: Test 2. Verify build-info.txt is in release commit
         run: |
@@ -617,10 +617,10 @@ jobs:
         id: test3
         uses: ./action
         with:
-          release-gh: false
-          release-branches: '["${{ github.ref_name }}"]'
-          summary: ''
           pre-publish-script: echo "$version" > not-added.txt
+          release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
+          summary: ''
 
       - name: Test 3. Verify v1.0.2 is released without not-added.txt
         run: |
@@ -649,8 +649,8 @@ jobs:
         continue-on-error: true
         uses: ./action
         with:
-          release-gh: false
           release-branches: '["${{ github.ref_name }}"]'
+          release-gh: false
           summary: ''
 
       - name: Test 4. Verify it failed

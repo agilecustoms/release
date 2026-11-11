@@ -26,11 +26,11 @@ jobs:
         uses: agilecustoms/setup-maven-codeartifact@v2
         with:
           aws-account: 123456789012
+          aws-codeartifact-domain: agilecustoms
           aws-region: 'us-east-1'
           aws-role: 'ci/builder'
-          aws-codeartifact-domain: agilecustoms
-          java-version: '23'
           java-distribution: 'corretto'
+          java-version: '23'
 
       - name: Maven build
         run: mvn --no-transfer-progress verify
