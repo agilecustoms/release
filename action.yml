@@ -244,9 +244,9 @@ runs:
       id: login-gcp
       uses: google-github-actions/auth@v3
       with:
-        workload_identity_provider: ${{ inputs.gcp-workload-identity-provider }}
         service_account: ${{ steps.init.outputs.gcp_service_account }}
         token_format: access_token # for 'docker login', otherwise only gcloud and client libraries can use credentials
+        workload_identity_provider: ${{ inputs.gcp-workload-identity-provider }}
 
 ## Phase 4 - Prepare: mainly bump versions in language-specific files
 
@@ -254,8 +254,8 @@ runs:
       if: hashFiles('pom.xml') && inputs.dev-release != 'true'
       uses: actions/setup-java@v5
       with:
-        java-version: ${{ inputs.java-version }}
         distribution: ${{ inputs.java-distribution }}
+        java-version: ${{ inputs.java-version }}
 
     # not setup-java's own cache: its key is an exact pom.xml hash with no fallback, and each release commit changes
     # pom versions, so it always missed and saved a new cache nobody could use. Instead restore (read-only) the cache
@@ -264,10 +264,10 @@ runs:
       if: hashFiles('pom.xml') && inputs.dev-release != 'true' && inputs.java-cache == 'maven'
       uses: actions/cache/restore@v6
       with:
+        key: maven-${{ inputs.java-cache-key }}-${{ runner.os }}-${{ hashFiles(inputs.java-cache-dependency-path || '**/pom.xml') }}
         path: |
           ~/.m2/repository
           ~/.m2/wrapper
-        key: maven-${{ inputs.java-cache-key }}-${{ runner.os }}-${{ hashFiles(inputs.java-cache-dependency-path || '**/pom.xml') }}
         restore-keys: maven-${{ inputs.java-cache-key }}-${{ runner.os }}-
 
     - name: Setup Maven CodeArtifact

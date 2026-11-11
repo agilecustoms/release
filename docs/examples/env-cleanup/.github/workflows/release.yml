@@ -51,9 +51,9 @@ jobs:
         uses: agilecustoms/release@v6
         with:
           aws-account: ${{ vars.AWS_ACCOUNT_DIST }}
+          aws-ecr: true
           aws-region: us-east-1
           aws-role: 'ci/publisher'
-          aws-ecr: true
           dev-release: ${{ inputs.dev-release }}
           release-channel: ${{ inputs.release-channel }}
           version: ${{ inputs.version }}
