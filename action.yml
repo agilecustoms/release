@@ -8,24 +8,24 @@ inputs:
   aws-account:
     description: 'AWS account to publish artifacts to. Not needed if there are no artifacts, just git tag'
     required: false
-  aws-region:
-    description: 'AWS region'
-    required: false
-  aws-role:
-    description: 'IAM role to assume to publish, e.g., `ci/publisher`'
-    required: false
   aws-codeartifact-domain:
     description: 'CodeArtifact domain name, e.g., `mycompany`'
+    required: false
+  aws-codeartifact-maven:
+    description: 'Two possible values: build and publish. publish - publish maven artifacts to AWS CodeArtifact, build - just access CodeArtifact to update version in pom.xml'
     required: false
   aws-codeartifact-repository:
     description: 'CodeArtifact repository name, e.g., `maven`'
     required: false
     default: 'maven'
-  aws-codeartifact-maven:
-    description: 'Two possible values: build and publish. publish - publish maven artifacts to AWS CodeArtifact, build - just access CodeArtifact to update version in pom.xml'
-    required: false
   aws-ecr:
     description: 'If true, then push docker image to ECR'
+    required: false
+  aws-region:
+    description: 'AWS region'
+    required: false
+  aws-role:
+    description: 'IAM role to assume to publish, e.g., `ci/publisher`'
     required: false
   aws-s3-bucket:
     description: 'Required if uploading to S3 (i.e. s3/ directory exists)'
@@ -95,13 +95,13 @@ inputs:
     description: 'Used together with input `npm-publish`. Specifies package visibility: public or private'
     required: false
     default: 'public'
+  pre-publish-script:
+    description: 'Shell script that allows you to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
+    required: false
   python-version:
     description: 'Python version. Not in use right now'
     required: false
     default: '3.13'
-  pre-publish-script:
-    description: 'Shell script that allows you to update version in custom file(s), not only files governed by build tool (pom.xml, package.json, etc)'
-    required: false
   release-branches:
     description: 'semantic-release "branches" configuration'
     required: false
