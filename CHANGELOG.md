@@ -1,5 +1,26 @@
 # Changelog
 
+## [6.2.0](https://github.com/agilecustoms/release/compare/v6.1.1...v6.2.0) (2026-11-15)
+
+### Documentation
+
+* env-api example matches the real repo (python3.14 runtime, handler module lambda_handler, ruff instead of pylint) [skip ci] ([8cd663f](https://github.com/agilecustoms/release/commit/8cd663f4f75ba9b3e88f54cc1e4fb933d042d09d))
+* fix mismatches with action and real repos (dev-branch-prefix, GH_TOKEN env, prerelease tables, broken links, examples), add AGENTS.md ([98ce602](https://github.com/agilecustoms/release/commit/98ce602602866011355f72936e03bbd8326d2664))
+* Google Artifact Registry artifact type (example, Workload Identity Federation, tags, dev-release), test coverage ([603f1e9](https://github.com/agilecustoms/release/commit/603f1e9eaf97f094800fc84b61b9d83af09c6670))
+* prerelease channel can change only together with prerelease suffix, roadmap mentions Google Artifact Registry ([541cc2f](https://github.com/agilecustoms/release/commit/541cc2f02eed6ce828ea639456d4d298bd7ab8b8))
+* sort inputs alphabetically [skip ci] ([b02a9ac](https://github.com/agilecustoms/release/commit/b02a9ac7d444dacdfb4ea5c7ae5ecb696a267eb1))
+
+### Features
+
+* GCP inputs gcp-project, gcp-region, gcp-artifact-repository, gcp-service-account (short name) instead of full registry and service account email ([f972a7f](https://github.com/agilecustoms/release/commit/f972a7f5bbfc0a2b4400569420276d35c0558e5c))
+* publish Docker image to Google Artifact Registry (gcp-artifact-registry, gcp-service-account, gcp-workload-identity-provider) ([be433f3](https://github.com/agilecustoms/release/commit/be433f341db1c605dffa8d7c6c5ddb011f3095ea))
+
+### Miscellaneous
+
+* actions/setup-node v6 -> v7, actions/setup-java v5 -> v6, astral-sh/setup-uv v8.1.0 -> v10.3.3 (also in env-api example) ([176a60c](https://github.com/agilecustoms/release/commit/176a60c83a79fded02b9296558512a24422c0ed4))
+* release-gen v5.0.0 -> v5.0.3, publish-s3 v2.2.4 -> v2.2.8 (dependency updates, Node 24 actions) ([36d7f41](https://github.com/agilecustoms/release/commit/36d7f41c122f348b628d3a25b296dda2381d97e2))
+
+
 ## [6.1.1](https://github.com/agilecustoms/release/compare/v6.1.0...v6.1.1) (2026-11-01)
 
 ### Miscellaneous
