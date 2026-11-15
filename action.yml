@@ -188,7 +188,7 @@ runs:
 
     # the default Node is still 20, while release-gen uses Node 24 (can downgrade to 22 if needed)
     - name: Set up Node
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: 24
 
@@ -252,7 +252,7 @@ runs:
 
     - name: Setup Java
       if: hashFiles('pom.xml') && inputs.dev-release != 'true'
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         distribution: ${{ inputs.java-distribution }}
         java-version: ${{ inputs.java-version }}
@@ -309,7 +309,7 @@ runs:
 
     - name: Install uv
       if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
-      uses: astral-sh/setup-uv@v8.1.0 # no floating tags :(
+      uses: astral-sh/setup-uv@v10.3.3 # no floating tags :(
 
     # sadly but 'uv lock' downloads python bcz system one (installed in Ubuntu) != .python-version
     # note: Poetry doesn't track app version in its poetry.lock file, so no need to update
