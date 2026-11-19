@@ -9,20 +9,20 @@ Private repos use it via wrapper `agilecustoms/gha-release`, which points to `ag
 
 ## Layout
 
-| Path                          | What                                                                                           |
-|-------------------------------|------------------------------------------------------------------------------------------------|
-| `action.yml`                  | the action: inputs and steps grouped by phases (validate, generate, login, publish, git push)  |
-| `scripts/*.sh`                | multi-line steps; each script header lists its inputs (env) and outputs                        |
-| `.github/workflows/build.yml` | CI: `Validate` (shellcheck), `Input-Validation`, `E2E-*`, `Test` (gate), `Release` (main only) |
-| `README.md`                   | features, inputs/outputs tables                                                                |
-| `docs/`                       | artifact types, features, authorization; `docs/examples/`: trimmed copies of real repos        |
+| Path                          | What                                                                                                                    |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| `action.yml`                  | the action: inputs and steps grouped by phases (validate, generate, login, publish, git push)                           |
+| `scripts/*.sh`                | multi-line steps; each script header lists its inputs (env) and outputs                                                 |
+| `.github/workflows/build.yml` | CI: `Validate` (`make lint`: actionlint, shellcheck), `Input-Validation`, `E2E-*`, `Test` (gate), `Release` (main only) |
+| `README.md`                   | features, inputs/outputs tables                                                                                         |
+| `docs/`                       | artifact types, features, authorization; `docs/examples/`: trimmed copies of real repos                                 |
 
 ## Branches and release
 
 - develop in `next` (safe: `gha-release` uses `@next`, so private repos test new features before they are released)
 - release = merge `next` -> `main` with a **merge commit**. Fast-forward/rebase brings `Release version ... [skip ci]`
   as the head commit and no workflow runs on `main`
-- no Makefile here. Before finishing a change: shellcheck (`docker run --rm -v "$PWD:/mnt" -w /mnt koalaman/shellcheck:stable scripts/*.sh`)
+- Before finishing a change: `make lint` (actionlint on workflows, shellcheck on `scripts/*.sh`)
   and check that `action.yml` and workflows are valid YAML. E2E tests run only in CI (they release into a local sandbox repo)
 
 ## Documentation rules

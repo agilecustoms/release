@@ -21,9 +21,15 @@ jobs:
         with:
           persist-credentials: false
 
+      # pinned (script and binary): new checks don't break the lint at once
+      - name: Install actionlint
+        run: |
+          bash <(curl -sSf https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash) 1.7.12 "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
       # shellcheck is preinstalled in GH Ubuntu image
-      - name: Shellcheck
-        run: shellcheck scripts/*.sh
+      - name: Lint
+        run: make lint
 
   Input-Validation:
     runs-on: ubuntu-slim
