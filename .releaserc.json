@@ -1,11 +1,7 @@
 {
   "branches": [
     "main",
-    {
-      "name": "next",
-      "prerelease": "beta",
-      "channel": "beta"
-    }
+    { "name": "next", "prerelease": "beta", "channel": "beta" }
   ],
   "plugins": [
     [
@@ -13,6 +9,7 @@
       {
         "preset": "conventionalcommits",
         "releaseRules": [
+          { "type": "build", "release": "patch" },
           { "type": "docs", "release": "patch" },
           { "type": "misc", "release": "patch" },
           { "type": "perf", "release": false }
@@ -25,6 +22,10 @@
         "preset": "conventionalcommits",
         "presetConfig": {
           "types": [
+            {
+              "type": "build",
+              "section": "Dependencies update"
+            },
             {
               "type": "docs",
               "section": "Documentation"
