@@ -1,4 +1,4 @@
-# About
+# release
 
 Release software artifacts in AWS (S3, ECR, CodeArtifact), Google Artifact Registry and NPM with consistent versioning!
 
@@ -90,19 +90,7 @@ The action will:
 - push tags `v1.3.0`, `v1.3`, `v1` and `latest` to the remote repository
 - create a GH Release tied to tag `v1.3.0`
 
-## Ecosystem
-
-The action comes with an **ecosystem**:
-- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
-- Terraform modules to provide AWS policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
-- GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
-- documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
-- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
-- Release workflow [best practices](./docs/best-practices.md)
-- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
-  🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
-
-## Inputs
+### Inputs
 
 _There are no required inputs. The action only controls that the combination of inputs is valid_
 
@@ -146,18 +134,34 @@ _There are no required inputs. The action only controls that the combination of 
 | version                        |                   | [Explicit version](./docs/features/version-generation.md#explicit-version) to use instead of auto-generation                                                                                                                                                                                                                                                                                                          |
 | version-bump                   |                   | Allows you to [bump a version](./docs/features/version-generation.md#version-bump) without conventional commits                                                                                                                                                                                                                                                                                                       |
 
-## Outputs
+### Outputs
 
 | Name    | Description                                                                                                                    |
 |---------|--------------------------------------------------------------------------------------------------------------------------------|
 | git-tag | Git tag of the release: version with `tag-format` applied, e.g. `v1.2.3`                                                       |
 | version | Version that was generated (or provided via `version` input), bare, e.g. `1.2.3`. Same as in manifests, S3 path and Docker tag |
 
-## Environment variables
+### Environment variables
 
 | Name      | Description                                                                                                                                       |
 |-----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | GH_TOKEN  | Takes GH PAT with permission to bypass the branch and tags protection rules. See details in [Authorization and Security](./docs/authorization.md) |
+
+## Ecosystem
+
+The action comes with an **ecosystem**:
+- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
+- Terraform modules to provide AWS policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
+- GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
+- documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
+- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
+- Release workflow [best practices](./docs/best-practices.md)
+- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
+  🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
+
+## License
+
+This project is released under the [MIT License](./LICENSE)
 
 ## Misc
 
@@ -165,10 +169,6 @@ _There are no required inputs. The action only controls that the combination of 
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Contribution guideline](./docs/contribution.md)
 - [Feature test coverage](./docs/test-coverage.md)
-
-## License
-
-This project is released under the [MIT License](./LICENSE)
 
 ## Acknowledgements
 

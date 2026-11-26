@@ -5,7 +5,19 @@ This file is `release` specific.
 
 `agilecustoms/release` is a public composite GitHub Action: generate version (via `agilecustoms/release-gen`),
 publish artifacts (S3, ECR, CodeArtifact maven, Google Artifact Registry, npmjs), push release commit and git tags, create GH release.
-Private repos use it via wrapper `agilecustoms/gha-release`, which points to `agilecustoms/release@next`
+`README.md` is its public page (GitHub, Marketplace): only user-facing content goes there, internals are here
+
+## Tech summary
+
+- Language: YAML composite action, multi-line steps are Bash scripts in `scripts/`.
+  Delegates to *release-gen* (version, notes), *publish-s3* (S3 upload), *setup-maven-codeartifact* (Maven)
+- Runtime: GitHub Actions runner
+- Artifact: git tag `v{version}` and floating tags `v{major}`, `v{major}.{minor}`, created by CI on push to `main`.
+  Branch `next` is the prerelease channel
+
+## Context
+
+Private agilecustoms repos use it via wrapper *gha-release*, which points to `agilecustoms/release@next`
 
 ## Layout
 
@@ -22,8 +34,12 @@ Private repos use it via wrapper `agilecustoms/gha-release`, which points to `ag
 - develop in `next` (safe: `gha-release` uses `@next`, so private repos test new features before they are released)
 - release = merge `next` -> `main` with a **merge commit**. Fast-forward/rebase brings `Release version ... [skip ci]`
   as the head commit and no workflow runs on `main`
-- Before finishing a change: `make lint` (actionlint on workflows, shellcheck on `scripts/*.sh`)
-  and check that `action.yml` and workflows are valid YAML. E2E tests run only in CI (they release into a local sandbox repo)
+
+## Development
+
+`make lint` (actionlint on workflows, shellcheck on `scripts/*.sh`), all targets are in [Makefile](Makefile).
+Before finishing a change run it and check that `action.yml` and workflows are valid YAML.
+E2E tests run only in CI (they release into a local sandbox repo)
 
 ## Documentation rules
 
