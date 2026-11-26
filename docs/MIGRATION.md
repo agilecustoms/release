@@ -2,19 +2,25 @@
 
 ## v5 -> v6
 
-Version is now a bare semantic version (`1.2.3`), `tag-format` applies only to git tags (default `v${version}` -> `v1.2.3`).
+Version is now a bare semantic version (`1.2.3`), `tag-format` applies only to git tags
+(default `v${version}` -> `v1.2.3`).
 Before, version was the same as git tag (`v1.2.3`) and it was used everywhere: S3 path, Docker tags, outputs.
 
 - output `version` is bare: was `v1.2.3`, now `1.2.3`. Use new output `git-tag` if you need the git tag
 - output `version-number` (added in v5.5.0) is removed, use `version` instead
-- `pre-publish-script`: `$version` is bare `1.2.3`, `$version_number` is removed, use `$git_tag` for the git tag `v1.2.3`
+- `pre-publish-script`: `$version` is bare `1.2.3`, `$version_number` is removed,
+  use `$git_tag` for the git tag `v1.2.3`
 - S3 dirs and Docker tags are bare: was `s3://bucket/myapp/v1.2.3/`, now `s3://bucket/myapp/1.2.3/`.
   Update consumers which build S3 key or Docker image tag from a version (e.g. terraform `s3_key` or `image_uri`).
   Artifacts published before keep their `v`-prefixed paths/tags, so pin old versions as `v1.2.3` and new ones as `1.2.3`
-- floating tags in S3 and ECR are bare as well: was `v1`, `v1.2`, now `1`, `1.2`. Git floating tags keep `tag-format` (`v1`, `v1.2`)
-- explicit `version` input: `tag-format` is now applied to the git tag (version `1.2.3` -> git tag `v1.2.3`, before it was `1.2.3`).
-  A leading `v` in explicit version is ignored (`v1.2.3` -> version `1.2.3`). If you rely on git tags without prefix, set `tag-format: ${version}`
-- git tags, release commit message (`Release version v1.2.3 [skip ci]`) and GH release name are unchanged (they use git tag)
+- floating tags in S3 and ECR are bare as well: was `v1`, `v1.2`, now `1`, `1.2`.
+  Git floating tags keep `tag-format` (`v1`, `v1.2`)
+- explicit `version` input: `tag-format` is now applied to the git tag
+  (version `1.2.3` -> git tag `v1.2.3`, before it was `1.2.3`).
+  A leading `v` in explicit version is ignored (`v1.2.3` -> version `1.2.3`).
+  If you rely on git tags without prefix, set `tag-format: ${version}`
+- git tags, release commit message (`Release version v1.2.3 [skip ci]`) and GH release name are unchanged
+  (they use git tag)
 
 ## v4 -> v5
 
@@ -35,5 +41,7 @@ the author decided to drop support of presets and keep only one "conventionalcom
 
 - remove `npm-extra-deps` input from your workflow file
 - if you use v1..3 with "conventionalcommits" preset, there will be no difference at all
-- if you use v1..3 with default preset (angular), the only difference will be how "conventionalcommits" interprets take breaking changes: they use `feat!:` prefix
-- if you use v1..3 with other presets, you need to migrate to "conventionalcommits" preset by configuring it via `release-plugins` input or `.releaserc.json` file
+- if you use v1..3 with default preset (angular), the only difference will be how "conventionalcommits" interprets take
+  breaking changes: they use `feat!:` prefix
+- if you use v1..3 with other presets, you need to migrate to "conventionalcommits" preset by configuring it via
+  `release-plugins` input or `.releaserc.json` file

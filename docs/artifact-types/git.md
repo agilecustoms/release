@@ -1,10 +1,12 @@
 # No artifacts, just git tags
 
-Nowadays many types of software are released just as source code with version tag: Terraform modules, GitHub Actions, Go modules, etc.
+Nowadays many types of software are released just as source code with version tag:
+Terraform modules, GitHub Actions, Go modules, etc.
 This is the simplest scenario for `agilecustoms/release` as there is no need to publish any artifacts, just create a tag
 
-_Note: all examples use shared patterns: two workflows: Build and Release — covered in [Best practices](../best-practices.md);
-"release" GitHub environment — covered in [Authorization and security](../authorization.md)_
+_Note: all examples use shared patterns: two workflows: Build and Release
+— covered in [Best practices](../best-practices.md); "release" GitHub environment
+— covered in [Authorization and security](../authorization.md)_
 
 - [Terraform module](#terraform-module)
 - [Composite GitHub Action](#composite-github-action)
@@ -88,7 +90,8 @@ jobs:
 ```
 
 When a developer merges a PR, the Release workflow is triggered:
-1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#build-and-release)
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows,
+   see [Best practices](../best-practices.md#build-and-release)
 2. Build job compiles TypeScript files in a single `dist/index.js` file and uploads it as an artifact
 3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. commit `dist/index.js`

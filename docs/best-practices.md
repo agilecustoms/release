@@ -6,15 +6,17 @@
 ## Build and Release
 
 Build and Release are two distinct actions. Build should happen on each push in a feature branch
-for early feedback about code quality (lint, tests). Once code is merged into `main` branch there should be Build (again!) and Release.
+for early feedback about code quality (lint, tests). Once code is merged into `main` branch there should be
+Build (again!) and Release.
 There are two ways how you can organize your workflows:
 1. (simple) you have one workflow with two jobs: Build and Release.
  Build is run all the time, and a Release job is conditioned to run only on `main` branch
 2. (advanced) you have two workflows: Build and Release. Build workflow is called on every push in non-main branches, 
  and also it can be called from another workflow (`on: workflow_call:`).
  Release workflow is called only on push in the `main` branch, and inside it calls Build workflow
- Advanced setup is used when there are multiple types of releases: besides normal (when feature is merged into `main` branch)
- there are [dev-release](./features/dev-release.md) and "fixed version" when a version is passed explicitly as workflow argument:
+ Advanced setup is used when there are multiple types of releases:
+ besides normal (when feature is merged into `main` branch) there are [dev-release](./features/dev-release.md)
+ and "fixed version" when a version is passed explicitly as workflow argument:
 ```
       /- normal release
 build -- dev release
@@ -119,9 +121,10 @@ In many [examples](./examples) you may see some inputs repeated, such as `aws-ac
 You can reduce code repetition by creating your own wrapper around `agilecustoms/release`.
 For this just create a new GH repo with single file `action.yml`, see example [gha-release](./examples/gha-release).
 Here you provide company-specific defaults, see comment `# company-specific defaults`.
-For parameters that may vary - you add them in `inputs` section and pass them through, see comment `# pass through inputs`.
-For pass-through inputs you can use either same defaults as in `agilecustoms/release` (like `floating-tags` default is true)
-and for others you may want to set your own defaults (like `summary`).
+For parameters that may vary - you add them in `inputs` section and pass them through,
+see comment `# pass through inputs`.
+For pass-through inputs you can use either same defaults as in `agilecustoms/release`
+(like `floating-tags` default is true) and for others you may want to set your own defaults (like `summary`).
 
 Especially useful to provide default value for input `release-plugins`.
 This is the recommended way to have shared release configuration among multiple repos.

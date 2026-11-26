@@ -1,7 +1,9 @@
 # Maintenance release
 
-_This document assumes you use [version generation](./version-generation.md) mode "conventional commits" or "version bump".
-"explicit version" does not provide any help with respect to maintenance versions, all you get is just [floating tags](./floating-tags.md)_
+_This document assumes you use [version generation](./version-generation.md) mode "conventional commits"
+or "version bump".
+"explicit version" does not provide any help with respect to maintenance versions,
+all you get is just [floating tags](./floating-tags.md)_
 
 Maintenance release is a release from a branch with a version range.
 A range can be reflected in branch name like `N.x.x` or `N.N.x` (where `N` is a number)
@@ -54,7 +56,8 @@ For **non-standard** maintenance branch name, like `support`, you need following
 ## Example 3. Release channels
 
 In this example we have "patch" maintenance branch `1.5.x` with versions in range `1.5.0 <= .. < 1.6.0`.
-And it has a release channel `legacy`, so that git tag `legacy` moves on every release. See [floating tags](./floating-tags.md) for details
+And it has a release channel `legacy`, so that git tag `legacy` moves on every release.
+See [floating tags](./floating-tags.md) for details
 ```json
 {
   "branches": [

@@ -1,7 +1,7 @@
 # publish in Google Artifact Registry
 
-_Note: examples use shared patterns covered in [Best practices](../best-practices.md) and [Authorization and security](../authorization.md)
-("release" GitHub environment holds `GH_TOKEN` secret)_
+_Note: examples use shared patterns covered in [Best practices](../best-practices.md)
+and [Authorization and security](../authorization.md) ("release" GitHub environment holds `GH_TOKEN` secret)_
 
 - [Docker image for Cloud Run](#docker-image-for-cloud-run)
 - [Authorization: Workload Identity Federation](#authorization-workload-identity-federation)
@@ -10,7 +10,8 @@ _Note: examples use shared patterns covered in [Best practices](../best-practice
 
 ## Docker image for Cloud Run
 
-Example: Python (FastAPI) service, image is built from `package/` directory (app + dependencies installed for linux/amd64)
+Example: Python (FastAPI) service, image is built from `package/` directory
+(app + dependencies installed for linux/amd64)
 
 ```
 <repo root>
@@ -66,13 +67,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
 
-Local image name must be equal to the repo name (`my-service` for repo `my-company/my-service`), same as for [ECR](./aws-ecr.md).
+Local image name must be equal to the repo name (`my-service` for repo `my-company/my-service`),
+same as for [ECR](./aws-ecr.md).
 `agilecustoms/release`:
 1. generates the next version based on commit messages
-2. logs in Google Cloud with [google-github-actions/auth](https://github.com/google-github-actions/auth) as service account
-   `ci-publisher@my-project.iam.gserviceaccount.com` (no keys, see below)
+2. logs in Google Cloud with [google-github-actions/auth](https://github.com/google-github-actions/auth) as service
+   account `ci-publisher@my-project.iam.gserviceaccount.com` (no keys, see below)
 3. updates version in `pyproject.toml` and `uv.lock` (if present)
-4. pushes Docker image `us-east1-docker.pkg.dev/my-project/my-repo/my-service` with tags `1.2.3`, `1.2`, `1` and `latest`
+4. pushes Docker image `us-east1-docker.pkg.dev/my-project/my-repo/my-service` with tags `1.2.3`, `1.2`,
+   `1` and `latest`
 5. pushes git commit and tags to the remote repository
 
 ## Authorization: Workload Identity Federation
@@ -126,8 +129,10 @@ Google needs it explicitly: a project can have many pools, each with many provid
 
 ## Tags
 
-Repository must have mutable tags (default): floating tags `1.2`, `1` and `latest` move to the new image on each release.
-Unlike [ECR](./aws-ecr.md), existing tags are not deleted before push: Artifact Registry moves a tag to the pushed image.
+Repository must have mutable tags (default):
+floating tags `1.2`, `1` and `latest` move to the new image on each release.
+Unlike [ECR](./aws-ecr.md), existing tags are not deleted before push:
+Artifact Registry moves a tag to the pushed image.
 Re-running a release pushes the same tags again, so the release is idempotent.
 Old images can be removed by [cleanup policies](https://cloud.google.com/artifact-registry/docs/repositories/cleanup-policy),
 e.g. keep N most recent versions and delete the rest older than 30 days

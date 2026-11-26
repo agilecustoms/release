@@ -2,11 +2,12 @@
 
 **Floating tags** are tags that move! When you release `1.2.4` then tags `1` and `1.2` move to point to `1.2.4`.
 This feature is primarily supported by Git and Docker, they both use tags. It is also supported by AWS S3.
-AWS S3 mimics file system structure: path/object ~ dir/file. Given version stored in dir `1.2`, you can override its content
-— sort of "move" the tag
+AWS S3 mimics file system structure: path/object ~ dir/file.
+Given version stored in dir `1.2`, you can override its content — sort of "move" the tag
 
 **Release channel** is a term from NPM, where you can publish a package to a specific channel, like `latest` or `beta`.
-Release channel reflects the purpose/audience of the release: `latest` for stable releases, `alpha`/`beta`/`rc` for prereleases.
+Release channel reflects the purpose/audience of the release:
+`latest` for stable releases, `alpha`/`beta`/`rc` for prereleases.
 Git, ECR and S3 adopt "release channel" by virtue of using tags and directories
 
 Consider git branches (from old to new):
@@ -40,7 +41,8 @@ Rules:
 - maintenance and prerelease by default do not have a release channel tag
 - maintenance release from branch like `1.1.x` only gives floating tag of `1.1`, no `1`
 - normal release by default has tag `latest`, you can set release channel `false` to disable it
-- if a release channel equals to the branch name, then the corresponding git tag is not created, but docker tag and S3 dir are created
+- if a release channel equals to the branch name, then the corresponding git tag is not created,
+  but docker tag and S3 dir are created
 
 ## Release channel configuration
 

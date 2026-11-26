@@ -1,7 +1,8 @@
 # publish in AWS ECR
 
-_Note: all examples use shared patterns: two workflows: Build and Release — covered in [Best practices](../best-practices.md);
-"release" GitHub environment and AWS IAM authorization — covered in [Authorization and security](../authorization.md)_
+_Note: all examples use shared patterns: two workflows: Build and Release
+— covered in [Best practices](../best-practices.md); "release" GitHub environment and AWS IAM authorization
+— covered in [Authorization and security](../authorization.md)_
 
 - [AWS Lambda running Spring Boot application in Docker](#aws-lambda-running-spring-boot-application-in-docker)
   - [Workflow reuse](#workflow-reuse)
@@ -12,7 +13,8 @@ _Note: all examples use shared patterns: two workflows: Build and Release — co
 
 ## AWS Lambda running Spring Boot application in Docker
 
-Example: [env-cleanup](../examples/env-cleanup) — it is from the AgileCustoms repository with all code removed, only workflows left
+Example: [env-cleanup](../examples/env-cleanup) — it is from the AgileCustoms repository with all code removed,
+only workflows left
 
 ```
 <repo root>
@@ -55,12 +57,14 @@ When developer merges a PR, the `release-main.yml` workflow is triggered:
 1. `release-main.yml` workflow calls `release.yml` workflow
 2. `release.yml` workflow calls `build.yml` workflow
 3. `build.yml` workflow:
-   1. call `agilecustoms/setup-maven-codeartifact` to authorize maven to use dependencies from corporate `CodeArtifact` package registry
+   1. call `agilecustoms/setup-maven-codeartifact` to authorize maven
+      to use dependencies from corporate `CodeArtifact` package registry
    2. run maven build (maven plugins configured to build fat jar)
    3. upload a binary (jar) as an artifact so that the next workflow can access it
 4. Release workflow takes over. It:
    1. download the artifact from the build workflow
-   2. build a Docker image with the jar inside. Note: `docker build` in _Release_ workflow is not idiomatic, but it has to be in the same job that runs `docker push`
+   2. build a Docker image with the jar inside. Note: `docker build` in _Release_ workflow is not idiomatic,
+      but it has to be in the same job that runs `docker push`
    3. call `agilecustoms/release` action
 5. `agilecustoms/release` action:
    1. generate the next version based on commit messages
@@ -86,8 +90,10 @@ in `release-dev.yml` workflow and run it from a feature branch — GitHub will s
 
 ### Application code and IaC
 
-This is an example of a microservice that consists of an application (java in Docker) code and IaC (Terraform in `infrastructure` directory).
-Upon release the `agilecustoms/release` generates a new version `1.2.3`, it is used as ECR tag, and git tag is `v1.2.3` (default `tag-format`).
+This is an example of a microservice that consists of an application (java in Docker) code and IaC
+(Terraform in `infrastructure` directory).
+Upon release the `agilecustoms/release` generates a new version `1.2.3`, it is used as ECR tag,
+and git tag is `v1.2.3` (default `tag-format`).
 So your code and infrastructure are in sync! Now you can deploy infra and code like this:
 
 ```hcl
@@ -97,7 +103,8 @@ module "env_cleanup" {
 }
 ```
 
-Note file `infrastructure/vars.tf` has variable `aVersion` which is used in `infrastructure/lambda.tf` to set ECR image URL
+Note file `infrastructure/vars.tf` has variable `aVersion` which is used in `infrastructure/lambda.tf`
+to set ECR image URL
 
 ### explicit version
 
@@ -110,7 +117,8 @@ so if you need to configure a [release channel](../features/floating-tags.md#rel
 
 ### setup-maven-codeartifact
 
-`agilecustoms/release` allows to publish java packages in CodeArtifact, see [aws-codeartifact-maven](./aws-codeartifact-maven.md).
+`agilecustoms/release` allows to publish java packages in CodeArtifact,
+see [aws-codeartifact-maven](./aws-codeartifact-maven.md).
 This example also shows how to _USE_ java packages published in the corporate AWS CodeArtifact registry.
 This is done by another GitHub action [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact),
 see [build.yml](../examples/env-cleanup/.github/workflows/build.yml) workflow file:
@@ -142,5 +150,7 @@ ECR has two great features:
 
 Combine all together:
 - you can allow your dev team to make dev-releases from `feature/` branches
-- developers can re-run dev-release workflow on the same branch if needed, because ECR repo is immutable with exclusion for `feature-*` tags
-- corresponding images will be automatically removed thanks to lifecycle rules by tag prefix, so you don't worry about overspending on ECR storage
+- developers can re-run dev-release workflow on the same branch if needed,
+  because ECR repo is immutable with exclusion for `feature-*` tags
+- corresponding images will be automatically removed thanks to lifecycle rules by tag prefix,
+  so you don't worry about overspending on ECR storage

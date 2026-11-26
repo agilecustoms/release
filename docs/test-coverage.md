@@ -2,8 +2,10 @@
 
 This is an internal document describing feature/test coverage
 
-Features covered by tests in [build.yml](../.github/workflows/build.yml) (jobs `Input-Validation` and `E2E-*`) are not listed here.
-Version generation (conventional commits, floating tags, explicit version, maintenance branches, release channels, version-bump) is also covered by [release-gen](https://github.com/agilecustoms/release-gen) integration tests.
+Features covered by tests in [build.yml](../.github/workflows/build.yml)
+(jobs `Input-Validation` and `E2E-*`) are not listed here.
+Version generation (conventional commits, floating tags, explicit version, maintenance branches, release channels,
+version-bump) is also covered by [release-gen](https://github.com/agilecustoms/release-gen) integration tests.
 This document only lists features that are tested by real releases in other repos
 
 ## Versioning features

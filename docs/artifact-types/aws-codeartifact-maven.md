@@ -1,11 +1,13 @@
 # publish in AWS CodeArtifact Maven repository
 
-_Note: all examples use shared patterns: two workflows: Build and Release — covered in [Best practices](../best-practices.md);
-"release" GitHub environment and AWS IAM authorization — covered in [Authorization and security](../authorization.md)_
+_Note: all examples use shared patterns: two workflows: Build and Release
+— covered in [Best practices](../best-practices.md); "release" GitHub environment and AWS IAM authorization
+— covered in [Authorization and security](../authorization.md)_
 
 ## Multi-module maven project
 
-Example: [java-parent](../examples/java-parent) - it is from AgileCustoms repository with all code removed, only workflows left
+Example: [java-parent](../examples/java-parent) - it is from AgileCustoms repository with all code removed,
+only workflows left
 
 ```
 <repo root>
@@ -39,11 +41,13 @@ jobs:
 ```
 
 Besides the release workflow, the next infrastructure pieces must be aligned:
-1. There should be an IAM role (`ci/publisher`) which can be assumed by GitHub Actions via OIDC, see [Authorization and security](../authorization.md)
+1. There should be an IAM role (`ci/publisher`) which can be assumed by GitHub Actions via OIDC,
+   see [Authorization and security](../authorization.md)
 2. AWS IAM role's policy should allow `codeartifact:PublishPackageVersion` and few more actions.
    You can use Terraform module [ci-publisher](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest)
-3. You need to have a CodeArtifact _domain_ and _repository_ created. CodeArtifact _domain_ acts as namespace for your packages,
-   typically your company name. In this example _domain_ is `agilecustoms`.
+3. You need to have a CodeArtifact _domain_ and _repository_ created.
+   CodeArtifact _domain_ acts as namespace for your packages, typically your company name.
+   In this example _domain_ is `agilecustoms`.
    CodeArtifact _repository_ allows arbitrary name, but let's use `maven`.
 4. In root `pom.xml` you need to have `<distributionManagement>` section like this:
 ```xml
@@ -57,7 +61,8 @@ Besides the release workflow, the next infrastructure pieces must be aligned:
 Here `<id>` has format `{domain}-{repository}`, so replace `agilecustoms` with your company name.
 
 When a developer merges a PR, the Release workflow is triggered:
-1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows, see [Best practices](../best-practices.md#build-and-release)
+1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows,
+   see [Best practices](../best-practices.md#build-and-release)
 2. Build job compiles java code in `target/*.jar` files and uploads them as an artifact
 3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. generate the next version based on commit messages
@@ -66,8 +71,9 @@ When a developer merges a PR, the Release workflow is triggered:
       2. generate env variable `ARTIFACT_STORE_HOST`
       3. create file `settings.xml` with credentials
    3. update version in `pom.xml` (and all submodules for multi-module projects)
-   4. run `mvn deploy` to publish packages in CodeArtifact. Maven uses repository id from `pom.xml` `distributionManagement` section
-      and find matching section `<server>` (with credentials) in `settings.xml` prepared by `setup-maven-codeartifact` action
+   4. run `mvn deploy` to publish packages in CodeArtifact. Maven uses repository id from `pom.xml`
+      `distributionManagement` section and find matching section `<server>`
+      (with credentials) in `settings.xml` prepared by `setup-maven-codeartifact` action
    5. push git commit and tags to the remote repository
 
 ### setup-maven-codeartifact

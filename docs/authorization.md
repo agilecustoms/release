@@ -27,18 +27,22 @@ then a person possessing this role needs to create a PAT to use it in the releas
 - or classic PAT with `repo` scope
 
 The next big question: **how do you ensure this PAT is not compromised**?
-Like when a developer makes a mistake/malicious workflow in a feature branch to print PAT in a file and then upload it as an artifact.
+Like when a developer makes a mistake/malicious workflow in a feature branch to print PAT in a file and
+then upload it as an artifact.
 There are two solutions:
 
 For private/internal repositories you can use **push ruleset** to prohibit any changes in `.github/**/*`.
 This restriction is even stronger than `CODEOWNERS`: GitHub will reject any push that attempts to change workflow files!
-So you can put the PAT in an organization-level secret and access it from all repos. Problem 1: if any repo misses this rule,
-the token still can leak. Problem 2: it is not scalable — only admins can change `.github/**/*` files,
+So you can put the PAT in an organization-level secret and access it from all repos.
+Problem 1: if any repo misses this rule, the token still can leak.
+Problem 2: it is not scalable — only admins can change `.github/**/*` files,
 other developers can't even create a PR for improvements!
 
-The better option is to create a **GitHub environment** (let's call it `release`) and put PAT in this environment secret.
+The better option is to create a **GitHub environment** (let's call it `release`)
+and put PAT in this environment secret.
 Then configure this environment so that only protected branches can use it.
-Finally, in the release workflow (assuming it is run on push in protected branch) you specify `environment: release` to access a secret
+Finally, in the release workflow (assuming it is run on push in protected branch) you specify `environment: release`
+to access a secret
 
 `agilecustoms/release` action takes this PAT via env variable `GH_TOKEN`:
 ```yaml
@@ -54,8 +58,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # secret can have any name, use `GH_TOKEN` for consistency
 ```
 
-One problem remains: what if two "bad" developers act together: one creates a PR to change the release workflow to print PAT,
-and the second approves it? To mitigate this risk you configure `CODEOWNERS` so that only trusted people can approve changes in `.github/**/*`
+One problem remains: what if two "bad" developers act together:
+one creates a PR to change the release workflow to print PAT,
+and the second approves it? To mitigate this risk you configure `CODEOWNERS` so
+that only trusted people can approve changes in `.github/**/*`
 
 ### Final GH repo setup
 
@@ -65,8 +71,9 @@ and the second approves it? To mitigate this risk you configure `CODEOWNERS` so 
 4. create environment `release` associated with protected branch(es) and put PAT in this environment secret
 5. (additionally) create `CODEOWNERS` file to protect `.github/**/*` files
 
-At this point, GitHub security should be in good shape. Only problem — it is quite a lot of work: configure branch protection rules,
-tag protection rules, create an environment and configure its access from protected branches, configure CODEOWNERS.
+At this point, GitHub security should be in good shape. Only problem — it is quite a lot of work:
+configure branch protection rules, tag protection rules, create an environment
+and configure its access from protected branches, configure CODEOWNERS.
 In the world of microservices it is quite common to have 50+ repositories, so it is a lot of work to do it manually.
 Here is a production ready [terraform module](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
 to provision security-aware GitHub repositories
@@ -84,7 +91,8 @@ Legacy approach (not supported): have a service account (user)
 with long-lived `ACCESS_KEY_ID`/`SECRET_ACCESS_KEY` stored in GitHub secrets
 
 Modern approach: use [OpenID Connect](https://github.com/aws-actions/configure-aws-credentials?tab=readme-ov-file#quick-start-oidc-recommended)(OIDC) between GitHub and AWS,
-so that GitHub workflows can assume an IAM role in an AWS account. Note that trust policy should use `sub` condition with `environment` (not `ref`).
+so that GitHub workflows can assume an IAM role in an AWS account.
+Note that trust policy should use `sub` condition with `environment` (not `ref`).
 Here is a [complete example using Terraform](https://github.com/agilecustoms/terraform-aws-ci-publisher?tab=readme-ov-file#how-to-create-a-role-with-this-policy)
 
 Step-by-step explanation:
@@ -126,12 +134,13 @@ jobs:
           # any combination of: aws-* inputs pointing to S3 / ECR / CodeArtifact
 ```
 
-_Note: by default, a Job has permissions `contents: read`, since you need `id-token: write`, the default one is overridden,
-so if you need to read repository content, make sure to add `contents: read` explicitly_
+_Note: by default, a Job has permissions `contents: read`, since you need `id-token: write`,
+the default one is overridden, so if you need to read repository content, make sure to add `contents: read` explicitly_
 
 ## Google Cloud Authorization
 
-Read this section if you release in Google Artifact Registry. Same idea as AWS: no long-lived keys (service account keys),
+Read this section if you release in Google Artifact Registry.
+Same idea as AWS: no long-lived keys (service account keys),
 GitHub OIDC token is exchanged for a short-lived token of a service account via Workload Identity Federation.
 See [Google Artifact Registry](./artifact-types/gcp-artifact-registry.md#authorization-workload-identity-federation) for Terraform example.
 As with AWS, the job needs `id-token: write` permission
@@ -141,7 +150,8 @@ As with AWS, the job needs `id-token: write` permission
 `agilecustoms/release` has major feature [dev-release](./features/dev-release.md).
 It is basically a release self-service for developers.
 Use of this feature assumes all security measures described above are already in place!
-Additional dev-release specific security considerations are placed in the [dev-release security](./features/dev-release.md#security) section
+Additional dev-release specific security considerations are placed in the
+[dev-release security](./features/dev-release.md#security) section
 
 ## Advanced
 

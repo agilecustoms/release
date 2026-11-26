@@ -7,7 +7,9 @@ Next:
   - Python packages (pip and Twine)
   - npm
   - Gradle
-- input `version-bump` to take two more options: `minor` and `patch`. Requires custom conventional-commits config with custom minor/patch triggers to "ignore" accidental `fix:`, `feat:` and `BREAKING CHANGE:` commits
+- input `version-bump` to take two more options: `minor` and `patch`.
+  Requires custom conventional-commits config with custom minor/patch triggers to "ignore" accidental `fix:`,
+  `feat:` and `BREAKING CHANGE:` commits
 - ensure `release-channel` is respected together with conventional commits and `version-bump`
 - customizable publish path (S3 path, ECR repository): renaming a repo should not break existing artifacts in S3/ECR
 - publish artifacts in GitHub release
@@ -22,7 +24,8 @@ Potential future features (not prioritized):
   - private npmjs repository
 - GitHub release
   - ability to specify a list of files to include release
-  - integration between release and issues/PRs, ex: close issues fixed in a release, see [semantic-release/github](https://github.com/semantic-release/github)
+  - integration between release and issues/PRs, ex: close issues fixed in a release,
+    see [semantic-release/github](https://github.com/semantic-release/github)
   - notify maintainers and users about new releases
 - support proxy on different levels (just never faced with it yet)
 - git commit

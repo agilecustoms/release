@@ -4,7 +4,8 @@
 This chapter describes the default mode — "conventional commits"
 
 "conventional commits" mode follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0) specification.
-It takes the latest [SemVer](https://semver.org) tag and analyzes commit messages to determine the next version following these rules:
+It takes the latest [SemVer](https://semver.org) tag and analyzes commit messages
+to determine the next version following these rules:
 - commit with `feat!:` prefix ⇒ increment a major version
 - commit with `feat:` prefix ⇒ increment a minor version
 - commit with `fix:` or `perf:` prefix ⇒ increment a patch version
@@ -82,7 +83,8 @@ Configuration will be provided via `release-plugins` input in `agilecustoms/rele
 In this example:
 - `perf:` type is disabled, if I ever need it — will just include in `feat:` or `fix:`
 - `docs:` will cause patch updates and show up in "Documentation" section as documentation for this project is essential
-- `misc:` introduced as a way to make patch release for minor changes (such as update dependencies) and do _not_ use `fix:` for that
+- `misc:` introduced as a way to make patch release for minor changes (such as update dependencies)
+  and do _not_ use `fix:` for that
 
 Use prefixes in commit messages as per [conventionalcommits](https://www.conventionalcommits.org/en/v1.0.0/):
 ```text
@@ -91,7 +93,8 @@ fix: bug fix
 docs: test documentation
 ```
 
-==> new patch version. Release notes (and/or changelog) will have sections "Bug Fixes", "Documentation" and "Miscellaneous"
+==> new patch version. Release notes (and/or changelog) will have sections "Bug Fixes",
+"Documentation" and "Miscellaneous"
 
 **Conclusion**. Providing conventional commits behavior via GH action input looks bulky,
 but it is recommended if you have many repositories that need to follow the same release pattern.

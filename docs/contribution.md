@@ -4,13 +4,15 @@ For any bugs, feel free to create an issue or raise a pull request with fix
 
 ## semantic-release notes
 
-If you need some specific `semantic-release` plugin supported, please start a discussion first, do not create an issue/PR
+If you need some specific `semantic-release` plugin supported, please start a discussion first,
+do not create an issue/PR
 
 ## Other cloud providers
 
 Please do not add other cloud providers directly in this action.
-As of June 2025 `agilecustoms/release` uses 6 other GH actions — all of them resolved at runtime even though some of them might not be used,
-such as you do not use CodeArtifact, but still load related actions.
+As of June 2025 `agilecustoms/release` uses 6 other GH actions
+— all of them resolved at runtime even though some of them might not be used, such as you do not use CodeArtifact,
+but still load related actions.
 Adding of another cloud provider support will increase the number of unused actions even more!
 Instead, feel free to fork with a prefix say 'gc-' for Google Cloud
 
