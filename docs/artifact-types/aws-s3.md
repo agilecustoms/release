@@ -1,8 +1,8 @@
 # publish in AWS S3
 
 _Note: all examples use shared patterns: two workflows: Build and Release
-— covered in [Best practices](../best-practices.md); "release" GitHub environment and AWS IAM authorization
-— covered in [Authorization and security](../authorization.md)_
+— covered in [Best practices][best-practices]; "release" GitHub environment and AWS IAM authorization
+— covered in [Authorization and security][authorization-and-security]_
 
 AWS S3 is very powerful, and specifically, it works very well for software distribution.
 S3 allows flexible read and write permissions by prefix and by tags.
@@ -72,12 +72,12 @@ jobs:
 
 When a developer merges a PR, the Release workflow is triggered:
 1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows,
-   see [Best practices](../best-practices.md#build-and-release)
+   see [Best practices][best-practices-build-and-release]
 2. Build job packages python code and dependencies in `dist/app.zip` file and uploads it as an artifact
 3. Release job downloads the artifact in directory `s3`, so you get `s3/app.zip`
 4. Release job calls `agilecustoms/release` action, then action:
    1. generate the next version based on commit messages
-   2. authorize in AWS with role `ci/publisher`, see [Authorization and security](../authorization.md)
+   2. authorize in AWS with role `ci/publisher`, see [Authorization and security][authorization-and-security]
    3. update version in `pyproject.toml`
    4. upload `s3/app.zip` to `mycompany-dist/env-api/{version}/app.zip`
    5. push git commit and tags to the remote repository
@@ -122,7 +122,8 @@ So the distribution format (how release files are stored) should match how S3 se
 
 Also, this example showcases use of corporate action `mycompany/gha-release`
 which is a thin wrapper around `agilecustoms/release`.
-In this action you provide all defaults, so your release workflow gets even simpler, see [details](../best-practices.md#company-specific-gha-release-wrapper)
+In this action you provide all defaults, so your release workflow gets even simpler,
+see [details][company-specific-gha-release-wrapper]
 
 ```yaml
 jobs:
@@ -158,7 +159,7 @@ When developer merges a PR, the Release workflow is triggered:
    `aws-account`, `aws-region`, `aws-s3-bucket` and others
 6. `agilecustoms/release` action then:
     1. generate next version based on commit messages
-    2. authorize in AWS with role `ci/publisher`, see [Authorization and security](../authorization.md)
+    2. authorize in AWS with role `ci/publisher`, see [Authorization and security][authorization-and-security]
     3. update version in `package.json`
     4. upload `s3/*` to `mycompany-dist/tt-web/{version}/*`
     5. push git commit and tags to the remote repository
@@ -201,3 +202,8 @@ It is important for security and cleanup:
 - IAM role (e.g. `ci/publisher-dev`) used in dev-release workflow can distinguish between normal release
   and dev-release:
   it allows to override `Release=false` objects and deny to override `Release=true`
+
+[authorization-and-security]: ../authorization.md
+[best-practices]: ../best-practices.md
+[best-practices-build-and-release]: ../best-practices.md#build-and-release
+[company-specific-gha-release-wrapper]: ../best-practices.md#company-specific-gha-release-wrapper

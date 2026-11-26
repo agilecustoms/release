@@ -1,9 +1,9 @@
 # Maintenance release
 
-_This document assumes you use [version generation](./version-generation.md) mode "conventional commits"
+_This document assumes you use [version generation][version-generation] mode "conventional commits"
 or "version bump".
 "explicit version" does not provide any help with respect to maintenance versions,
-all you get is just [floating tags](./floating-tags.md)_
+all you get is just [floating tags][floating-tags]_
 
 Maintenance release is a release from a branch with a version range.
 A range can be reflected in branch name like `N.x.x` or `N.N.x` (where `N` is a number)
@@ -24,7 +24,7 @@ on:
 ## Example 1. Branch 1.x.x
 
 Imagine current development in `main` branch and previous version in `1.x.x` branch,
-and you use [conventional commits](./conventional-commits.md) or [version bump](./version-generation.md#version-bump)
+and you use [conventional commits](./conventional-commits.md) or [version bump][version-generation-version-bump]
 
 You need to place a file `.releaserc.json` in the repo root with the following content:
 ```json
@@ -57,7 +57,7 @@ For **non-standard** maintenance branch name, like `support`, you need following
 
 In this example we have "patch" maintenance branch `1.5.x` with versions in range `1.5.0 <= .. < 1.6.0`.
 And it has a release channel `legacy`, so that git tag `legacy` moves on every release.
-See [floating tags](./floating-tags.md) for details
+See [floating tags][floating-tags] for details
 ```json
 {
   "branches": [
@@ -70,4 +70,9 @@ See [floating tags](./floating-tags.md) for details
 }
 ```
 
-Read more about maintenance branches in [semantic-release documentation](https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#maintenance-branches)
+Read more about maintenance branches in [semantic-release documentation][sr-docs]
+
+[floating-tags]: ./floating-tags.md
+[sr-docs]: https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#maintenance-branches
+[version-generation]: ./version-generation.md
+[version-generation-version-bump]: ./version-generation.md#version-bump

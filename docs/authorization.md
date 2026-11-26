@@ -20,7 +20,7 @@ So a developer can "release" `v2.0.0` at will!
 Solution? Use the GitHub feature "tag ruleset" to prohibit all tags creation, update and deletion.
 Now we need to grant permission to bypass this rule to a Release workflow so it can create tags!
 
-This is where PAT ([Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) 
+This is where PAT ([Personal Access Token][pat]) 
 comes into play: in this "tag ruleset" you configure a Role that can bypass it,
 then a person possessing this role needs to create a PAT to use it in the release workflow:
 - either a fine-grained PAT with `Contents "Read and write"`
@@ -90,13 +90,13 @@ Now you need an IAM role that can be assumed from GitHub Action
 Legacy approach (not supported): have a service account (user)
 with long-lived `ACCESS_KEY_ID`/`SECRET_ACCESS_KEY` stored in GitHub secrets
 
-Modern approach: use [OpenID Connect](https://github.com/aws-actions/configure-aws-credentials?tab=readme-ov-file#quick-start-oidc-recommended)(OIDC) between GitHub and AWS,
+Modern approach: use [OpenID Connect][openid-connect](OIDC) between GitHub and AWS,
 so that GitHub workflows can assume an IAM role in an AWS account.
 Note that trust policy should use `sub` condition with `environment` (not `ref`).
-Here is a [complete example using Terraform](https://github.com/agilecustoms/terraform-aws-ci-publisher?tab=readme-ov-file#how-to-create-a-role-with-this-policy)
+Here is a [complete example using Terraform][ci-publisher-role]
 
 Step-by-step explanation:
-1. The only new step compared to the legacy approach is to create [IAM OIDC provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html).
+1. The only new step compared to the legacy approach is to create [IAM OIDC provider][iam-oidc-provider].
    If you use Terraform, just use this resource:
 ```hcl
 resource "aws_iam_openid_connect_provider" "github" {
@@ -105,7 +105,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 ```
 2. Create IAM policy (recommended name `ci/publisher`) with permissions to publish artifacts
-    or use terraform module [terraform-aws-ci-publisher](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest)
+    or use terraform module [terraform-aws-ci-publisher][terraform-aws-ci-publisher]
 3. Create an IAM role (recommended name `ci/publisher`)
    with trust policy's principal set to the OIDC provider from step 1 and permission policy from step 2
 
@@ -142,16 +142,16 @@ the default one is overridden, so if you need to read repository content, make s
 Read this section if you release in Google Artifact Registry.
 Same idea as AWS: no long-lived keys (service account keys),
 GitHub OIDC token is exchanged for a short-lived token of a service account via Workload Identity Federation.
-See [Google Artifact Registry](./artifact-types/gcp-artifact-registry.md#authorization-workload-identity-federation) for Terraform example.
+See [Google Artifact Registry][google-artifact-registry] for Terraform example.
 As with AWS, the job needs `id-token: write` permission
 
 ## dev-release security
 
-`agilecustoms/release` has major feature [dev-release](./features/dev-release.md).
+`agilecustoms/release` has major feature [dev-release][dev-release].
 It is basically a release self-service for developers.
 Use of this feature assumes all security measures described above are already in place!
 Additional dev-release specific security considerations are placed in the
-[dev-release security](./features/dev-release.md#security) section
+[dev-release security][dev-release-security] section
 
 ## Advanced
 
@@ -200,3 +200,12 @@ it limits write access only to one step (`agilecustoms/release`).
 In Option 2 all steps (after checkout) effectively have permission to commit and push in protected branch
 
 Secret name could be different, I use `GH_TOKEN` for consistency with env variable
+
+[ci-publisher-role]: https://github.com/agilecustoms/terraform-aws-ci-publisher#how-to-create-a-role-with-this-policy
+[dev-release]: ./features/dev-release.md
+[dev-release-security]: ./features/dev-release.md#security
+[google-artifact-registry]: ./artifact-types/gcp-artifact-registry.md#authorization-workload-identity-federation
+[iam-oidc-provider]: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html
+[openid-connect]: https://github.com/aws-actions/configure-aws-credentials#quick-start-oidc-recommended
+[pat]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
+[terraform-aws-ci-publisher]: https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest

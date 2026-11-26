@@ -10,13 +10,13 @@ This is especially useful in microservices where the release is a _binary_ + _Ia
 
 ## Features
 
-- automatic and manual [version generation](./docs/features/version-generation.md)
+- automatic and manual [version generation][version-generation]
 - release notes generation and changelog update
-- [floating tags](./docs/features/floating-tags.md) —
+- [floating tags][floating-tags] —
   given the current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
-- [maintenance releases](./docs/features/maintenance-release.md) — made from branch like `1.x.x`
+- [maintenance releases][maintenance-releases] — made from branch like `1.x.x`
   (given `2.x.x` development is in `main`)
-- [prereleases](./docs/features/prerelease.md) — develop a next (often major, sometimes minor) version,
+- [prereleases][prereleases] — develop a next (often major, sometimes minor) version,
   typically made from a branch `next`
 - [dev-release](./docs/features/dev-release.md) —
   ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
@@ -34,18 +34,11 @@ This is especially useful in microservices where the release is a _binary_ + _Ia
 | [GCP Artifact Registry][gcp-artifact-registry]   | ✅            | ✅          | ⚠️          | ✅           |
 | [npmjs][npmjs]                                   | ✅            | ⚠️          | ❌️          | N/A          |
 
-[git]: ./docs/artifact-types/git.md
-[aws-s3]: ./docs/artifact-types/aws-s3.md
-[aws-ecr]: ./docs/artifact-types/aws-ecr.md
-[aws-codeartifact-maven]: ./docs/artifact-types/aws-codeartifact-maven.md
-[gcp-artifact-registry]: ./docs/artifact-types/gcp-artifact-registry.md
-[npmjs]: ./docs/artifact-types/npmjs.md
-
 _See the respective artifact type to learn about idempotency limitations ⚠️_
 
 ## Usage
 
-All examples are structured by [artifact types](./docs/artifact-types/index.md) and [features](./README.md#features)
+All examples are structured by [artifact types][artifact-types] and [features](./README.md#features)
 
 The example below shows how to publish binaries in S3:
 
@@ -92,7 +85,7 @@ Assume:
 
 Scenario:
 - a developer made a feature branch and a commit with message `feat: new-feature`
-(alternatively use input [version-bump](./docs/features/version-generation.md#version-bump) for default minor/patch
+(alternatively use input [version-bump][version-generation-version-bump] for default minor/patch
 bump)
 - the developer created and merged a PR which triggered a `Release` workflow
 - build steps (omitted) produced a directory `./s3` with files (like a zip archive for AWS Lambda)
@@ -168,21 +161,21 @@ Details:
   not only files governed by build tool (pom.xml, package.json, etc.).
   In this script you can use variables `$version` (e.g. `1.2.3`) and `$git_tag` (e.g. `v1.2.3`).
   Script changes in tracked files go into the release commit; to include a new file, `git add` it in the script.
-  See example in [npmjs](./docs/artifact-types/npmjs.md)
+  See example in [npmjs][npmjs]
 - `release-branches`: Semantic-release
   [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches),
-  mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and
-  [prereleases](./docs/features/prerelease.md)
+  mainly used to support [maintenance releases][maintenance-releases] and
+  [prereleases][prereleases]
 - `release-channel`: Repeat `.releaserc.json` `channel` behavior when `version` is set explicitly.
-  See [floating-tags](./docs/features/floating-tags.md) for details
+  See [floating-tags][floating-tags] for details
 - `summary`: Text to print in step summary. Can use `${version}` placeholder. Default is `### Released ${version}`.
   Set to an empty string to omit summary generation
 - `tag-format`: Git tag format, default git tag is `v1.0.0` _(default is in code level, not input value)_.
   Applies only to git tags: version in manifests, S3 path and Docker tag is always bare `1.0.0`.
   Use `${version}` to remove `v` prefix from git tags
-- `version`: [Explicit version](./docs/features/version-generation.md#explicit-version)
+- `version`: [Explicit version][version-generation-explicit-version]
   to use instead of auto-generation
-- `version-bump`: Allows you to [bump a version](./docs/features/version-generation.md#version-bump)
+- `version-bump`: Allows you to [bump a version][version-generation-version-bump]
   without conventional commits
 
 ### Outputs
@@ -194,9 +187,9 @@ Details:
 
 ### Environment variables
 
-| Name     | Description                                                                                |
-|----------|--------------------------------------------------------------------------------------------|
-| GH_TOKEN | GH PAT that can bypass branch and tag protection rules, [details](./docs/authorization.md) |
+| Name     | Description                                                                      |
+|----------|----------------------------------------------------------------------------------|
+| GH_TOKEN | GH PAT that can bypass branch and tag protection rules, [details][authorization] |
 
 ## Ecosystem
 
@@ -208,8 +201,8 @@ The action comes with an **ecosystem**:
   [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
 - GitHub actions to use in build workflows, e.g.,
   [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
-- documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
-- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service
+- documentation and examples for all supported [artifact types][artifact-types]
+- [Authorization and Security][authorization] — how to make releases secure, including self-service
   (dev-releases)
 - Release workflow [best practices](./docs/best-practices.md)
 - Articles: 🧩 [Software distribution in
@@ -237,3 +230,18 @@ This project is released under the [MIT License](./LICENSE)
   easy and powerful GH action to generate the next version and push it as a tag.
   Used it for almost 2 years until switched to semantic-release
 - https://github.com/googleapis/release-please-action — GH action to create release PRs based on conventional commits
+
+[artifact-types]: ./docs/artifact-types/index.md
+[authorization]: ./docs/authorization.md
+[aws-codeartifact-maven]: ./docs/artifact-types/aws-codeartifact-maven.md
+[aws-ecr]: ./docs/artifact-types/aws-ecr.md
+[aws-s3]: ./docs/artifact-types/aws-s3.md
+[floating-tags]: ./docs/features/floating-tags.md
+[gcp-artifact-registry]: ./docs/artifact-types/gcp-artifact-registry.md
+[git]: ./docs/artifact-types/git.md
+[maintenance-releases]: ./docs/features/maintenance-release.md
+[npmjs]: ./docs/artifact-types/npmjs.md
+[prereleases]: ./docs/features/prerelease.md
+[version-generation]: ./docs/features/version-generation.md
+[version-generation-explicit-version]: ./docs/features/version-generation.md#explicit-version
+[version-generation-version-bump]: ./docs/features/version-generation.md#version-bump

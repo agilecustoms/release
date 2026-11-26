@@ -3,7 +3,7 @@
 _This document assumes you use [version generation](./version-generation.md) mode "conventional commits"
 or "version bump".
 "explicit version" does not provide any help with respect to prerelease versions,
-all you get is just [floating tags](./floating-tags.md)_
+all you get is just [floating tags][floating-tags]_
 
 Prereleases allow to evolve a version `-alpha.1..N` → `-beta.1..N` → `-rc.1..N` while staying in the same branch!
 
@@ -25,7 +25,7 @@ This property can be `true` or a string like `alpha`, `beta`, `rc` etc.
 - `prerelease: true` means "use branch name as version suffix", ex: `next` branch → `2.0.0-next.1`
 - `prerelease: <suffix>` means "use <suffix> as version suffix", ex: `prerelease: "alpha"` → `2.0.0-alpha.1`
 
-Additionally, you can use property `channel` for [floating tags](./floating-tags.md)
+Additionally, you can use property `channel` for [floating tags][floating-tags]
 
 **First commit** is very important — it defines a version you intend to release at the end.
 Most of the time prerelease is used to start work on a new major version,
@@ -100,4 +100,7 @@ Rules:
   (tag already exists)
 - explicit `channel` gives a floating tag
 
-Read more about prerelease branches in [semantic-release documentation](https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#pre-release-branches)
+Read more about prerelease branches in [semantic-release documentation][sr-docs]
+
+[floating-tags]: ./floating-tags.md
+[sr-docs]: https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#pre-release-branches

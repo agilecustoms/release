@@ -3,7 +3,7 @@
 **As of Aug 2025 only public npmjs repositories are supported (private is available, but not tested!)**
 
 _Note: all examples use shared patterns: two workflows: Build and Release
-— covered in [Best practices](../best-practices.md); "release" GitHub environment
+— covered in [Best practices][best-practices]; "release" GitHub environment
 — covered in [Authorization and security](../authorization.md)_
 
 ## Public NPM package
@@ -66,7 +66,7 @@ jobs:
 
 When a developer merges a PR, the Release workflow is triggered:
 1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows,
-   see [Best practices](../best-practices.md#build-and-release)
+   see [Best practices][best-practices-build-and-release]
 2. Build job compiles TypeScript in JavaScript in directory `dist` and uploads entire `dist` as an artifact
 3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. generate the next version based on commit messages
@@ -74,3 +74,6 @@ When a developer merges a PR, the Release workflow is triggered:
    3. update version in `package.json`
    4. run `npm publish` to publish package in npmjs
    5. push commit and tags to the remote repository
+
+[best-practices]: ../best-practices.md
+[best-practices-build-and-release]: ../best-practices.md#build-and-release

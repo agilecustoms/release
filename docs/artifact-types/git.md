@@ -5,7 +5,7 @@ Terraform modules, GitHub Actions, Go modules, etc.
 This is the simplest scenario for `agilecustoms/release` as there is no need to publish any artifacts, just create a tag
 
 _Note: all examples use shared patterns: two workflows: Build and Release
-— covered in [Best practices](../best-practices.md); "release" GitHub environment
+— covered in [Best practices][best-practices]; "release" GitHub environment
 — covered in [Authorization and security](../authorization.md)_
 
 - [Terraform module](#terraform-module)
@@ -91,7 +91,7 @@ jobs:
 
 When a developer merges a PR, the Release workflow is triggered:
 1. Build and Release can be organized as two jobs in the same workflow or as two separate workflows,
-   see [Best practices](../best-practices.md#build-and-release)
+   see [Best practices][best-practices-build-and-release]
 2. Build job compiles TypeScript files in a single `dist/index.js` file and uploads it as an artifact
 3. Release job downloads the artifact and calls `agilecustoms/release` action, then action:
    1. commit `dist/index.js`
@@ -99,11 +99,16 @@ When a developer merges a PR, the Release workflow is triggered:
 
 ## dev-release
 
-Git formally supports [dev-release](../features/dev-release.md). It just means you can create a feature branch
+Git formally supports [dev-release][dev-release]. It just means you can create a feature branch
 and run `agilecustoms/release` action in `dev-release` mode on this branch.
 Git acts like glue for all other artifacts: branch `feature/login` becomes `feature-login` version.
 IaC files such as Terraform are accessible via `?ref=feature/login`
 
 Input `dev-branch-prefix` (default is `feature/`) enforces that only branches with this prefix
 can run `agilecustoms/release` in dev-release mode.
-This helps with [security](../features/dev-release.md#security) and auto cleanup
+This helps with [security][dev-release-security] and auto cleanup
+
+[best-practices]: ../best-practices.md
+[best-practices-build-and-release]: ../best-practices.md#build-and-release
+[dev-release]: ../features/dev-release.md
+[dev-release-security]: ../features/dev-release.md#security

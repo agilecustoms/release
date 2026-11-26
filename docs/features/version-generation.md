@@ -37,7 +37,7 @@ it allows to bump a minor/patch version even if there are no special prefixes in
 
 ⚠️ Notes:
 - CHANGELOG.md updated / GH release created only if there is a conventional commit(s)
-- See [prerelease](./prerelease.md) for details on how to make a first commit in the prerelease branch
+- See [prerelease][prerelease] for details on how to make a first commit in the prerelease branch
 
 After first commit values `default-patch` and `default-minor` behave identical
 — just increment number in suffix `beta.1` -> `beta.2`
@@ -50,7 +50,7 @@ for the release
 This can be helpful in the following cases:
 - you have your own versioning scheme like `yyyy-mm-dd-HH:mm:ss`, `Major.Minor` or `A.B.C.D`
 - you do not want to release every time a PR is merged in the main branch, but rather want to release on demand
-- quick alternative instead of fully fledged [prereleases](./prerelease.md)
+- quick alternative instead of fully fledged [prereleases][prerelease]
   or [maintenance release](./maintenance-release.md)
 - (rare, typically not recommended) you want to re-release an existing version
 
@@ -74,3 +74,5 @@ see the last row):
 | `main` | 1.3.0   | _true_        | _false_ | ⇒ | `v1.3.0`, `v1.3`, `v1`           | `1.3.0`, `1.3`, `1`           | main    |
 | `main` | 2.0.0   | _true_        | main    | ⇒ | `v2.0.0`, `v2.0`, `v2`           | `2.0.0`, `2.0`, `2`, `main`   | main    |
 | `main` | v2.1    | _true_        | release | ⇒ | `v2.1`, `v2`, `release`          | `2.1`, `2`, `release`         | release |
+
+[prerelease]: ./prerelease.md

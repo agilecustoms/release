@@ -3,7 +3,8 @@
 Next:
 - GitHub action to access terraform modules from corporate private GH repos
 - publish in Maven central
-- publish in AWS CodeArtifact. Every artifact type will require a corresponding GH action like [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
+- publish in AWS CodeArtifact. Every artifact type will require a corresponding GH action like
+  [setup-maven-codeartifact][setup-maven-codeartifact]
   - Python packages (pip and Twine)
   - npm
   - Gradle
@@ -16,7 +17,7 @@ Next:
 - clear error message for malformed configuration
 - test `npm-visibility: private`
 - bring actual errors (from release-gen) in [troubleshooting](./troubleshooting.md)
-- [terraform-aws-ci-builder](https://github.com/agilecustoms/terraform-aws-ci-builder): ECR access, to build one Docker image from another one
+- [terraform-aws-ci-builder][terraform-aws-ci-builder]: ECR access, to build one Docker image from another one
 
 Potential future features (not prioritized):
 - publish in AWS CodeArtifact: Yarn
@@ -32,8 +33,16 @@ Potential future features (not prioritized):
   - ability to customize the commit message, see [semantic-release/git](https://github.com/semantic-release/git)
   - GPG signing
 - features from downstream/related actions
-  - semantic-release: `working_directory`, `repository_url` and `dry-run` mode like in [semantic-release-action](https://github.com/cycjimmy/semantic-release-action?tab=readme-ov-file#inputs)
-  - more outputs like in [semantic-release-action](https://github.com/cycjimmy/semantic-release-action?tab=readme-ov-file#outputs)
-  - `actions/setup-java` has lots of [extra inputs](https://github.com/actions/setup-java?tab=readme-ov-file#usage)
-  - `aws-actions/configure-aws-credentials` has lots of [extra inputs](https://github.com/aws-actions/configure-aws-credentials?tab=readme-ov-file#options)
-  - inputs `registries`, `registry-type`, `http-proxy` from [amazon-ecr-login](https://github.com/aws-actions/amazon-ecr-login/tree/main)
+  - semantic-release: `working_directory`, `repository_url` and `dry-run` mode like in
+    [semantic-release-action][semantic-release-action]
+  - more outputs like in [semantic-release-action][semantic-release-action-outputs]
+  - `actions/setup-java` has lots of [extra inputs](https://github.com/actions/setup-java#usage)
+  - `aws-actions/configure-aws-credentials` has lots of [extra inputs][extra-inputs]
+  - inputs `registries`, `registry-type`, `http-proxy` from [amazon-ecr-login][amazon-ecr-login]
+
+[amazon-ecr-login]: https://github.com/aws-actions/amazon-ecr-login/tree/main
+[extra-inputs]: https://github.com/aws-actions/configure-aws-credentials#options
+[semantic-release-action]: https://github.com/cycjimmy/semantic-release-action#inputs
+[semantic-release-action-outputs]: https://github.com/cycjimmy/semantic-release-action#outputs
+[setup-maven-codeartifact]: https://github.com/agilecustoms/setup-maven-codeartifact
+[terraform-aws-ci-builder]: https://github.com/agilecustoms/terraform-aws-ci-builder

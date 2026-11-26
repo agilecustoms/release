@@ -2,7 +2,7 @@
 
 _Note: all examples use shared patterns: two workflows: Build and Release
 — covered in [Best practices](../best-practices.md); "release" GitHub environment and AWS IAM authorization
-— covered in [Authorization and security](../authorization.md)_
+— covered in [Authorization and security][authorization-and-security]_
 
 - [AWS Lambda running Spring Boot application in Docker](#aws-lambda-running-spring-boot-application-in-docker)
   - [Workflow reuse](#workflow-reuse)
@@ -68,20 +68,20 @@ When developer merges a PR, the `release-main.yml` workflow is triggered:
    3. call `agilecustoms/release` action
 5. `agilecustoms/release` action:
    1. generate the next version based on commit messages
-   2. authorize in AWS ECR with role `ci/publisher`, see [Authorization and security](../authorization.md)
+   2. authorize in AWS ECR with role `ci/publisher`, see [Authorization and security][authorization-and-security]
    3. update version in `pom.xml`
    4. push Docker image to AWS ECR with tags: `1.2.3`, `1.2`, `1` and `latest`
    5. push git commit and tags to the remote repository
 
 ### Workflow reuse
 
-This project also showcases a workflow reuse when you want to have [dev-releases](../features/dev-release.md)
-or use [explicit version](../features/version-generation.md#explicit-version).
+This project also showcases a workflow reuse when you want to have [dev-releases][dev-releases]
+or use [explicit version][version-generation-explicit-version].
 For this purpose common release steps are placed in `release.yml` workflow file which is then called
 from three specific workflows:
 - `release-main.yml` — normal release on push in `main` branch
-- `release-dev.yml` — [dev-releases](../features/dev-release.md) from feature branch
-- `release-manual.yml` — manual release with [explicit version](../features/version-generation.md#explicit-version).
+- `release-dev.yml` — [dev-releases][dev-releases] from feature branch
+- `release-manual.yml` — manual release with [explicit version][version-generation-explicit-version].
 
 Note that `environment` is passed as input. `release-main.yml` and `release-manual.yml` use `environment: release`
 meaning take `GH_TOKEN` secret from `release` environment, while `release-dev.yml` doesn't pass any environment
@@ -108,7 +108,7 @@ to set ECR image URL
 
 ### explicit version
 
-This example showcases how to use [explicit version](../features/version-generation.md#explicit-version).
+This example showcases how to use [explicit version][version-generation-explicit-version].
 Same as for normal release — you run `agilecustoms/release` action with input `version` on protected branch
 and use GitHub environment `release` to access `GH_TOKEN` secret.
 In this mode the configuration in `.releaserc.json` is ignored,
@@ -120,7 +120,7 @@ so if you need to configure a [release channel](../features/floating-tags.md#rel
 `agilecustoms/release` allows to publish java packages in CodeArtifact,
 see [aws-codeartifact-maven](./aws-codeartifact-maven.md).
 This example also shows how to _USE_ java packages published in the corporate AWS CodeArtifact registry.
-This is done by another GitHub action [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact),
+This is done by another GitHub action [setup-maven-codeartifact][setup-maven-codeartifact],
 see [build.yml](../examples/env-cleanup/.github/workflows/build.yml) workflow file:
 
 ```yaml
@@ -139,7 +139,7 @@ It also uses OIDC to assume an IAM role and access CodeArtifact in read-only mod
 
 ## dev-release
 
-`agilecustoms/release` supports ECR [dev-release](../features/dev-release.md):
+`agilecustoms/release` supports ECR [dev-release][dev-releases]:
 Docker image gets published with tag equal to branch name (branch name `feature/login` becomes ECR tag `feature-login`).
 
 ECR has two great features:
@@ -154,3 +154,8 @@ Combine all together:
   because ECR repo is immutable with exclusion for `feature-*` tags
 - corresponding images will be automatically removed thanks to lifecycle rules by tag prefix,
   so you don't worry about overspending on ECR storage
+
+[authorization-and-security]: ../authorization.md
+[dev-releases]: ../features/dev-release.md
+[setup-maven-codeartifact]: https://github.com/agilecustoms/setup-maven-codeartifact
+[version-generation-explicit-version]: ../features/version-generation.md#explicit-version

@@ -24,7 +24,7 @@ Before, version was the same as git tag (`v1.2.3`) and it was used everywhere: S
 
 ## v4 -> v5
 
-This release is to catch up with [npm changes in Dec 2025](https://github.blog/changelog/2025-12-09-npm-classic-tokens-revoked-session-based-auth-and-cli-token-management-now-available/).
+This release is to catch up with [npm changes in Dec 2025][npm-changes-in-dec-2025].
 The env variable `NPM_TOKEN` is now gone. Instead, you would need to use boolean input `npm-publish`.
 And for actual authorization follow [Trusted publishing for npm packages](https://docs.npmjs.com/trusted-publishers)
 
@@ -45,3 +45,5 @@ the author decided to drop support of presets and keep only one "conventionalcom
   breaking changes: they use `feat!:` prefix
 - if you use v1..3 with other presets, you need to migrate to "conventionalcommits" preset by configuring it via
   `release-plugins` input or `.releaserc.json` file
+
+[npm-changes-in-dec-2025]: https://github.blog/changelog/2025-12-09-npm-classic-tokens-revoked-session-based-auth-and-cli-token-management-now-available/

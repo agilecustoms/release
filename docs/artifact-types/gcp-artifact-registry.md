@@ -68,7 +68,7 @@ jobs:
 ```
 
 Local image name must be equal to the repo name (`my-service` for repo `my-company/my-service`),
-same as for [ECR](./aws-ecr.md).
+same as for [ECR][ecr].
 `agilecustoms/release`:
 1. generates the next version based on commit messages
 2. logs in Google Cloud with [google-github-actions/auth](https://github.com/google-github-actions/auth) as service
@@ -131,10 +131,10 @@ Google needs it explicitly: a project can have many pools, each with many provid
 
 Repository must have mutable tags (default):
 floating tags `1.2`, `1` and `latest` move to the new image on each release.
-Unlike [ECR](./aws-ecr.md), existing tags are not deleted before push:
+Unlike [ECR][ecr], existing tags are not deleted before push:
 Artifact Registry moves a tag to the pushed image.
 Re-running a release pushes the same tags again, so the release is idempotent.
-Old images can be removed by [cleanup policies](https://cloud.google.com/artifact-registry/docs/repositories/cleanup-policy),
+Old images can be removed by [cleanup policies][cleanup-policies],
 e.g. keep N most recent versions and delete the rest older than 30 days
 
 ## dev-release
@@ -143,3 +143,6 @@ Not tested yet. Technically [dev-release](../features/dev-release.md) pushes an 
 (`feature/login` -> `feature-login`), but it needs a service account that trusts non-protected branches
 (in the example above `ci-publisher` trusts only environment `release`).
 Cleanup policies support tag prefixes, so `feature-*` images can be removed automatically
+
+[cleanup-policies]: https://cloud.google.com/artifact-registry/docs/repositories/cleanup-policy
+[ecr]: ./aws-ecr.md
