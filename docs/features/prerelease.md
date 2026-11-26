@@ -40,18 +40,19 @@ Assume you made branch `next` from `main` at version `1.2.3`
 Note: if you use "version bump" mode and want a next major version,
 in the first commit you must follow "conventional commits" rules
 
-Next table shows behavior with first major commit and different combinations of `prerelease` and `channel`:
+Next table shows behavior in branch `next` with first major commit
+and different combinations of `prerelease` and `channel`:
 
-| branch | version | prerelease | channel |   | version         | git tags                | Docker tags and S3 dirs | npm tag |
-|--------|---------|------------|---------|---|-----------------|-------------------------|-------------------------|---------|
-| `next` | 1.2.3   | _true_     |         | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
-| `next` | 1.2.3   | _true_     | _false_ | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
-| `next` | 1.2.3   | _true_     | next    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | `2.0.0-next.1`, `next`  | `next`  |
-| `next` | 1.2.3   | _true_     | beta    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`, `beta`  | _same_                  | `beta`  |
-| `next` | 1.2.3   | alpha      |         | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | _same_                  | `next`  |
-| `next` | 1.2.3   | alpha      | _false_ | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | _same_                  | `next`  |
-| `next` | 1.2.3   | alpha      | next    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | `2.0.0-alpha.1`, `next` | `next`  |
-| `next` | 1.2.3   | alpha      | beta    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`, `beta` | _same_                  | `beta`  |
+| version | prerelease | channel |   | version         | git tags                | Docker tags and S3 dirs | npm tag |
+|---------|------------|---------|---|-----------------|-------------------------|-------------------------|---------|
+| 1.2.3   | _true_     |         | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
+| 1.2.3   | _true_     | _false_ | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | _same_                  | `next`  |
+| 1.2.3   | _true_     | next    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`          | `2.0.0-next.1`, `next`  | `next`  |
+| 1.2.3   | _true_     | beta    | ⇒ | `2.0.0-next.1`  | `2.0.0-next.1`, `beta`  | _same_                  | `beta`  |
+| 1.2.3   | alpha      |         | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | _same_                  | `next`  |
+| 1.2.3   | alpha      | _false_ | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | _same_                  | `next`  |
+| 1.2.3   | alpha      | next    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`         | `2.0.0-alpha.1`, `next` | `next`  |
+| 1.2.3   | alpha      | beta    | ⇒ | `2.0.0-alpha.1` | `2.0.0-alpha.1`, `beta` | _same_                  | `beta`  |
 
 **Subsequent commits**. No matter what commit message you make (`fix:`, `feat:` etc.)
 or "version bump" `default-patch`/`default-minor` you use, the version will always be incremented `+1` in the prerelease
@@ -81,16 +82,17 @@ Given branch `main` with current version 2.4.0. Create branch `next` with follow
 }
 ```
 
-In the table below each row represents a commit in the `next` branch:
+In the table below each row represents a commit in the `next` branch
+(Docker tags and S3 dirs are the same as git tags):
 
-| branch | version       | prerelease | channel | commit |   | version                 | git tags                | Docker tags and S3 dirs | npm tag |
-|--------|---------------|------------|---------|--------|---|-------------------------|-------------------------|-------------------------|---------|
-| `next` | 2.4.0         | alpha      | demo    | BR CH: | ⇒ | `3.0.0-alpha.1`         | `3.0.0-alpha.1`, `demo` | _same_                  | `demo`  |
-| `next` | 3.0.0-alpha.1 | alpha      | demo    | fix:   | ⇒ | `3.0.0-alpha.2`         | `3.0.0-alpha.2`, `demo` | _same_                  | `demo`  |
-| `next` | 3.0.0-alpha.2 | beta       | demo    | feat:  | ⇒ | `3.0.0-beta.1`          | `3.0.0-beta.1`, `demo`  | _same_                  | `demo`  |
-| `next` | 3.0.0-beta.1  | beta       | demo    | fix:   | ⇒ | `3.0.0-beta.2`          | `3.0.0-beta.2`, `demo`  | _same_                  | `demo`  |
-| `next` | 3.0.0-beta.2  | rc         |         | feat:  | ⇒ | `3.0.0-rc.1`            | `3.0.0-rc.1`            | _same_                  | `next`  |
-| `next` | 3.0.0-rc.1    | rc         |         | fix:   | ⇒ | `3.0.0-rc.2`            | `3.0.0-rc.2`            | _same_                  | `next`  |
+| version       | prerelease | channel | commit |   | version         | git tags                | npm tag |
+|---------------|------------|---------|--------|---|-----------------|-------------------------|---------|
+| 2.4.0         | alpha      | demo    | BR CH: | ⇒ | `3.0.0-alpha.1` | `3.0.0-alpha.1`, `demo` | `demo`  |
+| 3.0.0-alpha.1 | alpha      | demo    | fix:   | ⇒ | `3.0.0-alpha.2` | `3.0.0-alpha.2`, `demo` | `demo`  |
+| 3.0.0-alpha.2 | beta       | demo    | feat:  | ⇒ | `3.0.0-beta.1`  | `3.0.0-beta.1`, `demo`  | `demo`  |
+| 3.0.0-beta.1  | beta       | demo    | fix:   | ⇒ | `3.0.0-beta.2`  | `3.0.0-beta.2`, `demo`  | `demo`  |
+| 3.0.0-beta.2  | rc         |         | feat:  | ⇒ | `3.0.0-rc.1`    | `3.0.0-rc.1`            | `next`  |
+| 3.0.0-rc.1    | rc         |         | fix:   | ⇒ | `3.0.0-rc.2`    | `3.0.0-rc.2`            | `next`  |
 
 Rules:
 - change of `prerelease` drops number back to 1, so `3.0.0-alpha.2` becomes `3.0.0-beta.1`

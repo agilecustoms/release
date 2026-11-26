@@ -16,14 +16,14 @@ This document only lists features that are tested by real releases in other repo
 
 ## Artifact types
 
-| feature                                          | tested in           | last tested | notes                                                                 |
-|--------------------------------------------------|---------------------|-------------|-----------------------------------------------------------------------|
-| aws codeartifact maven `publish`                 | java-parent         | 4.0.0       |                                                                       |
-| aws codeartifact maven `build`                   | db-evolution-runner | 4.0.0       |                                                                       |
-| dev-release in ECR                               | envctl              | 1.0.0       | attempt to overwrite existing image, attempt to delete existing image |
-| dev-release of S3 w/ disabled suffix enforcement | tt-web              | 1.0.0       |                                                                       |
-| Google Artifact Registry                         | tt-gc-test          | next        | first release 1.0.0: tags 1.0.0, 1.0, 1, latest                       |
-| npm public                                       | envctl              | 3.1.0       |                                                                       |
+| feature                                  | tested in           | last tested | notes                                |
+|------------------------------------------|---------------------|-------------|--------------------------------------|
+| aws codeartifact maven `publish`         | java-parent         | 4.0.0       |                                      |
+| aws codeartifact maven `build`           | db-evolution-runner | 4.0.0       |                                      |
+| dev-release in ECR                       | envctl              | 1.0.0       | attempts to overwrite/delete image   |
+| dev-release of S3 w/o suffix enforcement | tt-web              | 1.0.0       |                                      |
+| Google Artifact Registry                 | tt-gc-test          | next        | first release: 1.0.0, 1.0, 1, latest |
+| npm public                               | envctl              | 3.1.0       |                                      |
 
 ## Security
 

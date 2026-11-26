@@ -21,17 +21,21 @@ so that you can deploy it in sandbox or dev environment for testing or POC
 
 The table below shows a comparison of different release types:
 
-| Name                        | normal release and maintenance release        | prerelease                                    | dev-release              |
-|-----------------------------|-----------------------------------------------|-----------------------------------------------|--------------------------|
-| intention                   | use in production                             | beta testing                                  | dev testing              |
-| best use for                | software packages and deployable apps         | software packages and deployable apps         | deployable apps          |
-| adoption                    | widely                                        | widely                                        | popular in enterprise    |
-| version generation          | "conventional commits" or "version-bump"      | "conventional commits" or "version bump"      | version = branch name    |
-| auto deletion               | ❌️                                            | ❌️                                            | ✅                       |
-| number of developers        | many                                          | many                                          | typically one            |
-| release notes and changelog | ✅                                            | ✅                                            | ❌️                       |
-| floating tags               | major, minor, latest                          | alpha / beta / rc                             | ❌️                       |
-| trigger                     | push in protected branch (including PR merge) | push in protected branch (including PR merge) | Manual workflow dispatch |
+| Name                        | normal / maintenance         | prerelease                   | dev-release              |
+|-----------------------------|------------------------------|------------------------------|--------------------------|
+| intention                   | use in production            | beta testing                 | dev testing              |
+| best use for                | packages and deployable apps | packages and deployable apps | deployable apps          |
+| adoption                    | widely                       | widely                       | popular in enterprise    |
+| version generation          | see details                  | see details                  | version = branch name    |
+| auto deletion               | ❌️                           | ❌️                           | ✅                       |
+| number of developers        | many                         | many                         | typically one            |
+| release notes and changelog | ✅                           | ✅                           | ❌️                       |
+| floating tags               | major, minor, latest         | alpha / beta / rc            | ❌️                       |
+| trigger                     | see details                  | see details                  | Manual workflow dispatch |
+
+Details (normal release, maintenance release and prerelease):
+- version generation: "conventional commits" or "version bump"
+- trigger: push in protected branch (including PR merge)
 
 
 Dev release allows publishing artifacts temporarily for testing purposes:

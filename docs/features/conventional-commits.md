@@ -14,13 +14,13 @@ If a PR has no commit bumping a version, the `agilecustoms/release` action exits
 
 Besides version bumping, conventional commits are reflected in GH Release and CHANGELOG.md
 
-| prefix      | version bump      | GH Release and CHANGELOG.md sections         | Description                                 |
-|-------------|-------------------|----------------------------------------------|---------------------------------------------|
-| `feat!:`    | major             | Features  and  BREAKING CHANGES              | Breaking change OR just first major release |
-| `feat:`     | minor             | Features                                     | New feature                                 |
-| `fix:`      | patch             | Bug Fixes                                    | Bug fix                                     |
-| `perf:`     | patch             | Performance Improvements                     | Performance improvement / fix               |
-| _no prefix_ | _no version bump_ | _not reflected in GH release / CHANGELOG.md_ | Discouraged, but allowed                    |
+| prefix      | version bump      | GH Release and CHANGELOG.md sections | Description                                 |
+|-------------|-------------------|--------------------------------------|---------------------------------------------|
+| `feat!:`    | major             | Features  and  BREAKING CHANGES      | Breaking change OR just first major release |
+| `feat:`     | minor             | Features                             | New feature                                 |
+| `fix:`      | patch             | Bug Fixes                            | Bug fix                                     |
+| `perf:`     | patch             | Performance Improvements             | Performance improvement / fix               |
+| _no prefix_ | _no version bump_ | _not in GH release / CHANGELOG.md_   | Discouraged, but allowed                    |
 
 This is a default (out of the box) behavior. You can configure:
 - additional prefixes (such as `docs:`, `chore:`, `build:` etc.)
