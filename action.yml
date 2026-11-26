@@ -309,7 +309,7 @@ runs:
 
     - name: Install uv
       if: inputs.update-version-in-manifest == 'true' && hashFiles('uv.lock') && inputs.dev-release != 'true'
-      uses: astral-sh/setup-uv@v10.3.3 # no floating tags :(
+      uses: astral-sh/setup-uv@v10.4.0 # no floating tags :(
 
     # sadly but 'uv lock' downloads python bcz system one (installed in Ubuntu) != .python-version
     # note: Poetry doesn't track app version in its poetry.lock file, so no need to update
