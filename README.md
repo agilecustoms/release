@@ -12,23 +12,34 @@ This is especially useful in microservices where the release is a _binary_ + _Ia
 
 - automatic and manual [version generation](./docs/features/version-generation.md)
 - release notes generation and changelog update
-- [floating tags](./docs/features/floating-tags.md) — given the current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
-- [maintenance releases](./docs/features/maintenance-release.md) — made from branch like `1.x.x` (given `2.x.x` development is in `main`)
-- [prereleases](./docs/features/prerelease.md) — develop a next (often major, sometimes minor) version, typically made from a branch `next`
-- [dev-release](./docs/features/dev-release.md) — ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
+- [floating tags](./docs/features/floating-tags.md) —
+  given the current version is `1.2.3` and you release `1.2.4` then also create/move tags `1.2`, `1` and `latest`
+- [maintenance releases](./docs/features/maintenance-release.md) — made from branch like `1.x.x`
+  (given `2.x.x` development is in `main`)
+- [prereleases](./docs/features/prerelease.md) — develop a next (often major, sometimes minor) version,
+  typically made from a branch `next`
+- [dev-release](./docs/features/dev-release.md) —
+  ability to publish artifacts for dev testing when testing on a local machine is impossible/complicated
 - [idempotency](./docs/features/idempotency.md) — ability to re-run the action without side effects
 - GitHub release
 
 ## Artifact types ⇔ features
 
-| Artifact type                                                             | floating tags | idempotency | dev-release | auto cleanup |
-|---------------------------------------------------------------------------|---------------|-------------|-------------|--------------|
-| [git](./docs/artifact-types/git.md)                                       | ✅            | ✅          | ✅ ️         | ✅           |
-| [AWS S3](./docs/artifact-types/aws-s3.md)                                 | ✅            | ✅          | ✅          | ✅           |
-| [AWS ECR](./docs/artifact-types/aws-ecr.md)                               | ✅            | ✅          | ✅          | ✅           |
-| [AWS CodeArtifact maven](./docs/artifact-types/aws-codeartifact-maven.md) | ❌️            | ⚠️          | ❌️          | N/A          |
-| [GCP Artifact Registry](./docs/artifact-types/gcp-artifact-registry.md)   | ✅            | ✅          | ⚠️          | ✅           |
-| [npmjs](./docs/artifact-types/npmjs.md)                                   | ✅            | ⚠️          | ❌️          | N/A          |
+| Artifact type                                    | floating tags | idempotency | dev-release | auto cleanup |
+|--------------------------------------------------|---------------|-------------|-------------|--------------|
+| [git][git]                                       | ✅            | ✅          | ✅ ️         | ✅           |
+| [AWS S3][aws-s3]                                 | ✅            | ✅          | ✅          | ✅           |
+| [AWS ECR][aws-ecr]                               | ✅            | ✅          | ✅          | ✅           |
+| [AWS CodeArtifact maven][aws-codeartifact-maven] | ❌️            | ⚠️          | ❌️          | N/A          |
+| [GCP Artifact Registry][gcp-artifact-registry]   | ✅            | ✅          | ⚠️          | ✅           |
+| [npmjs][npmjs]                                   | ✅            | ⚠️          | ❌️          | N/A          |
+
+[git]: ./docs/artifact-types/git.md
+[aws-s3]: ./docs/artifact-types/aws-s3.md
+[aws-ecr]: ./docs/artifact-types/aws-ecr.md
+[aws-codeartifact-maven]: ./docs/artifact-types/aws-codeartifact-maven.md
+[gcp-artifact-registry]: ./docs/artifact-types/gcp-artifact-registry.md
+[npmjs]: ./docs/artifact-types/npmjs.md
 
 _See the respective artifact type to learn about idempotency limitations ⚠️_
 
@@ -70,16 +81,19 @@ jobs:
 Assume:
 - you store artifacts in AWS account "Dist" and its number is stored in GH org variable `AWS_ACCOUNT_DIST`
 - you have an S3 bucket `mycompany-dist` in `us-east-1` region
-- there is a role `ci/publisher` with permissions to upload files in this S3 bucket and trust policy that allows to assume this role from GH action
+- there is a role `ci/publisher` with permissions to upload files in this S3 bucket and trust policy that allows to
+  assume this role from GH action
 - you have repo `mycompany/myapp`
 - current release branch `main` has a protection rule so all changes must be done via PR
 - you have a GH environment `release` associated with branch `main`
-- There is a PAT (Personal Access Token) with permission to bypass the branch protection rule. This PAT is stored as environment secret `GH_TOKEN`
+- There is a PAT (Personal Access Token) with permission to bypass the branch protection rule.
+  This PAT is stored as environment secret `GH_TOKEN`
 - the latest tag is `v1.2.3`
 
 Scenario:
 - a developer made a feature branch and a commit with message `feat: new-feature`
-(alternatively use input [version-bump](./docs/features/version-generation.md#version-bump) for default minor/patch bump)
+(alternatively use input [version-bump](./docs/features/version-generation.md#version-bump) for default minor/patch
+bump)
 - the developer created and merged a PR which triggered a `Release` workflow
 - build steps (omitted) produced a directory `./s3` with files (like a zip archive for AWS Lambda)
 
@@ -94,69 +108,112 @@ The action will:
 
 _There are no required inputs. The action only controls that the combination of inputs is valid_
 
-| Name                           | Default           | Description                                                                                                                                                                                                                                                                                                                                                                                                           |
-|--------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| aws-account                    |                   | AWS account to publish artifacts to. Not needed if there are no artifacts, just a git tag                                                                                                                                                                                                                                                                                                                             |
-| aws-codeartifact-domain        |                   | AWS CodeArtifact domain name, e.g., `mycompany`                                                                                                                                                                                                                                                                                                                                                                       |
-| aws-codeartifact-maven         |                   | Two possible values: build and publish. publish - publish maven artifacts to AWS CodeArtifact, build - just access CodeArtifact to update version in pom.xml                                                                                                                                                                                                                                                          |
-| aws-codeartifact-repository    | maven             | AWS CodeArtifact repository name, e.g., `maven`. Used only if `aws-codeartifact-maven` is set                                                                                                                                                                                                                                                                                                                         |
-| aws-ecr                        |                   | If true, then push docker image to AWS ECR, [example](./docs/artifact-types/aws-ecr.md)                                                                                                                                                                                                                                                                                                                               |
-| aws-region                     |                   | AWS region                                                                                                                                                                                                                                                                                                                                                                                                            |
-| aws-role                       |                   | AWS IAM role to assume to publish, e.g., `ci/publisher`                                                                                                                                                                                                                                                                                                                                                               |
-| aws-s3-bucket                  |                   | AWS S3 bucket to upload artifacts to                                                                                                                                                                                                                                                                                                                                                                                  |
-| aws-s3-dir                     |                   | Allows you to specify AWS S3 bucket directory to upload artifacts to. By default, just place in `bucket/{repo-name}/{version}/*`                                                                                                                                                                                                                                                                                      |
-| changelog-file                 | CHANGELOG.md      | Changelog file path. Pass an empty string to disable changelog generation                                                                                                                                                                                                                                                                                                                                             |
-| changelog-title                | # Changelog       | Title of the changelog file (first line of the file)                                                                                                                                                                                                                                                                                                                                                                  |
-| dev-branch-prefix              | feature/          | Allows you to enforce branch prefix for dev-releases; this helps to write auto-disposal rules. Empty string disables enforcement                                                                                                                                                                                                                                                                                      |
-| dev-release                    | false             | Allows you to create a temporary named release, mainly for dev testing. Implementation is different for all supported artifact types                                                                                                                                                                                                                                                                                  |
-| floating-tags                  | true              | When next version to be released is `1.2.4`, then also release `1.2`, `1` and `latest`. Not desired for public terraform modules                                                                                                                                                                                                                                                                                      |
-| gcp-artifact-repository        |                   | If set, then push docker image to this Google Artifact Registry repository (name), e.g. `my-repo`                                                                                                                                                                                                                                                                                                                     |
-| gcp-project                    |                   | Google Cloud project to publish artifacts to                                                                                                                                                                                                                                                                                                                                                                          |
-| gcp-region                     |                   | Google Cloud region of Artifact Registry repository, e.g. `us-east1`                                                                                                                                                                                                                                                                                                                                                  |
-| gcp-service-account            |                   | Google Cloud service account (short name) in `gcp-project` to impersonate to publish, e.g. `ci-publisher`                                                                                                                                                                                                                                                                                                             |
-| gcp-workload-identity-provider |                   | Workload Identity Provider full name: `projects/{number}/locations/global/workloadIdentityPools/{pool}/providers/{id}`                                                                                                                                                                                                                                                                                                |
-| java-cache                     | maven             | Enable Maven dependency caching. Use empty string `""` to disable                                                                                                                                                                                                                                                                                                                                                     |
-| java-cache-dependency-path     | **/pom.xml        | Files hashed into the Maven cache key                                                                                                                                                                                                                                                                                                                                                                                 |
-| java-cache-key                 | default           | Name of the Maven cache to restore (read-only, saved by the build job), see [gha-setup-java](https://github.com/agilecustoms/gha-setup-java) `java-cache-key`                                                                                                                                                                                                                                                         |
-| java-distribution              | temurin           | Java distribution. Default is Temurin as it is pre-cached in ubuntu-latest                                                                                                                                                                                                                                                                                                                                            |
-| java-version                   | 21                | Java version to use. [Example](./docs/artifact-types/aws-codeartifact-maven.md)                                                                                                                                                                                                                                                                                                                                       |
-| npm-publish                    | false             | If true, then publish package to npmjs.com registry. [Example](./docs/artifact-types/npmjs.md)                                                                                                                                                                                                                                                                                                                        |
-| npm-visibility                 | public            | Used together with input `npm-publish`. Specifies package visibility: public or private (not tested yet)                                                                                                                                                                                                                                                                                                              |
-| pre-publish-script             |                   | Custom shell script that allows you to update version in arbitrary file(s), not only files governed by build tool (pom.xml, package.json, etc.). In this script you can use variables `$version` (e.g. `1.2.3`) and `$git_tag` (e.g. `v1.2.3`). Script changes in tracked files go into the release commit; to include a new file, `git add` it in the script. See example in [npmjs](./docs/artifact-types/npmjs.md) |
-| python-version                 | 3.13              | Python version. Not in use right now                                                                                                                                                                                                                                                                                                                                                                                  |
-| release-branches               | (see description) | Semantic-release [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches), mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and [prereleases](./docs/features/prerelease.md)                                                                                                                                                                |
-| release-channel                |                   | Repeat `.releaserc.json` `channel` behavior when `version` is set explicitly. See [floating-tags](./docs/features/floating-tags.md) for details                                                                                                                                                                                                                                                                       |
-| release-gh                     | true              | If true, then create a GitHub release                                                                                                                                                                                                                                                                                                                                                                                 |
-| release-plugins                | (see description) | Semantic-release "plugins" configuration, see [details](./docs/configuration.md)                                                                                                                                                                                                                                                                                                                                      |
-| summary                        | (see description) | Text to print in step summary. Can use `${version}` placeholder. Default is `### Released ${version}`. Set to an empty string to omit summary generation                                                                                                                                                                                                                                                              |
-| tag-format                     | v${version}       | Git tag format, default git tag is `v1.0.0` _(default is in code level, not input value)_. Applies only to git tags: version in manifests, S3 path and Docker tag is always bare `1.0.0`. Use `${version}` to remove `v` prefix from git tags                                                                                                                                                                         |
-| update-version-in-manifest     | true              | Update version in language-specific manifest files (e.g., pom.xml, package.json, pyproject.toml)                                                                                                                                                                                                                                                                                                                      |
-| version                        |                   | [Explicit version](./docs/features/version-generation.md#explicit-version) to use instead of auto-generation                                                                                                                                                                                                                                                                                                          |
-| version-bump                   |                   | Allows you to [bump a version](./docs/features/version-generation.md#version-bump) without conventional commits                                                                                                                                                                                                                                                                                                       |
+| Name                           | Default           | Description                                                    |
+|--------------------------------|-------------------|----------------------------------------------------------------|
+| aws-account                    |                   | AWS account to publish artifacts to                            |
+| aws-codeartifact-domain        |                   | AWS CodeArtifact domain name, e.g., `mycompany`                |
+| aws-codeartifact-maven         |                   | `build` or `publish`, see details                              |
+| aws-codeartifact-repository    | maven             | CodeArtifact repository, used with `aws-codeartifact-maven`    |
+| aws-ecr                        |                   | If true, push docker image to AWS ECR, [example][aws-ecr]      |
+| aws-region                     |                   | AWS region                                                     |
+| aws-role                       |                   | AWS IAM role to assume to publish, e.g., `ci/publisher`        |
+| aws-s3-bucket                  |                   | AWS S3 bucket to upload artifacts to                           |
+| aws-s3-dir                     |                   | S3 bucket directory to upload artifacts to, see details        |
+| changelog-file                 | CHANGELOG.md      | Changelog file path, empty string disables the changelog       |
+| changelog-title                | # Changelog       | Title of the changelog file (its first line)                   |
+| dev-branch-prefix              | feature/          | Required branch prefix for dev-releases, see details           |
+| dev-release                    | false             | Temporary named release for dev testing, see details           |
+| floating-tags                  | true              | Release `1.2.4` also releases `1.2`, `1` and `latest`          |
+| gcp-artifact-repository        |                   | Artifact Registry repo to push docker image to, e.g. `my-repo` |
+| gcp-project                    |                   | Google Cloud project to publish artifacts to                   |
+| gcp-region                     |                   | Region of Artifact Registry repository, e.g. `us-east1`        |
+| gcp-service-account            |                   | Service account short name to impersonate, e.g. `ci-publisher` |
+| gcp-workload-identity-provider |                   | Workload Identity Provider full name, see details              |
+| java-cache                     | maven             | Maven dependency cache, empty string `""` disables it          |
+| java-cache-dependency-path     | **/pom.xml        | Files hashed into the Maven cache key                          |
+| java-cache-key                 | default           | Name of the Maven cache to restore, see details                |
+| java-distribution              | temurin           | Java distribution, Temurin is pre-cached in ubuntu-latest      |
+| java-version                   | 21                | Java version to use, [example][aws-codeartifact-maven]         |
+| npm-publish                    | false             | If true, publish package to npmjs.com, [example][npmjs]        |
+| npm-visibility                 | public            | With `npm-publish`: `public` or `private` (not tested yet)     |
+| pre-publish-script             |                   | Script to update version in custom files, see details          |
+| python-version                 | 3.13              | Python version. Not in use right now                           |
+| release-branches               | (see description) | semantic-release branches, see details                         |
+| release-channel                |                   | Channel when `version` is set explicitly, see details          |
+| release-gh                     | true              | If true, create a GitHub release                               |
+| release-plugins                | (see description) | semantic-release plugins, [details](./docs/configuration.md)   |
+| summary                        | (see description) | Text to print in step summary, see details                     |
+| tag-format                     | v${version}       | Git tag format, see details                                    |
+| update-version-in-manifest     | true              | Update version in pom.xml, package.json, pyproject.toml        |
+| version                        |                   | Explicit version instead of auto-generation, see details       |
+| version-bump                   |                   | Bump version w/o conventional commits, see details             |
+
+Details:
+- `aws-account`: AWS account to publish artifacts to. Not needed if there are no artifacts, just a git tag
+- `aws-codeartifact-maven`: Two possible values: build and publish.
+  publish - publish maven artifacts to AWS CodeArtifact, build - just access CodeArtifact to update version in pom.xml
+- `aws-s3-dir`: Allows you to specify AWS S3 bucket directory to upload artifacts to.
+  By default, just place in `bucket/{repo-name}/{version}/*`
+- `dev-branch-prefix`: Allows you to enforce branch prefix for dev-releases; this helps to write auto-disposal rules.
+  Empty string disables enforcement
+- `dev-release`: Allows you to create a temporary named release, mainly for dev testing.
+  Implementation is different for all supported artifact types
+- `floating-tags`: When next version to be released is `1.2.4`, then also release `1.2`, `1` and `latest`.
+  Not desired for public terraform modules
+- `gcp-workload-identity-provider`: Workload Identity Provider full name:
+  `projects/{number}/locations/global/workloadIdentityPools/{pool}/providers/{id}`
+- `java-cache-key`: Name of the Maven cache to restore (read-only, saved by the build job),
+  see [gha-setup-java](https://github.com/agilecustoms/gha-setup-java) `java-cache-key`
+- `pre-publish-script`: Custom shell script that allows you to update version in arbitrary file(s),
+  not only files governed by build tool (pom.xml, package.json, etc.).
+  In this script you can use variables `$version` (e.g. `1.2.3`) and `$git_tag` (e.g. `v1.2.3`).
+  Script changes in tracked files go into the release commit; to include a new file, `git add` it in the script.
+  See example in [npmjs](./docs/artifact-types/npmjs.md)
+- `release-branches`: Semantic-release
+  [branches](https://semantic-release.gitbook.io/semantic-release/usage/configuration#branches),
+  mainly used to support [maintenance releases](./docs/features/maintenance-release.md) and
+  [prereleases](./docs/features/prerelease.md)
+- `release-channel`: Repeat `.releaserc.json` `channel` behavior when `version` is set explicitly.
+  See [floating-tags](./docs/features/floating-tags.md) for details
+- `summary`: Text to print in step summary. Can use `${version}` placeholder. Default is `### Released ${version}`.
+  Set to an empty string to omit summary generation
+- `tag-format`: Git tag format, default git tag is `v1.0.0` _(default is in code level, not input value)_.
+  Applies only to git tags: version in manifests, S3 path and Docker tag is always bare `1.0.0`.
+  Use `${version}` to remove `v` prefix from git tags
+- `version`: [Explicit version](./docs/features/version-generation.md#explicit-version)
+  to use instead of auto-generation
+- `version-bump`: Allows you to [bump a version](./docs/features/version-generation.md#version-bump)
+  without conventional commits
 
 ### Outputs
 
-| Name    | Description                                                                                                                    |
-|---------|--------------------------------------------------------------------------------------------------------------------------------|
-| git-tag | Git tag of the release: version with `tag-format` applied, e.g. `v1.2.3`                                                       |
-| version | Version that was generated (or provided via `version` input), bare, e.g. `1.2.3`. Same as in manifests, S3 path and Docker tag |
+| Name    | Description                                                                                           |
+|---------|-------------------------------------------------------------------------------------------------------|
+| git-tag | Git tag of the release: version with `tag-format` applied, e.g. `v1.2.3`                              |
+| version | Generated (or `version` input) version, bare, e.g. `1.2.3`, same as in manifests, S3 path, Docker tag |
 
 ### Environment variables
 
-| Name      | Description                                                                                                                                       |
-|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| GH_TOKEN  | Takes GH PAT with permission to bypass the branch and tags protection rules. See details in [Authorization and Security](./docs/authorization.md) |
+| Name     | Description                                                                                |
+|----------|--------------------------------------------------------------------------------------------|
+| GH_TOKEN | GH PAT that can bypass branch and tag protection rules, [details](./docs/authorization.md) |
 
 ## Ecosystem
 
 The action comes with an **ecosystem**:
-- Terraform module to create a Release-ready [GitHub repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
-- Terraform modules to provide AWS policies to [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
-- GitHub actions to use in build workflows, e.g., [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
+- Terraform module to create a Release-ready [GitHub
+  repository](https://registry.terraform.io/modules/agilecustoms/repo/github/latest)
+- Terraform modules to provide AWS policies to
+  [read](https://registry.terraform.io/modules/agilecustoms/ci-builder/aws/latest) and
+  [publish](https://registry.terraform.io/modules/agilecustoms/ci-publisher/aws/latest) artifacts
+- GitHub actions to use in build workflows, e.g.,
+  [setup-maven-codeartifact](https://github.com/agilecustoms/setup-maven-codeartifact)
 - documentation and examples for all supported [artifact types](./docs/artifact-types/index.md)
-- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service (dev-releases)
+- [Authorization and Security](./docs/authorization.md) — how to make releases secure, including self-service
+  (dev-releases)
 - Release workflow [best practices](./docs/best-practices.md)
-- Articles: 🧩 [Software distribution in AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
+- Articles: 🧩 [Software distribution in
+  AWS](https://www.linkedin.com/pulse/software-distribution-aws-alexey-chekulaev-ubl0e),
   🧩 [GitFlow vs Build-and-deploy](https://www.linkedin.com/pulse/gitflow-build-and-deploy-alex-chekulaev-lvive)
 
 ## License
@@ -172,7 +229,11 @@ This project is released under the [MIT License](./LICENSE)
 
 ## Acknowledgements
 
-- https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes. Used as essential part of `agilecustoms/release` action
-- https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library. Used as a reference on how to write my own GH action-adapter for semantic-release
-- https://github.com/anothrNick/github-tag-action — easy and powerful GH action to generate the next version and push it as a tag. Used it for almost 2 years until switched to semantic-release
+- https://github.com/semantic-release/semantic-release — NPM library to generate the next version and release notes.
+  Used as essential part of `agilecustoms/release` action
+- https://github.com/cycjimmy/semantic-release-action — GH action wrapper for `semantic-release` library.
+  Used as a reference on how to write my own GH action-adapter for semantic-release
+- https://github.com/anothrNick/github-tag-action —
+  easy and powerful GH action to generate the next version and push it as a tag.
+  Used it for almost 2 years until switched to semantic-release
 - https://github.com/googleapis/release-please-action — GH action to create release PRs based on conventional commits
