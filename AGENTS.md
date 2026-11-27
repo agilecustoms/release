@@ -1,8 +1,5 @@
 # AGENTS.md
 
-Shared agilecustoms rules (git, code style) are in `../tools/agents/AGENTS.md`.
-This file is `release` specific.
-
 `agilecustoms/release` is a public composite GitHub Action: generate version (via `agilecustoms/release-gen`),
 publish artifacts (S3, ECR, CodeArtifact maven, Google Artifact Registry, npmjs), push release commit and git tags,
 create GH release.
