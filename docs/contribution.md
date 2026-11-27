@@ -2,6 +2,24 @@
 
 For any bugs, feel free to create an issue or raise a pull request with fix
 
+## Release procedure
+
+The action is public: a change must not break the workflow of those who use it.
+Every push to `main` is released, the version is derived from the commit prefix (conventional commits):
+`fix:`, `misc:`, `docs:`, `build:` -> patch, `feat:` -> minor, `feat!:` or `BREAKING CHANGE:` footer -> major
+
+Changes are developed in branch `next` and tested in real projects before they are released:
+
+1. commit and push to `next`: CI runs all tests (incl. E2E in a sandbox repo), but doesn't release
+2. use `agilecustoms/release@next` in your own projects and run real releases with it
+   (agilecustoms private repos always do: their wrapper action points to `@next`)
+3. a breaking change: commit with `feat!:` and a `BREAKING CHANGE:` footer,
+   add a section to [MIGRATION.md](MIGRATION.md): what changed and what users need to do
+4. after testing: create a PR `next` -> `main` and merge it with a merge commit
+   (fast-forward or rebase brings `Release version ... [skip ci]` as the head commit and no workflow runs on `main`).
+   Wait for the `Release` job on `main`
+5. recreate `next` from `main` (GitHub deletes it on merge) and push it
+
 ## semantic-release notes
 
 If you need some specific `semantic-release` plugin supported, please start a discussion first,

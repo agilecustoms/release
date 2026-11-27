@@ -30,16 +30,15 @@ Private agilecustoms repos use it via wrapper *gha-release*, which points to `ag
 | `README.md`                   | features, inputs/outputs tables                                                   |
 | `docs/`                       | artifact types, features, authorization; `docs/examples/`: copies of real repos   |
 
-## Branches and release
+## Changes
 
-- develop in `next` (safe: `gha-release` uses `@next`, so private repos test new features before they are released)
-- release = merge `next` -> `main` with a **merge commit**. Fast-forward/rebase brings `Release version ... [skip ci]`
-  as the head commit and no workflow runs on `main`
+The action is public, others depend on it: make changes following the release procedure in
+[docs/contribution.md](docs/contribution.md) (branch `next`, major version and migration guide for breaking changes)
 
 ## Development
 
 `make lint` (actionlint on workflows, shellcheck on `scripts/*.sh`), all targets are in [Makefile](Makefile).
-Before finishing a change run it and check that `action.yml` and workflows are valid YAML.
+Before finishing a change, run it and check that `action.yml` and workflows are valid YAML.
 E2E tests run only in CI (they release into a local sandbox repo)
 
 ## Documentation rules
