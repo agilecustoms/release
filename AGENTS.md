@@ -1,8 +1,5 @@
 # AGENTS.md
 
-`agilecustoms/release` is a public composite GitHub Action: generate version (via `agilecustoms/release-gen`),
-publish artifacts (S3, ECR, CodeArtifact maven, Google Artifact Registry, npmjs), push release commit and git tags,
-create GH release.
 `README.md` is its public page (GitHub, Marketplace): only user-facing content goes there, internals are here
 
 ## Tech summary
@@ -40,7 +37,6 @@ E2E tests run only in CI (they release into a local sandbox repo)
 
 ## Documentation rules
 
-- the repo is public: in docs and examples use placeholders (`mycompany`, `my-project`, `123456789012`), not real ids
 - README inputs table must match `action.yml` inputs (names,
   defaults; code-level defaults are explained in the description)
 - a new input or artifact type also updates: README (inputs, "Artifact types" table), `docs/artifact-types/`,
