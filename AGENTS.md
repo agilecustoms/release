@@ -14,7 +14,7 @@
 
 Private agilecustoms repos use it via wrapper *gha-release*, which points to `agilecustoms/release@next`
 
-## Layout
+## How it works
 
 | Path                          | What                                                                              |
 |-------------------------------|-----------------------------------------------------------------------------------|
@@ -24,18 +24,7 @@ Private agilecustoms repos use it via wrapper *gha-release*, which points to `ag
 | `README.md`                   | features, inputs/outputs tables                                                   |
 | `docs/`                       | artifact types, features, authorization; `docs/examples/`: copies of real repos   |
 
-## Changes
-
-The action is public, others depend on it: make changes following the release procedure in
-[docs/contribution.md](docs/contribution.md) (branch `next`, major version and migration guide for breaking changes)
-
-## Development
-
-`make lint` (actionlint on workflows, shellcheck on `scripts/*.sh`), all targets are in [Makefile](Makefile).
-Before finishing a change, run it and check that `action.yml` and workflows are valid YAML.
-E2E tests run only in CI (they release into a local sandbox repo)
-
-## Documentation rules
+## Change together
 
 - README inputs table must match `action.yml` inputs (names,
   defaults; code-level defaults are explained in the description)
@@ -50,3 +39,14 @@ E2E tests run only in CI (they release into a local sandbox repo)
   Examples call `agilecustoms/release@v6` with explicit inputs
   (or `mycompany/gha-release`), not agilecustoms internals
 - a high-level rule (best-practices.md, authorization.md, README) and a specific doc must agree: fix both or neither
+
+## Development
+
+`make lint` (actionlint on workflows, shellcheck on `scripts/*.sh`), all targets are in [Makefile](Makefile).
+Before finishing a change, run it and check that `action.yml` and workflows are valid YAML.
+E2E tests run only in CI (they release into a local sandbox repo)
+
+## Release procedure
+
+The action is public, others depend on it: make changes following the release procedure in
+[docs/contribution.md](docs/contribution.md) (branch `next`, major version and migration guide for breaking changes)
